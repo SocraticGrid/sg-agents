@@ -1,0 +1,315 @@
+/*******************************************************************************
+ *
+ * Copyright (C) 2012 by Cognitive Medical Systems, Inc (http://www.cognitivemedciine.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
+ * use this file except in compliance with the License. You may obtain a copy of 
+ * the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
+ 
+ /******************************************************************************
+ * Socratic Grid contains components to which third party terms apply. To comply 
+ * with these terms, the following notice is provided:
+ *
+ * TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ * Copyright (c) 2008, Nationwide Health Information Network (NHIN) Connect. All 
+ * rights reserved.
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * - Redistributions of source code must retain the above copyright notice, this 
+ *   list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice, 
+ *   this list of conditions and the following disclaimer in the documentation 
+ *   and/or other materials provided with the distribution.
+ * - Neither the name of the NHIN Connect Project nor the names of its 
+ *   contributors may be used to endorse or promote products derived from this 
+ *   software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * END OF TERMS AND CONDITIONS
+ *
+ ******************************************************************************/
+
+package org.socraticgrid.kmr2.simulatorAgent.services;
+
+import org.drools.io.internal.InternalResource;
+
+import org.drools.mas.body.content.Action;
+import java.util.List;
+import java.util.Date;
+import java.util.ArrayList;
+
+global org.drools.grid.Grid grid;
+
+declare SimCommand
+    simId           : String
+    successStatus   : boolean   = true;
+    statusMessage   : String    = "(ok)"
+end
+
+/**
+Used to keep track of an Action but without having it as a fact. 
+This is needed because each 'command' rule needs to retract the processed Action
+but the 'result' rule still need the information present in the Action being
+retracted
+**/
+declare CommandSimulationActionRecord
+    userId          : Object 
+    modelId         : Object 
+    simulationId    : Object 
+    action          : Object 
+    msgId           : String 
+end
+
+rule "Action_Request : commandSimulation Init"
+salience 20
+when
+    $a :  Action( actionName == "commandSimulation",
+                  $userId               : this["userId"],
+                  $modelId              : this["modelId"],
+                  $simulationId         : this["simulationId"],
+                  $action               : this["action"]
+                )
+    not SimCommand()
+then
+    insert( new SimCommand() );
+end
+
+rule "Clone Action"
+salience 20
+when
+    $a :  Action( 
+        actionName == "commandSimulation",
+        $userId               : this["userId"],
+        $modelId              : this["modelId"],
+        $simulationId         : this["simulationId"],
+        $action               : this["action"],
+        $msgId                : msgId
+    )
+then
+    insert (new CommandSimulationActionRecord($userId, $modelId, $simulationId, $action, $msgId)); 
+end
+
+rule "Action_Request : commandSimulation Fail"
+salience 10
+no-loop
+when
+    $a :  Action( actionName == "commandSimulation",
+                   $userId               : this["userId"],
+                   $modelId              : this["modelId"],
+                   $simulationId         : this["simulationId"],
+                   $action               : this["action"]
+                 )
+    not    Simulation( simulationId == $simulationId )
+    $cmd : SimCommand( )
+then
+    retract( $a );
+
+    System.out.println("Cmd Sim : Fail");
+    $cmd.setSimId( (String) $simulationId );
+    $cmd.setSuccessStatus( false );
+    $cmd.setStatusMessage( "Sim not found " + $simulationId );
+    update( $cmd );
+end
+
+
+
+rule "Action_Request : commandSimulation Pause"
+salience 10
+no-loop
+when
+    $a :  Action( actionName == "commandSimulation",
+                   $userId               : this["userId"],
+                   $modelId              : this["modelId"],
+                   $simulationId         : this["simulationId"],
+                   $action               : this["action"] == "Pause"
+                 )
+    $sim : Simulation( simulationId == $simulationId, status == "Running" )
+    $cmd : SimCommand( )
+then
+    retract( $a );
+
+    System.out.println("Cmd Sim : Pause");
+    $sim.pause();
+
+    $cmd.setSimId( (String) $simulationId );
+    $cmd.setSuccessStatus( true );
+    $cmd.setStatusMessage( "(ok)" );
+
+    update( $sim );
+    update( $cmd );
+end
+
+rule "Action_Request : commandSimulation Pause not necessary"
+salience 10
+no-loop
+when
+    $a :  Action( actionName == "commandSimulation",
+                   $userId               : this["userId"],
+                   $modelId              : this["modelId"],
+                   $simulationId         : this["simulationId"],
+                   $action               : this["action"] == "Pause"
+                 )
+    $sim : Simulation( simulationId == $simulationId, status != "Running" )
+    $cmd : SimCommand( )
+then
+    retract( $a );
+
+    System.out.println("Cmd Sim : Pause not nec");
+
+    $cmd.setSimId( (String) $simulationId );
+    $cmd.setSuccessStatus( false );
+    $cmd.setStatusMessage( "Sim not running " + $simulationId );
+
+    update( $cmd );
+end
+
+
+
+
+
+rule "Action_Request : commandSimulation Start"
+salience 10
+no-loop
+when
+    $a :  Action( actionName == "commandSimulation",
+                   $userId               : this["userId"],
+                   $modelId              : this["modelId"],
+                   $simulationId         : this["simulationId"],
+                   $action               : this["action"] == "Start"
+                 )
+    $sim : Simulation( simulationId == $simulationId, status == "Paused" )
+    $cmd : SimCommand( )
+then
+    retract( $a );
+
+    System.out.println("Cmd Sim : Start");
+    $sim.start();
+
+    $cmd.setSimId( (String) $simulationId );
+    $cmd.setSuccessStatus( true );
+    $cmd.setStatusMessage( "(ok)" );
+
+    update( $sim );
+    update( $cmd );
+end
+
+rule "Action_Request : commandSimulation Start not necessary"
+salience 10
+no-loop
+when
+    $a :  Action( actionName == "commandSimulation",
+                   $userId               : this["userId"],
+                   $modelId              : this["modelId"],
+                   $simulationId         : this["simulationId"],
+                   $action               : this["action"] == "Start"
+                 )
+    $sim : Simulation( simulationId == $simulationId, status != "Paused" )
+    $cmd : SimCommand( )
+then
+    retract( $a );
+
+    System.out.println("Cmd Sim : Start not nec");
+
+    $cmd.setSimId( (String) $simulationId );
+    $cmd.setSuccessStatus( false );
+    $cmd.setStatusMessage( "Sim not paused " + $simulationId );
+
+    update( $cmd );
+end
+
+
+
+
+
+
+rule "Action_Request : commandSimulation Stop"
+salience 10
+no-loop
+when
+    $a :  Action( actionName == "commandSimulation",
+                   $userId               : this["userId"],
+                   $modelId              : this["modelId"],
+                   $simulationId         : this["simulationId"],
+                   $action               : this["action"] == "Stop"
+                 )
+    $sim : Simulation( simulationId == $simulationId )
+    $cmd : SimCommand( )
+then
+    retract( $a );
+
+    System.out.println("Cmd Sim : Stop");
+    $sim.stop();
+
+    $cmd.setSimId( (String) $simulationId );
+    $cmd.setSuccessStatus( true );
+    $cmd.setStatusMessage( "(ok)" );
+
+    update( $sim );
+    update( $cmd );
+end
+
+
+
+rule "Action_Request : commandSimulation Clear Action"
+when
+    $a :  Action( actionName == "commandSimulation" )
+then
+    retract( $a );
+end
+
+rule "Action_Request : commandSimulation Clear SimCommand"
+when
+    $s :  SimCommand()
+then
+    retract( $s );
+end
+
+
+
+
+query commandSimulation( String $userId, String $modelId, String $simId, String $action, Object $return )
+    $return := SimCommand(simId == $simId )
+end
+
+rule "Action_Request : commandSimulation Result"
+salience 5
+when
+    $s : SessionLocator($nodeId: nodeId, $sessionId: sessionId, mind == true)
+    $a : CommandSimulationActionRecord(
+                    $userId               : userId,
+                    $modelId              : modelId,
+                    $simulationId         : simulationId,
+                    $action               : action,
+                    $msgId                : msgId
+                )
+    commandSimulation(  $userId,
+                        $modelId,
+                        $simId,
+                        $action,
+                        $return;
+    )
+then
+     ResponseContent.deliverResponse(grid, $nodeId, $sessionId, $msgId, $return, null, true );
+     retract ($a);
+end

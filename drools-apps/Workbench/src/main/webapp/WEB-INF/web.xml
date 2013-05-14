@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ~
+ ~ Copyright (C) 2012 by Cognitive Medical Systems, Inc (http://www.cognitivemedciine.com)
+ ~
+ ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ ~ the License. You may obtain a copy of the License at
+ ~
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ ~ an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ ~ specific language governing permissions and limitations under the License.
+ ~
+-->
+ 
+<!--
+ ~ Socratic Grid contains components to which third party terms apply. To comply with these terms, the following notice is provided:
+ ~
+ ~ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ ~ Copyright (c) 2008, Nationwide Health Information Network (NHIN) Connect. All rights reserved.
+ ~ Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+ ~ 
+ ~ - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ ~ - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ ~ - Neither the name of the NHIN Connect Project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+ ~ 
+ ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ~ 
+ ~ END OF TERMS AND CONDITIONS
+ ~
+-->
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <display-name>Workbench</display-name>
+    <filter>
+        <filter-name>SecurityFilter</filter-name>
+        <filter-class>org.socraticgrid.workbench.filter.SecurityFilter</filter-class>
+        <init-param>
+            <param-name>enabled</param-name>
+            <param-value>false</param-value>
+        </init-param>
+        <init-param>
+            <param-name>securityCallbackURL</param-name>
+            <param-value>/SecurityCallBackServlet</param-value>
+        </init-param>
+        <!-- Identity Provider URL -->
+        <init-param>
+            <param-name>identityProviderURL</param-name>
+            <param-value>https://localhost:9443/samlsso</param-value>
+        </init-param>
+        <init-param>
+            <param-name>serviceProviderId</param-name>
+            <param-value>Workbench</param-value>
+        </init-param>
+        <!-- Key Store Name-->
+        <init-param>
+            <param-name>keyStoreName</param-name>
+            <param-value>/home/esteban/programs/wso2is-3.2.2/repository/resources/security/wso2carbon.jks</param-value>
+        </init-param>
+        <!-- Key Store password -->
+        <init-param>
+            <param-name>keyStorePassword</param-name>
+            <param-value>wso2carbon</param-value>
+        </init-param>
+        <!-- Alias of the public key of the identity provider -->
+        <init-param>
+            <param-name>identityAlias</param-name>
+            <param-value>wso2carbon</param-value>
+        </init-param>
+    </filter>
+    <filter>
+        <filter-name>ApplicationConfigurationFilter</filter-name>
+        <filter-class>org.socraticgrid.workbench.filter.ApplicationConfigurationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ApplicationConfigurationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SecurityFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <servlet>
+        <servlet-name>PackageTreePanelServlet</servlet-name>
+        <servlet-class>org.socraticgrid.workbench.servlet.PackageTreePanelServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GuvnorLOVServlet</servlet-name>
+        <servlet-class>org.socraticgrid.workbench.servlet.GuvnorLOVServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GuvnorPackageCRUDServlet</servlet-name>
+        <servlet-class>org.socraticgrid.workbench.servlet.GuvnorPackageCRUDServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>WapamaServlet</servlet-name>
+        <servlet-class>org.socraticgrid.workbench.servlet.WapamaServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>KnowledgeModuleServlet</servlet-name>
+        <servlet-class>org.socraticgrid.workbench.servlet.KnowledgeModuleServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UserSettingsServlet</servlet-name>
+        <servlet-class>org.socraticgrid.workbench.servlet.UserSettingsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CategoryTreePanelServlet</servlet-name>
+        <servlet-class>org.socraticgrid.workbench.servlet.CategoryTreePanelServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProcessSearchServlet</servlet-name>
+        <servlet-class>org.socraticgrid.workbench.servlet.ProcessSearchServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PackageTreePanelServlet</servlet-name>
+        <url-pattern>/PackageTreePanelServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GuvnorLOVServlet</servlet-name>
+        <url-pattern>/GuvnorLOVServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GuvnorPackageCRUDServlet</servlet-name>
+        <url-pattern>/GuvnorPackageCRUDServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WapamaServlet</servlet-name>
+        <url-pattern>/WapamaServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>KnowledgeModuleServlet</servlet-name>
+        <url-pattern>/KnowledgeModuleServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserSettingsServlet</servlet-name>
+        <url-pattern>/UserSettingsServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CategoryTreePanelServlet</servlet-name>
+        <url-pattern>/CategoryTreePanelServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProcessSearchServlet</servlet-name>
+        <url-pattern>/ProcessSearchServlet</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

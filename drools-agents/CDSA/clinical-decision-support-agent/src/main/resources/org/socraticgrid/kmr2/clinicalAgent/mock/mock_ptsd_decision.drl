@@ -1,0 +1,471 @@
+/*******************************************************************************
+ *
+ * Copyright (C) 2012 by Cognitive Medical Systems, Inc (http://www.cognitivemedciine.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
+ * use this file except in compliance with the License. You may obtain a copy of 
+ * the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
+ 
+ /******************************************************************************
+ * Socratic Grid contains components to which third party terms apply. To comply 
+ * with these terms, the following notice is provided:
+ *
+ * TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ * Copyright (c) 2008, Nationwide Health Information Network (NHIN) Connect. All 
+ * rights reserved.
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * - Redistributions of source code must retain the above copyright notice, this 
+ *   list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice, 
+ *   this list of conditions and the following disclaimer in the documentation 
+ *   and/or other materials provided with the distribution.
+ * - Neither the name of the NHIN Connect Project nor the names of its 
+ *   contributors may be used to endorse or promote products derived from this 
+ *   software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * END OF TERMS AND CONDITIONS
+ *
+ ******************************************************************************/
+package org.socraticgrid.kmr2.clinicalAgent.models.decision;
+
+import org.drools.pmml.pmml_4_1.ModelMarker;
+import org.drools.pmml.pmml_4_1.PMML4Field;
+
+import org.drools.mas.*;
+import org.drools.base.DroolsQuery;
+
+import org.drools.informer.Answer;
+import org.drools.informer.Questionnaire;
+
+import org.drools.informer.ProgressStatus;
+import org.drools.informer.Question;
+import org.drools.informer.DomainModelAssociation;
+import org.drools.informer.generator.FormRegistry;
+import org.drools.informer.generator.annotations.Questionable;
+import org.drools.informer.generator.annotations.QuestionMark;
+import org.drools.informer.generator.annotations.AllowedAnswers;
+
+import org.drools.informer.interaction.TemplateBuilder;
+
+import org.drools.grid.api.ResourceDescriptor;
+
+import org.drools.informer.interaction.*;
+import org.drools.informer.generator.Surveyable;
+
+
+import org.socraticgrid.kmr2.clinicalAgent.models.decision.DxAction;
+import org.socraticgrid.kmr2.clinicalAgent.models.decision.QuestDxAction;
+
+declare DxAction end
+declare QuestDxAction end
+declare Surveyable end
+
+
+
+declare AskAlcohol extends QuestDxAction
+    descr           : String            = "Ask for alcohol abuse"
+
+    templateName    : String        = "askAlcohol.template"
+    bodyQuest       : String        = "org.socraticgrid.kmr2.clinicalAgent.models.decision.AskAlcoholSurvey"
+end
+
+declare AskAlcoholSurvey extends Surveyable
+@Questionable( label = "Ask for Alcohol Abuse", language = "EN" )
+
+    question        : String            = null
+    @QuestionMark( type = Question.QuestionType.TYPE_TEXT, label = " Do you abuse alcohol ? ", required = false )
+    @AllowedAnswers( values = { "true=true", "false=false", "unknown=unknown"  } )
+
+end
+
+
+declare AskDeployment extends QuestDxAction
+    descr           : String            = "Ask for number of deployments "
+
+    templateName    : String        = "empty.template"
+    bodyQuest       : String        = "org.socraticgrid.kmr2.clinicalAgent.models.decision.AskDeploymentSurvey"
+end
+
+declare AskDeploymentSurvey extends Surveyable
+@Questionable( label = "Ask for Number of Deployments", language = "EN" )
+
+    deploys         : String            = null
+    @QuestionMark( type = Question.QuestionType.TYPE_TEXT, label = " How many times have you been deployed ? ", required = true )
+    @AllowedAnswers( values = { "0=No deployments", "1=Just once", "2+=Two or more times"  } )
+
+end
+
+
+declare DoExcruciatinglyPainfulTest extends QuestDxAction
+    descr           : String        = "A simple test"
+
+    templateName    : String        = "someTest.template"
+    bodyQuest       : String        = "org.socraticgrid.kmr2.clinicalAgent.models.decision.DoExcruciatinglyPainfulTestSurvey"
+end
+
+declare DoExcruciatinglyPainfulTestSurvey extends Surveyable
+@Questionable( label = "There's something I have to tell you...", language = "EN" )
+
+    confirm         : boolean       = false
+    @QuestionMark( type = Question.QuestionType.TYPE_BOOLEAN, label = " Please confirm if sure ", required = true )
+
+end
+
+//@Questionable( label = "There's something I have to tell you...", language = "EN" )
+
+
+
+declare AskSomething1 extends DxAction
+    descr           : String        = "A1"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+declare AskSomething2 extends DxAction
+    descr           : String        = "A2"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+declare AskSomething3 extends DxAction
+    descr           : String        = "A3"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+declare AskSomething4 extends DxAction
+    descr           : String        = "A4"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+declare AskSomething5 extends DxAction
+    descr           : String        = "A5"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+declare AskSomething6 extends DxAction
+    descr           : String        = "A6"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+declare AskSomething7 extends DxAction
+    descr           : String        = "A7"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+declare AskSomething8 extends DxAction
+    descr           : String        = "A8"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+declare AskSomething9 extends DxAction
+    descr           : String        = "A9"
+    templateName    : String        = "empty.template"
+    bodyQuest       : String
+end
+
+
+
+
+
+
+
+
+//
+//
+//
+rule "Execute_AskAlcohol I"
+no-loop
+when
+    DiagnosticGuideProcess( $dm : diagModel == "MockDiag", $steps : diagnosticProcessHistory, status != "Complete" )
+    DxDecision( this memberOf $steps, current == true, $acts : actions )
+    AskAlcohol( this memberOf $acts, actionId != null, $bid : bodyQuestId )
+    AskAlcoholSurvey( question == "true", questionnaireId == $bid )
+    ModelMarker( modelName == $dm )
+then
+    System.out.println("Our friend uses ALCOHOL");
+    drools.getWorkingMemory().getWorkingMemoryEntryPoint("in_Alcohol").insert("yes");
+    drools.getWorkingMemory().getWorkingMemoryEntryPoint("in_Deployments").insert("2+");
+end
+
+rule "Execute_AskAlcohol II"
+no-loop
+when
+    DiagnosticGuideProcess( $dm : diagModel == "MockDiag", $steps : diagnosticProcessHistory, status != "Complete" )
+    DxDecision( this memberOf $steps, current == true, $acts : actions )
+    AskAlcohol( this memberOf $acts, actionId != null, $bid : bodyQuestId )
+    AskAlcoholSurvey( question == "false", questionnaireId == $bid )
+    ModelMarker( modelName == $dm )
+then
+    System.out.println("Our friend uses ALCOHOL NOT");
+    drools.getWorkingMemory().getWorkingMemoryEntryPoint("in_Alcohol").insert("no");
+    drools.getWorkingMemory().getWorkingMemoryEntryPoint("in_Deployments").insert("0");
+end
+
+
+rule "AskAlcohol Frame axiom"
+when
+    DiagnosticGuideProcess( $dm : diagModel == "MockDiag", $steps : diagnosticProcessHistory, status != "Complete" )
+    DxDecision( $step : stage, this memberOf $steps, current == true, $acts : actions )
+    DxDecision( stage == ($step - 1), current == false, $prevs : actions ) from $steps
+    $act  : AskAlcohol( this memberOf $acts, actionId != null, $currBid : bodyQuestId )
+    $curr : AskAlcoholSurvey( $q : question, questionnaireId == $currBid )
+    $prev : AskAlcohol( actionId != null, $oldBid : bodyQuestId ) from $prevs
+            AskAlcoholSurvey( $old : question != $q, questionnaireId == $oldBid )
+then
+    System.out.println("Our friend used to use ALCOHOL ?, yet still does");
+    modify ( $curr ) {
+        setQuestion( $old );
+    }
+end
+
+
+
+
+declare MockBooking
+@role(event)
+    actionId        : String
+end
+
+declare MockTest
+@role(event)
+    actionId        : String
+end
+
+declare MockAnalysis
+@role(event)
+    actionId        : String
+end
+
+declare MockResult
+@role(event)
+    actionId        : String
+end
+
+rule "Perform Costly Test"
+when
+    $dx   : DiagnosticGuideProcess( $dm : diagModel == "MockDiag", $steps : diagnosticProcessHistory, status != "Complete" )
+    $step : DxDecision( this memberOf $steps, current == true, $acts : actions )
+    $act  : DoExcruciatinglyPainfulTest( this memberOf $acts, $aid : actionId != null, status == "Started", $qid : bodyQuestId )
+    $form : DoExcruciatinglyPainfulTestSurvey( questionnaireId == $qid, confirm == true )
+then
+    System.out.println(" @@@@@@@@@@  We have booked a test, poor guy ");
+    insertLogical( new MockBooking( $qid ) );
+end
+
+rule "Book"
+when
+    $b : MockBooking()
+then
+    System.out.println( "We have received a booking ");
+end
+
+rule "or No Book"
+when
+    not MockBooking()
+then
+    System.out.println( "No more bookings in agenda ");
+end
+
+
+//rule "Should be the other way around"
+//when
+//    $b    : MockBooking( $aid : actionId )
+////    we should check FOR a test, not its absence :)
+//    not     MockTest( actionId == $aid, this after[0, 2s] $b )
+//    $act  : DoExcruciatinglyPainfulTest( confirm == "true", actionId == $aid, status == "Started" )
+//then
+//    System.out.println(" @@@@@@@@@@  Ouch ");
+//    $act.setStatus( "Committed" );
+//    retract($b);
+//    insert( new MockAnalysis( $aid ) );
+//    update( $act );
+//end
+//
+//
+//rule "Now finish it"
+//when
+//    $b    : MockAnalysis( $aid : actionId )
+////    we should check FOR a test, not its absence :)
+//    not     MockBooking( actionId == $aid, this after[0, 2s] $b )
+//    $act  : DoExcruciatinglyPainfulTest( confirm == "true", actionId == $aid, status == "Committed" )
+//then
+//    System.out.println(" @@@@@@@@@@  Too bad! ");
+//    $act.setStatus( "Complete" );
+//    insert( new MockResult( $aid ) );
+//    update( $act );
+//end
+
+
+
+
+
+
+
+
+
+
+rule "Mark"
+when
+    $rs : ResourceDescriptor( name == "MockDecision", loaded == false )
+then
+    modify ( $rs ) {
+        setLoaded( true );
+    }
+end
+
+
+rule "Register Forms"
+salience 99999
+when
+then
+    TemplateBuilder.addTemplate( "org/socraticgrid/kmr2/clinicalAgent/templates/askAlcohol.template" );
+    TemplateBuilder.addTemplate( "org/socraticgrid/kmr2/clinicalAgent/templates/empty.template" );
+    TemplateBuilder.addTemplate( "org/socraticgrid/kmr2/clinicalAgent/templates/someTest.template" );
+end
+
+
+
+rule "Add AskAlcohol"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskAlcohol.class )
+then
+    $acts.add( AskAlcohol.class );
+    FormRegistry.register( AskAlcoholSurvey.class );
+end
+
+rule "Add AskDeployment"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskDeployment.class )
+then
+    $acts.add( AskDeployment.class );
+    FormRegistry.register( AskDeploymentSurvey.class );
+end
+
+
+rule "Add DoTest"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains DoExcruciatinglyPainfulTest.class )
+then
+    $acts.add( DoExcruciatinglyPainfulTest.class );
+    FormRegistry.register( DoExcruciatinglyPainfulTestSurvey.class );
+end
+
+rule "Add Ask1"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskSomething1.class )
+then
+    $acts.add( AskSomething1.class );
+end
+rule "Add Ask2"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskSomething2.class )
+then
+    $acts.add( AskSomething2.class );
+end
+
+rule "Add Ask3"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskSomething3.class )
+then
+    $acts.add( AskSomething3.class );
+end
+rule "Add Ask4"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskSomething4.class )
+then
+    $acts.add( AskSomething4.class );
+end
+
+rule "Add Ask5"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskSomething5.class )
+then
+    $acts.add( AskSomething5.class );
+end
+rule "Add Ask6"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskSomething6.class )
+then
+    $acts.add( AskSomething6.class );
+end
+rule "Add Ask7"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskSomething7.class )
+then
+    $acts.add( AskSomething7.class );
+end
+rule "Add Ask8"
+salience 100
+no-loop
+when
+    $dx  : DiagnosticGuideProcess( decModel == "MockDecision", $acts : actions not contains AskSomething8.class )
+then
+    $acts.add( AskSomething8.class );
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

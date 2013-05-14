@@ -1,0 +1,174 @@
+/*******************************************************************************
+ *
+ * Copyright (C) 2012 by Cognitive Medical Systems, Inc (http://www.cognitivemedciine.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
+ * use this file except in compliance with the License. You may obtain a copy of 
+ * the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
+ 
+ /******************************************************************************
+ * Socratic Grid contains components to which third party terms apply. To comply 
+ * with these terms, the following notice is provided:
+ *
+ * TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ * Copyright (c) 2008, Nationwide Health Information Network (NHIN) Connect. All 
+ * rights reserved.
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * - Redistributions of source code must retain the above copyright notice, this 
+ *   list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice, 
+ *   this list of conditions and the following disclaimer in the documentation 
+ *   and/or other materials provided with the distribution.
+ * - Neither the name of the NHIN Connect Project nor the names of its 
+ *   contributors may be used to endorse or promote products derived from this 
+ *   software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * END OF TERMS AND CONDITIONS
+ *
+ ******************************************************************************/
+package org.kmr2.mock;
+
+import org.drools.mas.body.content.Action;
+import org.drools.mas.*;
+import org.drools.grid.api.ResourceDescriptor;
+import org.drools.pmml.pmml_4_1.ModelMarker;
+import org.drools.builder.ResourceType;
+
+
+import java.util.List;
+
+
+
+declare PatientInfo
+    patientName : String    @key
+end
+
+declare UserInfo
+    userName : String   @key
+end
+
+
+
+query patientName( String $pat )
+    PatientInfo( $pat := patientName )
+end
+
+
+query userName( String $pro )
+    UserInfo( $pro := userName )
+end
+
+
+
+
+
+rule "Clear pat"
+when
+    $act : Action( $prov : this["userId"] != null, $pat : this["patientId"] )
+    $pin : PatientInfo( patientName != $pat )
+then
+    modify( $pin ) {
+        setPatientName( (String) $pat );
+    }
+end
+
+rule "Clear pro"
+when
+    $act : Action( $prov : this["userId"] != null, $pat : this["patientId"] )
+    $uin : UserInfo( userName != $prov )
+then
+    modify( $uin ) {
+        setUserName( (String) $prov );
+    }
+end
+
+rule "Update pat"
+when
+//    $act : Action( $prov : this["userId"] != null, $pat : this["patientId"] )
+then
+//    insert( new UserInfo( (String) $prov ) );
+//    insert( new PatientInfo( (String) $pat ) );
+    insert( new UserInfo( "" ) );
+    insert( new PatientInfo( "" ) );
+end
+
+
+
+
+
+
+
+rule "Mark Models"
+when
+    $mm : ModelMarker( $modelName : modelName )
+    $rs : ResourceDescriptor( name == $modelName, loaded == false, type == ResourceType.PMML )
+then
+    modify ( $rs ) {
+        setLoaded( true );
+    }
+end
+
+rule "UnMark Models"
+when
+    $rs : ResourceDescriptor( $modelName : name, loaded == true, type == ResourceType.PMML )
+    not   ModelMarker( modelName == $modelName )
+then
+    modify ( $rs ) {
+        setLoaded( false );
+    }
+end
+
+
+
+
+/*
+
+declare EMRToken
+    id : String
+end
+
+rule "EMR"
+salience 99999999
+when
+    FactType( $patientId : patientId.value )
+    not EMRToken( id == $patientId )
+then
+    System.out.println( " << Initializing session >> " );
+    // factService.load( $patientId )
+    insert( new EMRToken( $patientId ) );
+end
+
+
+rule "LogEMR"
+when
+    EMRToken( $patientId : id )
+then
+    System.out.println(" << Session initialized for patient " + $patientId + " >>");
+end
+*/
+
+
+

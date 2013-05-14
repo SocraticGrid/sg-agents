@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ~
+ ~ Copyright (C) 2012 by Cognitive Medical Systems, Inc (http://www.cognitivemedciine.com)
+ ~
+ ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ ~ the License. You may obtain a copy of the License at
+ ~
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ ~ an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ ~ specific language governing permissions and limitations under the License.
+ ~
+-->
+ 
+<!--
+ ~ Socratic Grid contains components to which third party terms apply. To comply with these terms, the following notice is provided:
+ ~
+ ~ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ ~ Copyright (c) 2008, Nationwide Health Information Network (NHIN) Connect. All rights reserved.
+ ~ Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+ ~ 
+ ~ - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ ~ - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+ ~ - Neither the name of the NHIN Connect Project nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+ ~ 
+ ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ ~ 
+ ~ END OF TERMS AND CONDITIONS
+ ~
+-->
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/bpmn20" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_tPyNEHNVEeGmi-Cx1bwi4A" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" targetNamespace="http://www.omg.org/bpmn20">
+  <bpmn2:itemDefinition id="__BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ConfigurationInputItem" structureRef="MessageLink"/>
+  <bpmn2:itemDefinition id="__BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ResultOutputItem" structureRef="java.lang.Object"/>
+  <bpmn2:process id="com.sample.bpmm2" drools:packageName="org.socraticgrid.adapter.fact" name="Process3" isExecutable="true">
+    <bpmn2:task id="_BA6C32CD-2B0B-4E76-9642-B6834E4461C1" drools:taskName="CommunicationTask" name="Communication">
+      <bpmn2:incoming>_C423986B-CD77-45A2-9F1A-441EBFED86D9</bpmn2:incoming>
+      <bpmn2:outgoing>_6E5D7135-A2EE-4CD1-99CB-4B23E5E76CF0</bpmn2:outgoing>
+      <bpmn2:ioSpecification id="_tPyNEXNVEeGmi-Cx1bwi4A">
+        <bpmn2:dataInput id="_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_TaskNameInput" name="TaskName"/>
+        <bpmn2:dataInput id="_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ConfigurationInput" drools:dtype="MessageLink" itemSubjectRef="__BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ConfigurationInputItem" name="Configuration"/>
+        <bpmn2:dataOutput id="_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ResultOutput" drools:dtype="java.lang.Object" itemSubjectRef="__BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ResultOutputItem" name="Result"/>
+        <bpmn2:inputSet id="_tPyNEnNVEeGmi-Cx1bwi4A">
+          <bpmn2:dataInputRefs>_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ConfigurationInput</bpmn2:dataInputRefs>
+          <bpmn2:dataInputRefs>_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_TaskNameInput</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet id="_tPyNE3NVEeGmi-Cx1bwi4A">
+          <bpmn2:dataOutputRefs>_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ResultOutput</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation id="_tPyNFHNVEeGmi-Cx1bwi4A">
+        <bpmn2:targetRef>_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_TaskNameInput</bpmn2:targetRef>
+        <bpmn2:assignment id="_tPyNFXNVEeGmi-Cx1bwi4A">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_tPyNFnNVEeGmi-Cx1bwi4A">CommunicationTask</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_tPyNF3NVEeGmi-Cx1bwi4A">_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_TaskNameInput</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataInputAssociation id="_tPyNGHNVEeGmi-Cx1bwi4A">
+        <bpmn2:targetRef>_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ConfigurationInput</bpmn2:targetRef>
+        <bpmn2:assignment id="_tPyNGXNVEeGmi-Cx1bwi4A">
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_tPyNGnNVEeGmi-Cx1bwi4A">[{&quot;receiver&quot;: &quot;actor1&quot;_U_U_ &quot;channel&quot;: &quot;ALERT&quot;_U_U_ &quot;template&quot;: &quot;template1&quot;_U_U_ &quot;timeout&quot;: &quot;0s&quot;}_U_U_ {&quot;receiver&quot;: &quot;actor2&quot;_U_U_ &quot;channel&quot;: &quot;ALERT&quot;_U_U_ &quot;template&quot;: &quot;template2&quot;_U_U_ &quot;timeout&quot;: &quot;120s&quot;}]</bpmn2:from>
+          <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_tPyNG3NVEeGmi-Cx1bwi4A">_BA6C32CD-2B0B-4E76-9642-B6834E4461C1_ConfigurationInput</bpmn2:to>
+        </bpmn2:assignment>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:task>
+    <bpmn2:startEvent id="_74ED0DAD-DF28-48BD-88FF-6290646A6B9D" drools:bgcolor="#ffffff" name="">
+      <bpmn2:outgoing>_C423986B-CD77-45A2-9F1A-441EBFED86D9</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="_6E5D7135-A2EE-4CD1-99CB-4B23E5E76CF0" sourceRef="_BA6C32CD-2B0B-4E76-9642-B6834E4461C1" targetRef="_4D4B8049-6AB2-4698-95E8-B1503BB97370"/>
+    <bpmn2:endEvent id="_4D4B8049-6AB2-4698-95E8-B1503BB97370" drools:bgcolor="#ffffff" name="">
+      <bpmn2:incoming>_6E5D7135-A2EE-4CD1-99CB-4B23E5E76CF0</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="_tPyNHHNVEeGmi-Cx1bwi4A"/>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="_C423986B-CD77-45A2-9F1A-441EBFED86D9" sourceRef="_74ED0DAD-DF28-48BD-88FF-6290646A6B9D" targetRef="_BA6C32CD-2B0B-4E76-9642-B6834E4461C1"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="_tPyNHXNVEeGmi-Cx1bwi4A">
+    <bpmndi:BPMNPlane id="_tPyNHnNVEeGmi-Cx1bwi4A" bpmnElement="com.sample.bpmm2">
+      <bpmndi:BPMNShape id="_tPyNH3NVEeGmi-Cx1bwi4A" bpmnElement="_BA6C32CD-2B0B-4E76-9642-B6834E4461C1">
+        <dc:Bounds height="80.0" width="100.0" x="300.0" y="285.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_tPyNIHNVEeGmi-Cx1bwi4A" bpmnElement="_74ED0DAD-DF28-48BD-88FF-6290646A6B9D">
+        <dc:Bounds height="30.0" width="30.0" x="206.0" y="310.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_tPyNIXNVEeGmi-Cx1bwi4A" bpmnElement="_6E5D7135-A2EE-4CD1-99CB-4B23E5E76CF0">
+        <di:waypoint xsi:type="dc:Point" x="350.0" y="325.0"/>
+        <di:waypoint xsi:type="dc:Point" x="458.0" y="324.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_tPyNInNVEeGmi-Cx1bwi4A" bpmnElement="_4D4B8049-6AB2-4698-95E8-B1503BB97370">
+        <dc:Bounds height="28.0" width="28.0" x="444.0" y="310.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_tPyNI3NVEeGmi-Cx1bwi4A" bpmnElement="_C423986B-CD77-45A2-9F1A-441EBFED86D9">
+        <di:waypoint xsi:type="dc:Point" x="221.0" y="325.0"/>
+        <di:waypoint xsi:type="dc:Point" x="350.0" y="325.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

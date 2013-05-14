@@ -1,0 +1,252 @@
+/*******************************************************************************
+ *
+ * Copyright (C) 2012 by Cognitive Medical Systems, Inc (http://www.cognitivemedciine.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
+ * use this file except in compliance with the License. You may obtain a copy of 
+ * the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
+ 
+ /******************************************************************************
+ * Socratic Grid contains components to which third party terms apply. To comply 
+ * with these terms, the following notice is provided:
+ *
+ * TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ * Copyright (c) 2008, Nationwide Health Information Network (NHIN) Connect. All 
+ * rights reserved.
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * - Redistributions of source code must retain the above copyright notice, this 
+ *   list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice, 
+ *   this list of conditions and the following disclaimer in the documentation 
+ *   and/or other materials provided with the distribution.
+ * - Neither the name of the NHIN Connect Project nor the names of its 
+ *   contributors may be used to endorse or promote products derived from this 
+ *   software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * END OF TERMS AND CONDITIONS
+ *
+ ******************************************************************************/
+
+package org.kmr2.mock;
+
+import org.drools.mas.body.content.Action;
+import org.drools.mas.*;
+
+import org.socraticgrid.kmr2.clinicalAgent.models.risk.*;
+import org.socraticgrid.cdsa.dialoguehelper.DialogueHelperFactory;
+import org.socraticgrid.cdsa.dialoguehelper.DialogueHelperWrapper;
+
+import org.drools.informer.interaction.*;
+
+import org.drools.informer.generator.Surveyable;
+
+import org.drools.informer.generator.annotations.Questionable;
+import org.drools.informer.generator.annotations.QuestionMark;
+import org.drools.informer.generator.annotations.AllowedAnswers;
+
+import org.drools.informer.generator.FormRegistry;
+
+import org.mvel2.templates.*;
+
+import org.drools.mas.util.EndPointHelper;
+import java.util.List;
+
+import org.drools.informer.ProgressStatus;
+
+
+
+rule "At risk"
+when
+            RiskThreshold( $ctx : modelId, type == "Alert", $thold : threshold )
+    $risk : RiskValue( context == $ctx, value > ($thold / 100.0) )
+    ?patientName( $pat ; )
+    ?userName( $pro ; )
+then
+    System.out.println(" AT RISK ------------ of " + $risk + " contact " + $pat + " and " + $pro );
+
+    InteractionTicket ticket = new InteractionTicket( java.util.UUID.randomUUID().toString(),
+                                                      new java.util.ArrayList(),
+                                                      $risk );
+
+    Interaction ti1 = new TaskInteraction();
+        ti1.setType( InteractionTypes.NOTIFICATION );
+        ti1.setBodyTemplateIds( new java.util.LinkedList( java.util.Arrays.asList( "risk_alert.template", "risk_alert.template" ) ) );
+        ti1.setReceivers( new java.util.LinkedList( java.util.Arrays.asList( $pat, "99990061" ) ) );
+        ti1.setChannels( new java.util.LinkedList( java.util.Arrays.asList( "ALERT", "ALERT" ) ) );
+        ti1.setTimeouts( new java.util.LinkedList( java.util.Arrays.asList( "5s", "5s" ) ) );
+        System.err.println( ti1 );
+
+    Interaction ti2 = new TaskInteraction();
+        ti2.setType( InteractionTypes.NOTIFICATION );
+        ti2.setBodyTemplateIds( new java.util.LinkedList( java.util.Arrays.asList( "risk_alert_prov.template", "risk_alert_prov.template" ) ) );
+        ti2.setReceivers( new java.util.LinkedList( java.util.Arrays.asList( $pro, "2122" ) ) );
+        ti2.setChannels( new java.util.LinkedList( java.util.Arrays.asList( "ALERT", "SMS" ) ) );
+        ti2.setTimeouts( new java.util.LinkedList( java.util.Arrays.asList( "5s", "5s" ) ) );
+
+    ticket.getInteractions().add( ti1 );
+    ticket.getInteractions().add( ti2 );
+
+    insert( ticket );
+end
+
+
+
+
+
+rule "Register Usecase Forms"
+salience 99999
+when
+then
+    TemplateBuilder.addTemplate( "org/socraticgrid/kmr2/clinicalAgent/templates/risk_alert.template" );
+    TemplateBuilder.addTemplate( "org/socraticgrid/kmr2/clinicalAgent/templates/risk_alert_prov.template" );
+end
+
+
+
+
+
+
+rule "Dispatch"
+salience -200
+when
+    $ticket : InteractionTicket( $ticketId : id,
+                                 $inters : interactions,
+                                 $source : source  )
+    $convo  : TicketActor( $convoId, $ticketId, $actorId ; )
+    accumulate (
+                 Alert( ticketId == $ticketId, destination == $actorId,
+                        $formId : formId, $body : bodyTemplateId, $channel : channel, $timeout : timeout ),
+                 $formIds  : collectList( $formId ),
+                 $bodies   : collectList( $body ),
+                 $channels : collectList( $channel );
+                 $channels.size() > 0
+               )
+        RiskValue( $value, $model ; ) from $source
+    ?patientName( $pat ; )
+    ?userName( $pro ; )
+then
+    System.out.println( " ******************************* Dispatching +++ "
+                        + $ticketId + " "
+                        + $actorId + " "
+                        + $formIds + " "
+                        + $bodies + " "
+                        + $channels + " "
+                        );
+
+    int risk = (int) Math.round(100*$value);
+    String body = "";
+    for ( int j = 0; j < $formIds.size(); j ++ ) {
+        java.util.Map vars = new java.util.HashMap(10);
+        vars.put("title", $model );
+        vars.put("patient", $pat );
+        vars.put("disease", $model );
+        vars.put("risk", risk );
+        vars.put("provider", $pro );
+        vars.put("nonRisk", 100-risk );
+        vars.put("surveyId", $formIds.get(j) );
+
+//        CompiledTemplate template = (CompiledTemplate)  org.socraticgrid.kmr2.TemplateBuilder.getRegistry().getNamedTemplate( (String) $bodies.get(j) );
+//        body += ( TemplateRuntime.execute ( template, null, vars ).toString() );
+        body += TemplateBuilder.applyNamedTemplate ( (String) $bodies.get(j), vars ).replace( "\n", "" );
+    }
+
+    java.util.LinkedHashMap map = new java.util.LinkedHashMap();
+    map.put("refId", $ticketId );
+    map.put("conversationId", $convoId );
+    map.put("subjectAbout", new String[] { $pat, $pro, $actorId } );          // Array of ids, current alert creation will grab the first id as the ptUnitNumber.
+    map.put("sender", $pro );                // id
+    map.put("mainRecipients", new String[] { $actorId } );         // Array of Ids
+    map.put("secondaryRecipients", new String[0] );    // Array of Ids
+    map.put("hiddenRecipients", new String[0] );       // Array of Ids
+    map.put("type", $channels.get(0) );
+    map.put("header", "Risk threshold exceeded : " + $model + "(" + risk + "%)" );
+    map.put("body", body );
+    map.put("priority", "Critical" );
+    map.put("deliveryDate", new java.util.Date() );
+    map.put("status", "New" );                         // [ "New" | "Read" | "Unread" | "Escalated" | ... ]
+
+    System.out.println(map);
+
+    System.out.println( " ******************************* Deliver to " + $actorId + "  : >> " + $formIds + " in " + $convo + " using " + $channels.get(0) );
+    DialogueHelperWrapper voice = DialogueHelperFactory.newDialogueHelperWrapper( EndPointHelper.getEndPoint( "action-agent" ) ); 
+
+    voice.invokeRequest( "deliverMessage", map );
+    System.out.println( " ******************************* Delivered to " + $actorId  );
+
+end
+
+
+
+
+
+
+rule "Update state"
+salience -200
+when
+    $ticket : InteractionTicket( $ticketId : id,
+                                 $inters : interactions,
+                                 $source : source  )
+    $convo  : TicketActor( $convoId, $ticketId, $actorId ; )
+    accumulate (
+                 Alert( ticketId == $ticketId, destination == $actorId,
+                        $formId : formId, $body : bodyTemplateId, $channel : channel, $timeout : timeout ),
+                 $formIds  : collectList( $formId ),
+                 $bodies   : collectList( $body ),
+                 $channels : collectList( $channel );
+                 $channels.size() > 0
+               )
+    List( $numComplete : size > 0 ) from accumulate (
+            $p : ProgressStatus( formId memberOf $formIds, $x : percentage == 100 )
+            collectList( $p )
+        )
+    ?patientName( $pat ; )
+    ?userName( $pro ; )
+then
+    int ratio = 100 * $numComplete / $formIds.size();
+    System.out.println( " ******************************* Creating helper II " );
+
+    java.util.LinkedHashMap map = new java.util.LinkedHashMap();
+    map.put("refId", $ticketId );
+    map.put("conversationId", $convoId );
+    map.put("subjectAbout", new String[] { $pat, $pro, $actorId } );          // Array of ids, current alert creation will grab the first id as the ptUnitNumber.
+    map.put("sender", $pro );                // id
+    map.put("mainRecipients", new String[] { $actorId } );         // Array of Ids
+    map.put("secondaryRecipients", new String[0] );    // Array of Ids
+    map.put("hiddenRecipients", new String[0] );       // Array of Ids
+    map.put("type", "UPDATE" );
+    map.put("header", null );
+    map.put("body", null );
+    map.put("priority", "Critical" );
+    map.put("deliveryDate", new java.util.Date() );
+    map.put("status", ratio );                 // [ "New" | "Read" | "Unread" | "Escalated" | ... ]
+
+//    System.out.println(map);
+
+    System.out.println( " ******************************* On progressStatus to " + $actorId + "  : >> " + $formIds + " in " + $convo + " ////  " +  ratio );
+    DialogueHelperWrapper voice = DialogueHelperFactory.newDialogueHelperWrapper( EndPointHelper.getEndPoint( "action-agent" ) ); 
+    voice.invokeRequest( "deliverMessage", map );
+end
+

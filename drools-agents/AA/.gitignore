@@ -1,0 +1,10 @@
+.svn
+/target
+.classpath
+.project
+.DS_Store
+.iml
+nbactions.xml
+MANIFEST.MF
+catalog.xml
+/temp/

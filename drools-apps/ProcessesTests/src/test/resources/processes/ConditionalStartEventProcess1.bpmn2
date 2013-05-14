@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/bpmn20" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_0ecdoFGfEeGmheu1wUBfFA" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" targetNamespace="http://www.omg.org/bpmn20">
+  <bpmn2:process id="com.sample.bpmm2" drools:packageName="org.socraticgrid.adapter.fact" name="Test" isExecutable="true">
+    <bpmn2:startEvent id="_B0A7DDE1-CBA6-4359-8F79-CFF5F9FD3EDD" drools:bgcolor="#ffffff" name="">
+      <bpmn2:outgoing>_02968AEA-74E5-49E9-B313-49FBC85C0FC4</bpmn2:outgoing>
+      <bpmn2:conditionalEventDefinition id="_0ecdoVGfEeGmheu1wUBfFA">
+        <bpmn2:condition xsi:type="bpmn2:tFormalExpression" id="_0ecdolGfEeGmheu1wUBfFA" language="http://www.jboss.org/drools/rule">|-- auto-generated --|
+rule &quot;com.sample.bpmm2 defeater ClassA&quot;
+@activationListener('direct')
+when
+	$a : Activation(rule.name == &quot;RuleFlow-Start-com.sample.bpmm2&quot;)
+	not ClassA( fieldA == &quot;123&quot;)
+then
+	kcontext.blockActivation( $a );
+end
+
+
+------
+@ClassA([&quot;fieldA&quot; : &quot;123&quot;, &quot;processId&quot; : &quot;com.sample.bpmm2&quot;])
+#-#%3Crule%3E
+#-#%20%20%3Cname%3ECondition%20Constraint%3C%2Fname%3E
+#-#%20%20%3CmodelVersion%3E1.0%3C%2FmodelVersion%3E
+#-#%20%20%3Cattributes%2F%3E
+#-#%20%20%3CmetadataList%2F%3E
+#-#%20%20%3Clhs%3E
+#-#%20%20%20%20%3Cfact%3E
+#-#%20%20%20%20%20%20%3CconstraintList%3E
+#-#%20%20%20%20%20%20%20%20%3Cconstraints%3E
+#-#%20%20%20%20%20%20%20%20%20%20%3CfieldConstraint%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%3Cvalue%3E22153735704027%3C%2Fvalue%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%3Coperator%3E%3D%3D%3C%2Foperator%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%3CconstraintValueType%3E1%3C%2FconstraintValueType%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%3Cexpression%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cparts%2F%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexpression%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%3CfieldName%3EAllergy.oid%3C%2FfieldName%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%3CfieldType%3ENumeric%3C%2FfieldType%3E
+#-#%20%20%20%20%20%20%20%20%20%20%20%20%3Cid%3EAcidosis%20Acid%2C%20fatty%3C%2Fid%3E
+#-#%20%20%20%20%20%20%20%20%20%20%3C%2FfieldConstraint%3E
+#-#%20%20%20%20%20%20%20%20%3C%2Fconstraints%3E
+#-#%20%20%20%20%20%20%3C%2FconstraintList%3E
+#-#%20%20%20%20%20%20%3CfactType%3EAllergy%3C%2FfactType%3E
+#-#%20%20%20%20%20%20%3CisNegated%3Efalse%3C%2FisNegated%3E
+#-#%20%20%20%20%3C%2Ffact%3E
+#-#%20%20%3C%2Flhs%3E
+#-#%20%20%3Crhs%2F%3E
+#-#%20%20%3CisNegated%3Efalse%3C%2FisNegated%3E
+#-#%3C%2Frule%3E
+#-#
+#-#
+
+Allergy( oid == 22153735704027 )
+</bpmn2:condition>
+      </bpmn2:conditionalEventDefinition>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="_02968AEA-74E5-49E9-B313-49FBC85C0FC4" sourceRef="_B0A7DDE1-CBA6-4359-8F79-CFF5F9FD3EDD" targetRef="_369FCECC-6F3A-4B07-9AD1-0986E17AFD66"/>
+    <bpmn2:endEvent id="_369FCECC-6F3A-4B07-9AD1-0986E17AFD66" drools:bgcolor="#ffffff" name="">
+      <bpmn2:incoming>_02968AEA-74E5-49E9-B313-49FBC85C0FC4</bpmn2:incoming>
+      <bpmn2:terminateEventDefinition id="_0ecdo1GfEeGmheu1wUBfFA"/>
+    </bpmn2:endEvent>
+    <bpmn2:textAnnotation id="_36E94223-2F85-4F71-A48F-4B77C76D59CE">
+      <bpmn2:text>KMRCustom--Allergy--oid--22153735704027->Acidosis Acid, fatty</bpmn2:text>
+    </bpmn2:textAnnotation>
+    <bpmn2:association id="_C427D2DF-BE98-4E31-9F69-0E317FE971C0" drools:type="none" sourceRef="_36E94223-2F85-4F71-A48F-4B77C76D59CE" targetRef="_B0A7DDE1-CBA6-4359-8F79-CFF5F9FD3EDD"/>
+    <bpmn2:textAnnotation id="_BEF705C5-FA86-404F-A253-24140C56BED1">
+      <bpmn2:text>KMRCustomCohort--{&quot;cohortproperty_fieldb&quot;:&quot;&quot;,&quot;cohortproperty_fielda&quot;:&quot;123&quot;,&quot;resourceId&quot;:&quot;_BEF705C5-FA86-404F-A253-24140C56BED1&quot;,&quot;fieldb_name&quot;:&quot;fieldB&quot;,&quot;name&quot;:&quot;&quot;,&quot;fielda_name&quot;:&quot;fieldA&quot;,&quot;documentation&quot;:&quot;&quot;,&quot;cohortentity&quot;:&quot;ClassA&quot;}</bpmn2:text>
+    </bpmn2:textAnnotation>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="_0ecdpFGfEeGmheu1wUBfFA">
+    <bpmndi:BPMNPlane id="_0ecdpVGfEeGmheu1wUBfFA" bpmnElement="com.sample.bpmm2">
+      <bpmndi:BPMNShape id="_0ecdplGfEeGmheu1wUBfFA" bpmnElement="_B0A7DDE1-CBA6-4359-8F79-CFF5F9FD3EDD">
+        <dc:Bounds height="30.0" width="30.0" x="250.0" y="283.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_0edEsFGfEeGmheu1wUBfFA" bpmnElement="_02968AEA-74E5-49E9-B313-49FBC85C0FC4">
+        <di:waypoint xsi:type="dc:Point" x="265.0" y="298.0"/>
+        <di:waypoint xsi:type="dc:Point" x="338.0" y="297.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_0edEsVGfEeGmheu1wUBfFA" bpmnElement="_369FCECC-6F3A-4B07-9AD1-0986E17AFD66">
+        <dc:Bounds height="28.0" width="28.0" x="324.0" y="283.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_0edEslGfEeGmheu1wUBfFA" bpmnElement="_36E94223-2F85-4F71-A48F-4B77C76D59CE">
+        <dc:Bounds height="97.0" width="44.0" x="169.0" y="130.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="_0edEs1GfEeGmheu1wUBfFA" bpmnElement="_C427D2DF-BE98-4E31-9F69-0E317FE971C0">
+        <di:waypoint xsi:type="dc:Point" x="191.0" y="178.5"/>
+        <di:waypoint xsi:type="dc:Point" x="213.0" y="298.0"/>
+        <di:waypoint xsi:type="dc:Point" x="265.0" y="298.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_0edEtFGfEeGmheu1wUBfFA" bpmnElement="_BEF705C5-FA86-404F-A253-24140C56BED1">
+        <dc:Bounds height="97.0" width="88.0" x="404.0" y="127.0"/>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

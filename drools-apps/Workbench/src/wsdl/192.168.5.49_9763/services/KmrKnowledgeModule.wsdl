@@ -1,0 +1,866 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions name="KmrKnowledgeModuleService" targetNamespace="http://knowledgemodule.kmr.socraticgrid.com/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://knowledgemodule.kmr.socraticgrid.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+<xs:schema targetNamespace="urn:org:socraticgrid:kmr:kmtypes" version="1.0" xmlns:tns="urn:org:socraticgrid:kmr:kmtypes" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:element name="FindKmIdsRequest" type="tns:KmRequestType"/>
+<xs:element name="FindKmIdsResponse" type="tns:FindKmIdsResponseType"/>
+<xs:element name="GetKmLatestLogicRequest" type="tns:KmIdSearchRequestType"/>
+<xs:element name="GetKmLatestLogicResponse" type="tns:KmLatestLogicResponseType"/>
+<xs:element name="GetKmMetaRequest" type="tns:KmIdSearchRequestType"/>
+<xs:element name="GetKmMetaResponse" type="tns:KmMetaResponseType"/>
+<xs:element name="GetRefDataRequest" type="tns:ReferenceData.RefRequestType"/>
+<xs:element name="GetRefDataResponse" type="tns:ReferenceData.RefResponseType"/>
+<xs:element name="KmIdSearchRequest" type="tns:KmIdSearchRequestType"/>
+<xs:element name="KmIdSearchResponse" type="tns:KmIdSearchResponseType"/>
+<xs:element name="KmInsertAckResponse" type="tns:KmResponseType_importAck"/>
+<xs:element name="KmInsertRequest" type="tns:KmImportRequestType"/>
+<xs:element name="KmRecordRequest" type="tns:KmRequestType"/>
+<xs:element name="KmRecordResponse" type="tns:KmResponseType"/>
+<xs:element name="KmRuntimeRecordRequest" type="tns:KmRequestType"/>
+<xs:element name="KmRuntimeRecordResponse" type="tns:KmResponseType"/>
+<xs:element name="KmUpdateAckResponse" type="tns:KmResponseType_importAck"/>
+<xs:element name="KmUpdateRequest" type="tns:KmImportRequestType"/>
+<xs:complexType name="KmIdSearchRequestType">
+    <xs:sequence>
+      <xs:element form="qualified" name="request" type="tns:KmByIdRequestListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmByIdRequestListType">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="ACL" type="tns:ACL_SimpleType"/>
+      <xs:element form="qualified" name="kms" type="tns:KmIdType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="RequestRefType">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestId" type="xs:string"/>
+      <xs:element form="qualified" name="requestDate" type="xs:string"/>
+      <xs:element form="qualified" name="responseDate" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ACL_SimpleType">
+    <xs:sequence>
+      <xs:element name="User_OrganizationLevel" type="xs:string"/>
+      <xs:element name="UR_Name" type="xs:string"/>
+      <xs:element name="AuthorId" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmIdType">
+    <xs:sequence>
+      <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="kmId" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmLatestLogicResponseType">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="responseList" type="tns:KmLatestLogicResponseListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmLatestLogicResponseListType">
+    <xs:sequence>
+      <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="km" type="tns:KmLatestLogicResponse"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmLatestLogicResponse">
+    <xs:sequence>
+      <xs:element form="qualified" name="id" type="xs:int"/>
+      <xs:element form="qualified" name="Logic_IntermediateForm" type="xs:string"/>
+      <xs:element form="qualified" name="Logic_NativeForm" type="xs:string"/>
+      <xs:element form="qualified" name="Logic_BinaryForm" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmIdSearchResponseType">
+    <xs:sequence>
+      <xs:element form="qualified" name="exportFilename" type="xs:string"/>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="responseList" type="tns:ExportResponseListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ExportResponseListType">
+    <xs:sequence>
+      <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="km" type="tns:KmFullResponse"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmFullResponse">
+    <xs:sequence>
+      <xs:element form="qualified" name="kmId" type="xs:int"/>
+      <xs:element form="qualified" name="kmName" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="kmDescription" type="xs:string"/>
+      <xs:element form="qualified" name="kmKeywords" type="xs:string"/>
+      <xs:element form="qualified" name="kmOrganizationLevel" type="xs:string"/>
+      <xs:element form="qualified" name="kmType" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="lastModifiedByAuthorID" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="lastModifiedByAuthorName" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="lastModifiedTimestamp" type="xs:string"/>
+      <xs:element form="qualified" name="createdByAuthorID" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="createdByAuthorName" type="xs:string"/>
+      <xs:element form="qualified" name="createdTimestamp" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="isCheckedOut" type="xs:boolean"/>
+      <xs:element form="qualified" minOccurs="0" name="originInstitution" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="parentKMId" type="xs:int"/>
+      <xs:element form="qualified" name="latestVersionNum" type="xs:int"/>
+      <xs:element form="qualified" minOccurs="0" name="productionVersionNum" type="xs:int"/>
+      <xs:element form="qualified" name="validationStatus" type="xs:string"/>
+      <xs:element form="qualified" name="SpecialtyList" type="tns:SpecialtyListType"/>
+      <xs:element form="qualified" name="KmVersionList" type="tns:KmVersionListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="SpecialtyListType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="KM_Specialty" type="tns:KM_SpecialtyType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KM_SpecialtyType">
+    <xs:sequence>
+      <xs:element name="TerminologyScheme" type="xs:string"/>
+      <xs:element name="TerminologyCode" type="xs:string"/>
+      <xs:element name="Comments" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmVersionListType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="kmVersion" nillable="true" type="tns:KMVersionType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMVersionType">
+    <xs:sequence>
+      <xs:element name="KM_VersionNum" type="xs:int"/>
+      <xs:element name="KMV_Name" type="xs:string"/>
+      <xs:element name="CreatedBy_AuthorID" type="xs:string"/>
+      <xs:element name="CreatedBy_AuthorName" type="xs:string"/>
+      <xs:element name="CreatedTimestamp" type="xs:dateTime"/>
+      <xs:element name="LastModifiedTimestamp" type="xs:dateTime"/>
+      <xs:element name="ValidationStatus" type="xs:string"/>
+      <xs:element name="AuthorComments" type="xs:string"/>
+      <xs:element name="LMT_ID" type="xs:int"/>
+      <xs:element name="Logic_IntermediateForm" type="xs:string"/>
+      <xs:element name="Logic_NativeForm" type="xs:string"/>
+      <xs:element name="Logic_BinaryForm" type="xs:base64Binary"/>
+      <xs:element name="FactSpecificationList" type="tns:FactSpecificationListType"/>
+      <xs:element name="PopulationDependencyList" type="tns:PopulationDependencyListType"/>
+      <xs:element name="InferenceList" type="tns:InferenceListType"/>
+      <xs:element name="TaskList" type="tns:TaskListType"/>
+      <xs:element name="ACL_PermissionList" type="tns:ACL_PermissionListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="FactSpecificationListType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="KMV_FactDependency" type="tns:KMV_FactDependencyType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_FactDependencyType">
+    <xs:sequence>
+      <xs:element name="Type" type="xs:string"/>
+      <xs:element name="Description" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="FactSpecification" type="tns:FactSpecificationType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="FactSpecificationType">
+    <xs:sequence>
+      <xs:element name="TerminologyScheme" type="xs:string"/>
+      <xs:element name="TerminologyCode" type="xs:string"/>
+      <xs:element name="Comments" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="PopulationDependencyListType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="KMV_PopulationDependency" type="tns:KMV_PopulationDependencyType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_PopulationDependencyType">
+    <xs:sequence>
+      <xs:element name="PD_Status" type="xs:string"/>
+      <xs:element name="PD_Scope" type="xs:string"/>
+      <xs:element name="PD_Name" type="xs:string"/>
+      <xs:element name="PD_Description" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="PopulationSpecification" type="tns:PopulationSpecificationType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="PopulationSpecificationType">
+    <xs:sequence>
+      <xs:element name="TerminologyScheme" type="xs:string"/>
+      <xs:element name="TerminologyCode" type="xs:string"/>
+      <xs:element name="TerminologyValue" type="xs:string"/>
+      <xs:element name="Type" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="InferenceListType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="KMV_InferenceEngineDependency" type="tns:KMV_InferenceEngineDependencyType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_InferenceEngineDependencyType">
+    <xs:sequence>
+      <xs:element name="TerminologyScheme" type="xs:string"/>
+      <xs:element name="TerminologyCode" type="xs:string"/>
+      <xs:element name="Comments" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="TaskListType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="KMV_TaskDependency" type="tns:KMV_TaskDependencyType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_TaskDependencyType">
+    <xs:sequence>
+      <xs:element name="TD_Type" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="TT_Specification" type="tns:TT_SpecificationType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="TT_SpecificationType">
+    <xs:sequence>
+      <xs:element name="TerminologyScheme" type="xs:string"/>
+      <xs:element name="TerminologyCode" type="xs:string"/>
+      <xs:element name="Comments" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ACL_PermissionListType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="ACL_Permission" type="tns:ACL_PermissionType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ACL_PermissionType">
+    <xs:sequence>
+      <xs:element name="UR_Permission" type="xs:string"/>
+      <xs:element name="UserRole" type="tns:UserRoleType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="UserRoleType">
+    <xs:sequence>
+      <xs:element name="UR_Name" type="xs:string"/>
+      <xs:element name="UR_Description" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmMetaResponseType">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="responseList" type="tns:KmMetaResponseListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmMetaResponseListType">
+    <xs:sequence>
+      <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="km" type="tns:KmMetaResponse"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmMetaResponse">
+    <xs:sequence>
+      <xs:element form="qualified" name="id" type="xs:int"/>
+      <xs:element form="qualified" name="title" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="summary" type="xs:string"/>
+      <xs:element form="qualified" name="created" type="xs:string"/>
+      <xs:element form="qualified" name="updated" type="xs:string"/>
+      <xs:element form="qualified" name="type" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="authorId" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="authorName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmRequestType">
+    <xs:sequence>
+      <xs:element form="qualified" name="request" type="tns:MultiParamsRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="MultiParamsRequestType">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="km" type="tns:KmByParamsType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmByParamsType">
+    <xs:sequence>
+      <xs:element form="qualified" minOccurs="0" name="createdByAuthorID" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="createdByAuthorName" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="createdTimestamp" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="isCheckedOut" type="xs:boolean"/>
+      <xs:element form="qualified" minOccurs="0" name="kmDescription" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="kmId" type="xs:int"/>
+      <xs:element form="qualified" minOccurs="0" name="kmKeywords" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="kmName" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="kmOrganizationLevel" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="kmType" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="lastModifiedByAuthorID" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="lastModifiedByAuthorName" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="lastModifiedTimestamp" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="latestVersionNum" type="xs:int"/>
+      <xs:element form="qualified" minOccurs="0" name="originInstitution" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="parentKMId" type="xs:int"/>
+      <xs:element form="qualified" minOccurs="0" name="productionVersionNum" type="xs:int"/>
+      <xs:element form="qualified" minOccurs="0" name="validationStatus" type="xs:string"/>
+      <xs:element form="qualified" minOccurs="0" name="Specialty" type="tns:KM_Specialty_SimpleType"/>
+      <xs:element form="qualified" minOccurs="0" name="Fact" type="tns:KMV_FactDependency_SimpleType"/>
+      <xs:element form="qualified" minOccurs="0" name="PopulationDependency" type="tns:KMV_PopulationDependency_SimpleType"/>
+      <xs:element form="qualified" minOccurs="0" name="Inference" type="tns:KMV_InferenceEngineDependency_SimpleType"/>
+      <xs:element form="qualified" minOccurs="0" name="Task" type="tns:KMV_TaskDependency_SimpleType"/>
+      <xs:element form="qualified" name="ACL" type="tns:ACL_SimpleType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KM_Specialty_SimpleType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TerminologyScheme" type="xs:string"/>
+      <xs:element minOccurs="0" name="TerminologyCode" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_FactDependency_SimpleType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Type" type="xs:string"/>
+      <xs:element minOccurs="0" name="TerminologyScheme" type="xs:string"/>
+      <xs:element minOccurs="0" name="TerminologyCode" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_PopulationDependency_SimpleType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="PD_Status" type="xs:string"/>
+      <xs:element minOccurs="0" name="PD_Scope" type="xs:string"/>
+      <xs:element minOccurs="0" name="PD_Name" type="xs:string"/>
+      <xs:element minOccurs="0" name="TerminologyScheme" type="xs:string"/>
+      <xs:element minOccurs="0" name="TerminologyCode" type="xs:string"/>
+      <xs:element minOccurs="0" name="TerminologyValue" type="xs:string"/>
+      <xs:element minOccurs="0" name="Type" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_InferenceEngineDependency_SimpleType">
+    <xs:sequence>
+      <xs:element name="TerminologyScheme" type="xs:string"/>
+      <xs:element name="TerminologyCode" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_TaskDependency_SimpleType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TD_Type" type="xs:string"/>
+      <xs:element minOccurs="0" name="TerminologyScheme" type="xs:string"/>
+      <xs:element minOccurs="0" name="TerminologyCode" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmResponseType">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="responseList" type="tns:ResponseListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ResponseListType">
+    <xs:sequence>
+      <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="km" type="tns:KmFullResponse"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ReferenceData.RefRequestType">
+    <xs:sequence>
+      <xs:element name="Lookup" type="tns:ReferenceData.LookupType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ReferenceData.LookupType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Lookup_Type" type="tns:ReferenceData.LookupRefType_Type"/>
+      <xs:element minOccurs="0" name="Lookup_System" type="tns:ReferenceData.LookupRefType_System"/>
+      <xs:element minOccurs="0" name="Lookup_Code" type="tns:ReferenceData.LookupRefType_Code"/>
+    </xs:sequence>
+    <xs:attribute name="StartingRecNumber" type="xs:int"/>
+    <xs:attribute name="Reference" type="xs:string" use="required"/>
+    <xs:attribute name="MaxRecordsToShow" type="xs:int"/>
+  </xs:complexType>
+<xs:complexType name="ReferenceData.LookupRefType_Type">
+    <xs:sequence>
+      <xs:element name="CodeType" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ReferenceData.LookupRefType_System">
+    <xs:sequence>
+      <xs:element name="CodeType" nillable="true" type="xs:string"/>
+      <xs:element name="CodeSystem" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ReferenceData.LookupRefType_Code">
+    <xs:sequence>
+      <xs:element name="CodeType" nillable="true" type="xs:string"/>
+      <xs:element name="CodeSystem" nillable="true" type="xs:string"/>
+      <xs:element name="ContentCode" nillable="true" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ReferenceData.RefResponseType">
+    <xs:sequence>
+      <xs:element name="response" type="tns:ReferenceData.ResponseType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ReferenceData.ResponseType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="refData" nillable="true" type="tns:ReferenceData.RefDataType"/>
+    </xs:sequence>
+    <xs:attribute name="TotalReferencesFound" type="xs:int" use="required"/>
+    <xs:attribute name="Reference" type="xs:string" use="required"/>
+  </xs:complexType>
+<xs:complexType name="ReferenceData.RefDataType">
+    <xs:sequence>
+      <xs:element name="id" type="xs:int"/>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element minOccurs="0" name="descr" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmImportRequestType">
+    <xs:sequence>
+      <xs:element form="qualified" name="request" type="tns:ImportRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ImportRequestType">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="ACL" type="tns:ACL_SimpleType"/>
+      <xs:element form="qualified" name="importFilename" type="xs:string"/>
+      <xs:element form="qualified" name="kms" type="tns:KmsListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmsListType">
+    <xs:sequence>
+      <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="km" type="tns:KmFullResponse"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmResponseType_importAck">
+    <xs:sequence>
+      <xs:element form="qualified" name="importFilename" type="xs:string"/>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="ackList" type="tns:ImportResponseListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ImportResponseListType">
+    <xs:sequence>
+      <xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="km" type="tns:ImportAckType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="ImportAckType">
+    <xs:sequence>
+      <xs:element form="qualified" name="kmId" type="xs:int"/>
+      <xs:element form="qualified" name="kmName" type="xs:string"/>
+      <xs:element form="qualified" name="importStatus" type="xs:string"/>
+      <xs:element form="qualified" name="Description" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="FindKmIdsResponseType">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="response" type="tns:FindKmIdsResponseListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="FindKmIdsResponseListType">
+    <xs:sequence>
+      <xs:element form="qualified" name="kms" type="tns:KmIdType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_QualityAssessmentType">
+    <xs:sequence>
+      <xs:element name="KM_ID" type="xs:int"/>
+      <xs:element name="KM_VersionNum" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="UsageStatisticTypeType">
+    <xs:sequence>
+      <xs:element name="UST_ID" type="xs:int"/>
+      <xs:element name="UST_Name" type="xs:string"/>
+      <xs:element name="UST_Description" type="xs:string"/>
+      <xs:element name="UST_UnitOfMeasure" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="OperationalConstraintType">
+    <xs:sequence>
+      <xs:element name="OC_ID" type="xs:int"/>
+      <xs:element name="OC_Name" type="xs:string"/>
+      <xs:element name="OC_Type" type="xs:string"/>
+      <xs:element name="OC_Description" type="xs:string"/>
+      <xs:element name="OC_Keywords" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="OperationalConstraintElementType">
+    <xs:sequence>
+      <xs:element name="OC_ID" type="xs:int"/>
+      <xs:element name="OCE_ID" type="xs:int"/>
+      <xs:element name="OCE_Name" type="xs:string"/>
+      <xs:element name="OCE_Type" type="xs:string"/>
+      <xs:element name="OCE_Description" type="xs:string"/>
+      <xs:element name="OCE_Interpretation" type="xs:string"/>
+      <xs:element name="OCE_AttributeName" type="xs:string"/>
+      <xs:element name="OCE_Comparator" type="xs:string"/>
+      <xs:element name="OCE_AttributeValues" type="xs:string"/>
+      <xs:element name="OCE_UnitOfMeasure" type="xs:string"/>
+      <xs:element name="OperationalConstraint" type="tns:OperationalConstraintType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KmResponseType_runtime">
+    <xs:sequence>
+      <xs:element form="qualified" name="requestReference" type="tns:RequestRefType"/>
+      <xs:element form="qualified" name="responseList" type="tns:ResponseListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_SupportingReferenceType">
+    <xs:sequence>
+      <xs:element name="KM_ID" type="xs:int"/>
+      <xs:element name="KM_VersionNum" type="xs:int"/>
+      <xs:element name="SR_ID" type="xs:int"/>
+      <xs:element name="SR_Name" type="xs:string"/>
+      <xs:element name="SR_Type" type="xs:string"/>
+      <xs:element name="SR_Description" type="xs:string"/>
+      <xs:element name="SR_Reference" type="xs:string"/>
+      <xs:element name="SR_Document" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_UserCommentType">
+    <xs:sequence>
+      <xs:element name="KM_ID" type="xs:int"/>
+      <xs:element name="KM_VersionNum" type="xs:int"/>
+      <xs:element name="UC_ID" type="xs:int"/>
+      <xs:element name="UC_UserRole" type="xs:string"/>
+      <xs:element name="UC_UserName" type="xs:string"/>
+      <xs:element name="UC_UserID" type="xs:string"/>
+      <xs:element name="UC_UserAffiliation" type="xs:string"/>
+      <xs:element name="UC_UserContact" type="xs:string"/>
+      <xs:element name="UC_CreatedTimestamp" type="xs:dateTime"/>
+      <xs:element name="UC_Comment" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_UsageStatisticType">
+    <xs:sequence>
+      <xs:element name="KM_ID" type="xs:int"/>
+      <xs:element name="KM_VersionNum" type="xs:int"/>
+      <xs:element name="UST_ID" type="xs:int"/>
+      <xs:element name="UST_Value" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_AccessControlListType">
+    <xs:sequence>
+      <xs:element name="ACL_Name" type="xs:string"/>
+      <xs:element name="ACL_Description" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="ACL_PermissionList" type="tns:ACL_PermissionListType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="KMV_OperationalConstraintDependencyType">
+    <xs:sequence>
+      <xs:element name="KM_VersionNum" type="xs:int"/>
+      <xs:element name="OC_ID" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+<xs:schema elementFormDefault="unqualified" targetNamespace="http://knowledgemodule.kmr.socraticgrid.com/" version="1.0" xmlns:ns1="urn:org:socraticgrid:kmr:kmtypes" xmlns:tns="http://knowledgemodule.kmr.socraticgrid.com/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:import namespace="urn:org:socraticgrid:kmr:kmtypes"/>
+<xs:element name="findKmIds" type="tns:findKmIds"/>
+<xs:element name="findKmIdsResponse" type="tns:findKmIdsResponse"/>
+<xs:element name="getKmById" type="tns:getKmById"/>
+<xs:element name="getKmByIdResponse" type="tns:getKmByIdResponse"/>
+<xs:element name="getKmByParams" type="tns:getKmByParams"/>
+<xs:element name="getKmByParamsResponse" type="tns:getKmByParamsResponse"/>
+<xs:element name="getKmByParamsRuntime" type="tns:getKmByParamsRuntime"/>
+<xs:element name="getKmByParamsRuntimeResponse" type="tns:getKmByParamsRuntimeResponse"/>
+<xs:element name="getKmLatestLogic" type="tns:getKmLatestLogic"/>
+<xs:element name="getKmLatestLogicResponse" type="tns:getKmLatestLogicResponse"/>
+<xs:element name="getKmMeta" type="tns:getKmMeta"/>
+<xs:element name="getKmMetaResponse" type="tns:getKmMetaResponse"/>
+<xs:element name="getReferenceData" type="tns:getReferenceData"/>
+<xs:element name="getReferenceDataResponse" type="tns:getReferenceDataResponse"/>
+<xs:element name="insertKms" type="tns:insertKms"/>
+<xs:element name="insertKmsResponse" type="tns:insertKmsResponse"/>
+<xs:element name="updateKms" type="tns:updateKms"/>
+<xs:element name="updateKmsResponse" type="tns:updateKmsResponse"/>
+<xs:complexType name="getKmLatestLogic">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:KmIdSearchRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmLatestLogicResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:KmLatestLogicResponseType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmById">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:KmIdSearchRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmByIdResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:KmIdSearchResponseType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmMeta">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:KmIdSearchRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmMetaResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:KmMetaResponseType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmByParams">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:KmRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmByParamsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:KmResponseType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getReferenceData">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:ReferenceData.RefRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getReferenceDataResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:ReferenceData.RefResponseType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmByParamsRuntime">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:KmRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="getKmByParamsRuntimeResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:KmResponseType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="insertKms">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:KmImportRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="insertKmsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:KmResponseType_importAck"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="findKmIds">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:KmRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="findKmIdsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:FindKmIdsResponseType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="updateKms">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="arg0" type="ns1:KmImportRequestType"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="updateKmsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="ns1:KmResponseType_importAck"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="updateKmsResponse">
+    <wsdl:part element="tns:updateKmsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findKmIdsResponse">
+    <wsdl:part element="tns:findKmIdsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getReferenceDataResponse">
+    <wsdl:part element="tns:getReferenceDataResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmMeta">
+    <wsdl:part element="tns:getKmMeta" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmMetaResponse">
+    <wsdl:part element="tns:getKmMetaResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getReferenceData">
+    <wsdl:part element="tns:getReferenceData" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmByIdResponse">
+    <wsdl:part element="tns:getKmByIdResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmByParamsRuntimeResponse">
+    <wsdl:part element="tns:getKmByParamsRuntimeResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="insertKms">
+    <wsdl:part element="tns:insertKms" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmLatestLogicResponse">
+    <wsdl:part element="tns:getKmLatestLogicResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmByParamsRuntime">
+    <wsdl:part element="tns:getKmByParamsRuntime" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmById">
+    <wsdl:part element="tns:getKmById" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="updateKms">
+    <wsdl:part element="tns:updateKms" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmByParamsResponse">
+    <wsdl:part element="tns:getKmByParamsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmByParams">
+    <wsdl:part element="tns:getKmByParams" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="findKmIds">
+    <wsdl:part element="tns:findKmIds" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="insertKmsResponse">
+    <wsdl:part element="tns:insertKmsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getKmLatestLogic">
+    <wsdl:part element="tns:getKmLatestLogic" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="KmrKnowledgeModule">
+    <wsdl:operation name="getKmLatestLogic">
+      <wsdl:input message="tns:getKmLatestLogic" name="getKmLatestLogic">
+    </wsdl:input>
+      <wsdl:output message="tns:getKmLatestLogicResponse" name="getKmLatestLogicResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKmById">
+      <wsdl:input message="tns:getKmById" name="getKmById">
+    </wsdl:input>
+      <wsdl:output message="tns:getKmByIdResponse" name="getKmByIdResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKmMeta">
+      <wsdl:input message="tns:getKmMeta" name="getKmMeta">
+    </wsdl:input>
+      <wsdl:output message="tns:getKmMetaResponse" name="getKmMetaResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKmByParams">
+      <wsdl:input message="tns:getKmByParams" name="getKmByParams">
+    </wsdl:input>
+      <wsdl:output message="tns:getKmByParamsResponse" name="getKmByParamsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getReferenceData">
+      <wsdl:input message="tns:getReferenceData" name="getReferenceData">
+    </wsdl:input>
+      <wsdl:output message="tns:getReferenceDataResponse" name="getReferenceDataResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKmByParamsRuntime">
+      <wsdl:input message="tns:getKmByParamsRuntime" name="getKmByParamsRuntime">
+    </wsdl:input>
+      <wsdl:output message="tns:getKmByParamsRuntimeResponse" name="getKmByParamsRuntimeResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="insertKms">
+      <wsdl:input message="tns:insertKms" name="insertKms">
+    </wsdl:input>
+      <wsdl:output message="tns:insertKmsResponse" name="insertKmsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findKmIds">
+      <wsdl:input message="tns:findKmIds" name="findKmIds">
+    </wsdl:input>
+      <wsdl:output message="tns:findKmIdsResponse" name="findKmIdsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateKms">
+      <wsdl:input message="tns:updateKms" name="updateKms">
+    </wsdl:input>
+      <wsdl:output message="tns:updateKmsResponse" name="updateKmsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="KmrKnowledgeModuleServiceSoapBinding" type="tns:KmrKnowledgeModule">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getKmLatestLogic">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getKmLatestLogic">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getKmLatestLogicResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKmById">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getKmById">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getKmByIdResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKmMeta">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getKmMeta">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getKmMetaResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKmByParams">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getKmByParams">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getKmByParamsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getReferenceData">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getReferenceData">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getReferenceDataResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getKmByParamsRuntime">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getKmByParamsRuntime">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getKmByParamsRuntimeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="insertKms">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="insertKms">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="insertKmsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="findKmIds">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="findKmIds">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="findKmIdsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateKms">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="updateKms">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="updateKmsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="KmrKnowledgeModuleService">
+    <wsdl:port binding="tns:KmrKnowledgeModuleServiceSoapBinding" name="KmrKnowledgeModulePort">
+      <soap:address location="http://localhost:9000/KmrKnowledgeModule"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

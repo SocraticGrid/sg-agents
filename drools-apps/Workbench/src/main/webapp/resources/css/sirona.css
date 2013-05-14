@@ -1,0 +1,7 @@
+.processTreeNode{
+    background-image: url(../../resources/png/process.png) !important;
+}
+
+.processSearchFieldSet {
+    padding: 5px !important;
+}

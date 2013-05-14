@@ -1,0 +1,112 @@
+package org.drools.informer.interaction;
+
+import gov.hhs.fha.nhinc.workitemhandlers.*;
+import org.drools.base.DroolsQuery;
+import org.drools.informer.generator.*;
+import org.drools.informer.*;
+import org.drools.mas.body.content.*;
+import org.drools.mas.action.message.*;
+import org.drools.mas.action.message.types.*;
+import org.drools.mas.action.message.invokers.*;
+import org.drools.mas.*;
+import org.drools.mas.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Date;
+import org.drools.mas.util.MessageContentEncoder;
+import org.drools.mas.action.helpers.*;
+import org.drools.mas.util.helper.*;
+import org.socraticgrid.workitemhandlers.BaseCommunicationServiceTaskHandler; 
+
+rule "WI Handlers Configuration"
+when
+then
+    BaseCommunicationServiceTaskHandler handler = new BaseCommunicationServiceTaskHandler(kcontext.getKnowledgeRuntime());
+
+    ((org.drools.impl.StatefulKnowledgeSessionImpl)kcontext.getKnowledgeRuntime()).getWorkItemManager().registerWorkItemHandler("CommunicationTask", handler);
+    
+    ((org.drools.impl.StatefulKnowledgeSessionImpl)kcontext.getKnowledgeRuntime()).addEventListener(new org.drools.event.rule.DebugWorkingMemoryEventListener(System.out));
+    ((org.drools.impl.StatefulKnowledgeSessionImpl)kcontext.getKnowledgeRuntime()).addEventListener(new org.drools.event.rule.DebugAgendaEventListener(System.out));
+    
+end
+
+
+
+
+
+rule "DispatchImpl"
+salience -200
+when
+    $ticket : InteractionTicket( $ticketId : id,
+                                 $inters : interactions,
+                                 $source : source  )
+    $convo  : TicketActor( $convoId, $ticketId, $actorId ; )
+    accumulate (
+                 Alert( ticketId == $ticketId, destination == $actorId,
+                        $formId : formId, $body : bodyTemplateId, $channel : channel, $timeout : timeout ),
+                 $formIds  : collectList( $formId ),
+                 $bodies   : collectList( $body ),
+                 $channels : collectList( $channel );
+                 $channels.size() > 0
+               )
+then
+
+    String template = (String) $bodies.get(0);
+    String body = "";
+    String header = "";
+    if(template.equals("template1")){
+        header = "Recommendation 1";
+        body = "It is recommended that invasive breast cancer patients be offered Breast MRI if there is<br>a) discrepancy regarding the extent of disease from clinical examination, mammography or ultrasound assessment, b) if breast density precludes accurate mammographic assessment, or c) to assess tumour size if breast conserving surgery is being considered for invasive lobular cancer.";
+    }
+    if(template.equals("template2")){
+        header = "Recommendation 2";
+        body = "ER and PR should be measured in all patients with breast cancer. The primary purpose of measuring these receptors is to identify patients with breast cancer that can be treated with hormone therapy. In combination with established prognostic factors (i.e., tumor stage, tumor grade, and number of lymph node metastases), ER and PR may also be used for determining short-term prognosis in patients with newly diagnosed breast cancer.<br>Please indicate whether you accept this recommendation using the choices offered below. If you accept, an appropriate order will be filed electroinically on your behalf. If you would like to change the order for any reason, please select 'Modify' to edit as appropriate.";
+    }
+    if(template.equals("template3")){
+        header = "Recommendation 3";
+        body = "HER-2 should be measured in all patients with invasive breast cancer. The primary purpose of measuring HER-2 is to select patients with breast cancer that may be treated with trastuzumab.<br><br>HER-2 may also identify patients that preferentially benefit from anthracycline-based adjuvant chemotherapy.<br>Please indicate whether you accept this recommendation using the choices offered below. If you accept, an appropriate order will be filed electroinically on your behalf. If you would like to change the order for any reason, please select 'Modify' to edit as appropriate.";
+    }
+    if(template.equals("template4")){
+        header = "Lab Test Result is ready";
+        body = "Dear Jane,<br><br>Your recent Estrogen Receptor Assay has been resulted and is positive. This is good news and enables us to consider hormonal therapy. As we discussed previously, we should explore your options in person. My next available appointment is Tuesday, March 27th at 1400 in the Woman's Helath Clinic.<br><br>Please indicate whether you accept this appointment using the choices offered below. If you accept, your appointment will be booked automatically on your behalf. If you would like to change the appointment time for any reason, please select “Modify” and select a more appropriate time.<br><br>In the meantime, feel free to consult the educational material in the patient portal. If you have any questions, email me.<br>Sincerely,<br>Dr. Emory Fry";
+    }
+    if(template.equals("template5")){
+        header = "Recommendation 4";
+        body = "Patients with early invasive breast cancer should have a baseline dual energy X-ray absorptiometry (DEXA) scan to assess bone mineral density if they are starting adjuvant aromatase inhibitor treatment. No recent scan can be located.<br>Please indicate whether you would like to order the recommended DEXA scan using the choices offered below. If you accept, an appropriate order will be filed electroinically on your behalf. If you would like to change the order for any reason, please select “Modify” to edit as appropriate.";
+    }
+    if (template.equals("template6")){
+        header = "You have time sensitive treatment recommendations for a patient waiting for you. Please login to the your portal account, or review using mobile MedAlert.";
+        body = "";
+    }
+
+    
+
+    String $pro = "1"; //LDAP UID
+    String $pat = "99990070";
+
+    java.util.LinkedHashMap map = new java.util.LinkedHashMap();
+    map.put("refId", $ticketId );
+    map.put("conversationId", $convoId );
+    map.put("subjectAbout", new String[] { $pat, $pro, $actorId } );  
+    map.put("sender", $pro );                 
+    //map.put("sender", "CDS System" );                 
+    map.put("mainRecipients", new String[] { $actorId } );          
+    map.put("secondaryRecipients", new String[0] );     
+    map.put("hiddenRecipients", new String[0] ); 
+    map.put("type", $channels.get(0) );  //ALERT, SMS
+    map.put("header", header );
+    map.put("body", body );
+    map.put("priority", "High" );
+    map.put("deliveryDate", new java.util.Date() );
+    map.put("status", "New" );                       
+
+    System.out.println(map);
+
+
+    System.out.println( " ******************************* Deliver to " + $actorId + "  : >> " + $formIds + " in " + $convo + " using " + $channels.get(0) );
+    
+    insert(MessageContentFactory.newActionContent("deliverMessage", map));
+
+end

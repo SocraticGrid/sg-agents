@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context antiJARLocking="true" path="/KnowledgeModuleWS">
+  <Resource auth="Container" driverClassName="com.mysql.jdbc.Driver" logAbandoned="true" maxActive="400" maxIdle="0" maxWait="60" name="jdbc/kmrDB" password="kmrpass" removeAbandoned="true" removeAbandonedTimeout="15" type="javax.sql.DataSource" url="jdbc:mysql://192.168.5.47:3306/kmr" username="kmruser">
+    </Resource>
+</Context>

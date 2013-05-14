@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tns:FactList id="id4cbf83d5-512e-4f4c-b031-0c37d4da8675" xmlns:tns="urn:org:socraticgrid:adapter:fact" xmlns:owl="http://www.w3.org/2002/07/owl" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <tns:contains xsi:type="tns:VitalSign" id="idb08e736d-bce9-421e-9729-e45fd235bfab">
+        <tns:hasTypeReference id="id2c3a0248-66c4-43db-a943-ccaa154ca5c4">
+            <tns:contextSystemCode>2.16.840.1.113883.6.96</tns:contextSystemCode>
+            <tns:conceptCode>386725007</tns:conceptCode>
+            <tns:conceptLabel>BODY TEMPERATURE</tns:conceptLabel>
+            <tns:contextSystemLabel>SNOMED-CT</tns:contextSystemLabel>
+        </tns:hasTypeReference>
+        <tns:hasPatient id="idc722c882-1e5d-4726-8c17-6700326039c5">
+            <tns:hasLegalName id="idc861983e-1388-4ea2-83b8-8ca9a7b26d5c">
+                <tns:firstName>Fred</tns:firstName>
+                <tns:familyName>Jones</tns:familyName>
+            </tns:hasLegalName>
+            <tns:hasPatientID id="idd62ff63b-54b8-4fc9-bacd-69ba0318631e">
+                <tns:contextSystemCode>0.00.000.0.000000.0.0</tns:contextSystemCode>
+                <tns:conceptCode>http://patients.kmr.org/danno/2-1</tns:conceptCode>
+                <tns:conceptLabel>Patient Fred Jone</tns:conceptLabel>
+                <tns:contextSystemLabel>KMR</tns:contextSystemLabel>
+            </tns:hasPatientID>
+        </tns:hasPatient>
+        <tns:performedBy id="id6ef1a390-13bd-4d1c-b5d0-72057a20066c">
+            <tns:hasLegalName id="id8e5a5125-7819-4d0b-a504-402da592e6a2">
+                <tns:firstName>Joe</tns:firstName>
+                <tns:familyName>Smith</tns:familyName>
+            </tns:hasLegalName>
+            <tns:hasAgentID id="ida61bf4c9-6472-4fd6-936c-cb0666adb009">
+                <tns:contextSystemCode>0.00.000.0.000000.0.0</tns:contextSystemCode>
+                <tns:conceptCode>http://patients.kmr.org/danno/200-1</tns:conceptCode>
+                <tns:conceptLabel>Agent Joe Smith</tns:conceptLabel>
+                <tns:contextSystemLabel>KMR</tns:contextSystemLabel>
+            </tns:hasAgentID>
+        </tns:performedBy>
+        <tns:hasVitalSignResult id="id8c5628ca-4c6d-420b-a5f4-f8daa5ec3ae7">
+            <tns:unit>degrees</tns:unit>
+            <tns:val>98.6</tns:val>
+        </tns:hasVitalSignResult>
+    </tns:contains>
+    <tns:contains xsi:type="tns:VitalSign" id="id909b024a-6514-4477-9a06-1d46cfee47c2">
+        <tns:dateTimeCreated>2013-02-25T19:09:12Z</tns:dateTimeCreated>
+        <tns:dateTimeReported>2013-02-25T19:09:12Z</tns:dateTimeReported>
+        <tns:hasTypeReference id="id5297ca9f-67b6-47e8-87c5-0142d2c4c562">
+            <tns:contextSystemCode>2.16.840.1.113883.6.96</tns:contextSystemCode>
+            <tns:conceptCode>386725007</tns:conceptCode>
+            <tns:conceptLabel>BODY TEMPERATURE</tns:conceptLabel>
+            <tns:contextSystemLabel>SNOMED-CT</tns:contextSystemLabel>
+        </tns:hasTypeReference>
+        <tns:hasPatient idref="idc722c882-1e5d-4726-8c17-6700326039c5"/>
+        <tns:performedBy id="id70a542f5-e1e3-4aa8-9259-cf38857c6655">
+            <tns:hasLegalName id="id2f37a8bc-c433-4dea-b447-4a41d0a3883c">
+                <tns:firstName>Bill</tns:firstName>
+                <tns:familyName>Kid</tns:familyName>
+            </tns:hasLegalName>
+            <tns:hasAgentID id="id29c99f27-019d-4ae8-ae7c-8326f7f57570">
+                <tns:contextSystemCode>0.00.000.0.000000.0.0</tns:contextSystemCode>
+                <tns:conceptCode>http://patients.kmr.org/danno/200-2</tns:conceptCode>
+                <tns:conceptLabel>Agent Bill Kid</tns:conceptLabel>
+                <tns:contextSystemLabel>KMR</tns:contextSystemLabel>
+            </tns:hasAgentID>
+        </tns:performedBy>
+        <tns:hasVitalSignResult id="id2136b112-3ff6-462b-b500-fa4080cf88dc">
+            <tns:unit>degrees</tns:unit>
+            <tns:val>99.6</tns:val>
+        </tns:hasVitalSignResult>
+    </tns:contains>
+</tns:FactList>

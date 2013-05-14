@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+  <!--persistence-unit name="KnowledgeModuleEJBPU" transaction-type="JTA"-->
+    <persistence-unit name="KnowledgeModuleEJBPU" transaction-type="RESOURCE_LOCAL">
+    <!--provider>oracle.toplink.essentials.PersistenceProvider</provider-->
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <jta-data-source>java:comp/env/jdbc/kmrDB</jta-data-source>
+    <class>org.socraticgrid.kmr.model.ACLPermission</class>
+    <class>org.socraticgrid.kmr.model.FactSpecification</class>
+    <class>org.socraticgrid.kmr.model.KMSpecialty</class>
+    <class>org.socraticgrid.kmr.model.KMVAccessControlList</class>
+    <class>org.socraticgrid.kmr.model.KMVFactDependency</class>
+    <class>org.socraticgrid.kmr.model.KMVInferenceEngineDependency</class>
+    <class>org.socraticgrid.kmr.model.KMVPopulationDependency</class>
+    <class>org.socraticgrid.kmr.model.KMVSupportingReference</class>
+    <class>org.socraticgrid.kmr.model.KMVTaskDependency</class>
+    <class>org.socraticgrid.kmr.model.KMVUsageStatistic</class>
+    <class>org.socraticgrid.kmr.model.KMVUserComment</class>
+    <class>org.socraticgrid.kmr.model.KMVersion</class>
+    <class>org.socraticgrid.kmr.model.KnowledgeModule</class>
+    <class>org.socraticgrid.kmr.model.OperationalConstraint</class>
+    <class>org.socraticgrid.kmr.model.OperationalConstraintElement</class>
+    <class>org.socraticgrid.kmr.model.PopulationSpecification</class>
+    <class>org.socraticgrid.kmr.model.RefFactType</class>
+    <class>org.socraticgrid.kmr.model.RefFactScheme</class>
+    <class>org.socraticgrid.kmr.model.RefFactSchemeType</class>
+    <class>org.socraticgrid.kmr.model.RefFactCode</class>
+    <class>org.socraticgrid.kmr.model.RefSpecialtyScheme</class>
+    <class>org.socraticgrid.kmr.model.RefSpecialtyCode</class>
+    <class>org.socraticgrid.kmr.model.RefCodeSimple</class>
+    <class>org.socraticgrid.kmr.model.TTSpecification</class>
+    <class>org.socraticgrid.kmr.model.UsageStatisticType</class>
+    <class>org.socraticgrid.kmr.model.UserRole</class>
+    <class>org.socraticgrid.kmr.model.RefDictionary</class>
+    <class>org.socraticgrid.kmr.model.RefTaxonomyCode</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <properties>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.max_fetch_depth" value="3"/>
+      <property name="hibernate.show_sql" value="false"/>
+    </properties>
+  </persistence-unit>
+</persistence>
