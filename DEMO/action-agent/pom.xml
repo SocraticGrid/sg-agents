@@ -127,12 +127,28 @@
             <groupId>org.socraticgrid</groupId>
 	    <artifactId>fact-data-usecase1</artifactId>
 	    <version>1.0-SNAPSHOT</version>
+	    <exclusions>
+	     <exclusion>
+	      <artifactId>ejb3-persistence</artifactId>
+	      <groupId>org.hibernate</groupId>
+	     </exclusion>
+	    </exclusions>
 	</dependency>
         
         <!-- Drools dependencies -->
         <dependency>
             <groupId>org.drools.mas</groupId>
             <artifactId>drools-mas-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hibernate-commons-annotations</artifactId>
+                    <groupId>org.hibernate</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>hibernate-annotations</artifactId>
+                    <groupId>org.hibernate</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.drools.mas</groupId>
