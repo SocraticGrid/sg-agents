@@ -432,6 +432,88 @@
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.jboss.maven.plugins</groupId>
+                    <artifactId>maven-jdocbook-plugin</artifactId>
+                    <version>2.3.8</version>
+                    <extensions>true</extensions>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.jboss.pressgang</groupId>
+                            <artifactId>pressgang-xslt-ns</artifactId>
+                            <version>2.0.2</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.jboss.pressgang</groupId>
+                            <artifactId>pressgang-jdocbook-style</artifactId>
+                            <type>jdocbook-style</type>
+                            <version>3.0.0</version>
+                        </dependency>
+                    </dependencies>
+
+                    <configuration>
+                        <sourceDocumentName>master.xml</sourceDocumentName>
+                        <masterTranslation>en-US</masterTranslation>
+                        <imageResource>
+                            <directory>${basedir}/src/main/docbook/en-US</directory>
+                            <includes>
+                                <include>images/</include>
+                            </includes>
+                        </imageResource>
+                        <formats>
+                            <format>
+                                <formatName>html_single</formatName>
+                                <stylesheetResource>classpath:/xslt/org/jboss/xhtml-single.xsl</stylesheetResource>
+                                <finalName>index.html</finalName>
+                                <!-- <profilingTypeName>two_pass</profilingTypeName> -->
+                            </format>
+                            <format>
+                                <formatName>html</formatName>
+                                <stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource>
+                                <finalName>index.html</finalName>
+                                <!-- <profilingTypeName>two_pass</profilingTypeName> -->
+                            </format>
+                            <format>
+                                <formatName>pdf</formatName>
+                                <stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
+                                <finalName>${project.artifactId}.pdf</finalName>
+                            </format>
+                        </formats>
+                        <injections>
+                            <injection>
+                                <name>project.version</name>
+                                <value>${project.version}</value>
+                            </injection>
+                        </injections>
+                        <options>
+                            <xmlTransformerType>saxon</xmlTransformerType>
+                            <xincludeSupported>true</xincludeSupported>
+                            <useRelativeImageUris>true</useRelativeImageUris>
+                            <!-- TODO Probably obsolete after the upgrade to maven-jdocbook-plugin 2.3.0 -->
+                            <docbookVersion>1.72.0</docbookVersion>
+                            <!-- <localeSeparator>-</localeSeparator> -->
+                        </options>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.3</version>
+                    <dependencies>
+                        <dependency>
+                            <!-- Entry needed to enable jdocbook unzipping -->
+                            <groupId>org.jboss.maven.plugins</groupId>
+                            <artifactId>maven-jdocbook-plugin</artifactId>
+                            <version>2.3.7</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -441,6 +523,11 @@
                     <source>1.5</source>
                     <target>1.5</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <!-- Entry needed to enable jdocbook packaging -->
+                <groupId>org.jboss.maven.plugins</groupId>
+                <artifactId>maven-jdocbook-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
