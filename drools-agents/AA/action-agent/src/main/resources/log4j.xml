@@ -62,7 +62,7 @@
     <level value="DEBUG"/>
   </logger>
   <logger name="org.drools.grid">
-    <level value="DEBUG"/>
+    <level value="ERROR"/>
   </logger>
   <root>
     <priority value ="ERROR" />

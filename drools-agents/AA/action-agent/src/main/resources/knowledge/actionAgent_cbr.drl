@@ -76,7 +76,7 @@ import org.drools.mas.util.InspectMessageHelper;
 rule "Mapping"
 when
 then
-    insert( new SessionMapping("action-selection-primary","session1") );
+    insert( new SessionMapping("main-subsession","main-subsession") );
     
 end
 
@@ -85,8 +85,8 @@ rule "Route_Encoded_JSON"
 when
     $msg : ACLMessage( $msgId : id, $b : body, encoding == Encodings.JSON  )
 then
-    System.out.println("Routing message " + $msgId + " (JSON)" );
-    insert( new MappingLookup( $msgId, "action-selection-primary" ) );
+    System.err.println("Routing message '" + $msgId + "' (JSON)" );
+    insert( new MappingLookup( $msgId, "main-subsession") );
 end
 
 rule "Route_Encoded_XML"
@@ -94,10 +94,6 @@ rule "Route_Encoded_XML"
 when
     $msg : ACLMessage( $msgId : id, $b : body, encoding == Encodings.XML )
 then
-    System.out.println("Routing message " + $msgId + " (XML)"  );
-    insert( new MappingLookup( $msgId, "action-selection-primary" ) );
+    System.err.println("Routing message '" + $msgId + "' (XML)" );
+    insert( new MappingLookup( $msgId, "main-subsession" ) );
 end
-
-
-
-

@@ -42,26 +42,35 @@
                 <db.username>sa</db.username>
                 <db.password>sasa</db.password>
                 <db.dialect>org.hibernate.dialect.H2Dialect</db.dialect>
+                
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
                 <agent.port>8000</agent.port>
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
+                
+                <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
+                
+                <aa.endpoint>MOCK</aa.endpoint>
             </properties>
         </profile>
         <profile>
-            <id>prod</id>
+            <id>local</id>
             <properties>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
                 <db.connectionURL>jdbc:mysql://localhost:3306/drools-grid</db.connectionURL>
                 <db.username>root</db.username>
                 <db.password>root</db.password>
                 <db.dialect>org.hibernate.dialect.MySQL5Dialect</db.dialect>
+                
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
                 <agent.port>8000</agent.port>
                 <agent.endpoint.ip>192.168.5.46</agent.endpoint.ip>
-                <agent.endpoint.port>8083</agent.endpoint.port>
+                <agent.endpoint.port>8081</agent.endpoint.port>
+                
+                <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
+                <aa.endpoint>http://localhost:8081/action-agent/services/AsyncAgentService?wsdl</aa.endpoint>
             </properties>
             <dependencies>
                 <dependency>
@@ -102,9 +111,19 @@
             <artifactId>drools-mas-acl</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.drools.mas</groupId>
+            <artifactId>drools-mas-util</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.drools</groupId>
             <artifactId>drools-informer-interaction</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.drools.mas</groupId>
+            <artifactId>drools-mas-generic-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        
         
         <!-- Servlet dependencies -->
         <dependency>
@@ -183,45 +202,34 @@
                 <version>1.1.1</version>
                 <executions>
                     <execution>
-
                         <id>delefe-files</id>
                         <phase>test</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
                         <configuration>
-
                             <mainClass>org.h2.tools.DeleteDbFiles</mainClass>
                             <commandlineArgs>
                                 -dir ~
-
                             </commandlineArgs>
-
-
                         </configuration>
                     </execution>
                     <execution>
-
                         <id>start-db</id>
                         <phase>test</phase>
                         <goals>
                             <goal>java</goal>
                         </goals>
                         <configuration>
-
                             <mainClass>org.h2.tools.Server</mainClass>
                             <arguments>
                                 <argument>-tcp</argument>
                                 <argument>-tcpAllowOthers</argument>
                                 <argument>-tcpDaemon</argument>
                                 <argument>-trace</argument>
-
                             </arguments>
-
-
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
             <plugin>
@@ -253,7 +261,17 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/test/java</directory>
+                <filtering>true</filtering>
+                <targetPath>../filtered-sources/test/java</targetPath>
+            </resource>
         </resources>
+        <testSourceDirectory>target/filtered-sources/test/java</testSourceDirectory>
     </build>
 
 

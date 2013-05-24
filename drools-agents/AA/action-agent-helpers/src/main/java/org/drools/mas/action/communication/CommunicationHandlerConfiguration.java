@@ -29,7 +29,7 @@
  * END OF TERMS AND CONDITIONS
  *
  **********************************************************************************************************************/
-package org.socraticgrid.workitemhandlers.configuration;
+package org.drools.mas.action.communication;
 
 import java.io.Serializable;
 import java.util.ArrayList;
