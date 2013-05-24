@@ -25,7 +25,7 @@
     </parent>
 
 
-    <artifactId>action-agent</artifactId>
+    <artifactId>action-agent-demo</artifactId>
     <packaging>war</packaging>
 
     <name>SG :: DEMO Action Agent Web</name>
