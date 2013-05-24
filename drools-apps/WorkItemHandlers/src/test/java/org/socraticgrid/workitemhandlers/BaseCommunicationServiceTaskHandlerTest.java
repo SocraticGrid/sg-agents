@@ -32,7 +32,7 @@
 package org.socraticgrid.workitemhandlers;
 
 import org.socraticgrid.workitemhandlers.BaseCommunicationServiceTaskHandler;
-import org.socraticgrid.workitemhandlers.configuration.CommunicationHandlerConfiguration;
+import org.drools.mas.action.communication.CommunicationHandlerConfiguration;
 import java.util.Iterator;
 import org.drools.ClockType;
 import org.drools.KnowledgeBase;

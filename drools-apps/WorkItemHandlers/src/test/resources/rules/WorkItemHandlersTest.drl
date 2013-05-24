@@ -35,7 +35,7 @@ package org.socraticgrid.workitemhandlers;
 import org.drools.informer.generator.*;
 import org.drools.informer.*;
 import org.drools.informer.interaction.*;
-import org.socraticgrid.workitemhandlers.configuration.*;
+import org.drools.mas.action.communication.*;
 
 global CommunicationHandlerConfiguration globalConfiguration;
 

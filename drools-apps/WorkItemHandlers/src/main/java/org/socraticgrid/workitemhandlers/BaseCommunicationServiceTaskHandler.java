@@ -32,13 +32,13 @@
 package org.socraticgrid.workitemhandlers;
 
 import com.google.gson.Gson;
-import org.socraticgrid.workitemhandlers.configuration.CommunicationHandlerConfiguration;
-import org.socraticgrid.workitemhandlers.configuration.CommunicationHandlerConfigurationParser;
+import org.drools.mas.action.communication.CommunicationHandlerConfiguration;
 import org.drools.runtime.KnowledgeRuntime;
 import org.drools.runtime.StatefulKnowledgeSession;
 import org.drools.runtime.process.WorkItem;
 import org.drools.runtime.process.WorkItemHandler;
 import org.drools.runtime.process.WorkItemManager;
+import org.socraticgrid.workitemhandlers.communication.CommunicationHandlerConfigurationParser;
 
 /**
  *

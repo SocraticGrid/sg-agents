@@ -29,9 +29,8 @@
  * END OF TERMS AND CONDITIONS
  *
  **********************************************************************************************************************/
-package org.socraticgrid.workitemhandlers.configuration;
+package org.socraticgrid.workitemhandlers.communication;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -39,6 +38,7 @@ import com.google.gson.JsonParser;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.drools.mas.action.communication.CommunicationHandlerConfiguration;
 
 /**
  * Parses from a String sent as WorkItem parameter to a CommunicationHandlerConfiguration object.
