@@ -60,6 +60,9 @@
         <resource type="CHANGE_SET" source="classpath:org/drools/informer/interaction/interaction-changeset.xml" />
     
     
+        <resource type="DRL" source="classpath:knowledge/subsession/config.drl" />
+        <resource type="DRL" source="classpath:knowledge/subsession/declarations.drl" />
+        <resource type="DRL" source="classpath:knowledge/subsession/actionContentHandling.drl" />
         <resource type="DRL" source="classpath:knowledge/subsession/inputConvertion.drl" />
         <resource type="DRL" source="classpath:knowledge/subsession/delivery.drl" />
     </add>

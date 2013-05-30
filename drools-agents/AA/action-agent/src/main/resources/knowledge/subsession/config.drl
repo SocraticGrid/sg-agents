@@ -1,0 +1,31 @@
+package org.socraticgrid.taps.ds.agent;
+
+import org.socraticgrid.taps.aa.log.RulesLoggerHelper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+global Logger logger;
+
+
+/**
+Configures the session's logger global.
+**/
+rule "Logger Configuration"
+salience 1000
+when
+then
+    Logger sessionLogger = LoggerFactory.getLogger("subsession");
+    drools.getWorkingMemory().setGlobal("logger",sessionLogger);
+
+    RulesLoggerHelper.debug(sessionLogger, drools, "Subsession Logger configured. ");
+end
+
+
+rule "Event Listeners Configuration"
+when
+then
+    //((org.drools.impl.StatefulKnowledgeSessionImpl)kcontext.getKnowledgeRuntime()).addEventListener(new org.drools.event.rule.DebugWorkingMemoryEventListener(System.out));
+    //((org.drools.impl.StatefulKnowledgeSessionImpl)kcontext.getKnowledgeRuntime()).addEventListener(new org.drools.event.rule.DebugAgendaEventListener(System.out));
+end
+

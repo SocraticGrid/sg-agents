@@ -1,0 +1,105 @@
+package org.socraticgrid.taps.ds.agent;
+
+import org.drools.mas.body.content.*;
+import org.drools.mas.action.message.*;
+import org.drools.mas.action.message.types.*;
+import org.drools.mas.action.message.invokers.*;
+import org.drools.mas.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Date;
+import org.drools.mas.util.MessageContentEncoder;
+import org.drools.mas.action.helpers.*;
+import org.drools.mas.util.helper.*;
+import org.drools.mas.util.*;
+
+import javax.xml.ws.BindingProvider;
+
+
+declare Entity
+    @Traitable
+    @propertyReactive
+    id                  : String        @key
+    messageId           : String        @key
+    resolved            : boolean                   = false
+    cn                  : String
+    mobile              : String
+    employeeNumber      : String
+    displayName         : String
+    gender              : String
+end
+
+
+declare trait OrgEntity
+    cn                  : String
+    mobile              : String
+    employeeNumber      : String
+    displayName         : String
+    gender              : String
+end
+
+declare trait Patient extends OrgEntity
+    id                  : String        @key
+    messageId           : String        @key
+end
+
+declare trait Provider extends OrgEntity
+    id                  : String        @key
+    messageId           : String        @key
+end
+
+declare trait Recipient extends OrgEntity
+    id                  : String        @key
+    messageId           : String        @key
+end
+
+declare trait MainRecipient extends Recipient
+
+end
+
+declare trait SecondaryRecipient extends Recipient
+
+end
+
+declare trait HiddenRecipient extends Recipient
+
+end
+
+
+
+
+
+
+
+declare DeliverableMessage
+    id                  : String        @key
+end
+
+declare SMSMessage extends DeliverableMessage
+    mobileNumber        : String
+    text                : String
+end
+
+declare AlertMessage extends DeliverableMessage
+    ticketId            : String
+    recipient           : String
+    body                : String
+end
+
+
+declare MessageDeliveredResponse
+    refId               : String        @key
+    convoId             : String        @key
+end
+
+
+
+declare ActionContentTemplateContext
+    action      :   Action
+    variables   :   Map
+end
+
+
+

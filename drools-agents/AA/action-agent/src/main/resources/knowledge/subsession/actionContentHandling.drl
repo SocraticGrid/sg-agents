@@ -1,0 +1,62 @@
+package org.socraticgrid.taps.ds.agent;
+
+
+import org.drools.informer.interaction.TemplateBuilder;
+import org.drools.mas.body.content.Action;
+import org.drools.mas.mappers.MyMapArgsEntryType;
+import org.socraticgrid.taps.aa.template.TemplateManager;
+import org.socraticgrid.taps.aa.template.TemplateEntry;
+import org.socraticgrid.taps.aa.log.RulesLoggerHelper;
+
+import org.slf4j.Logger;
+
+import java.util.Map;
+import java.util.HashMap;
+
+
+global Logger logger;
+
+rule "Process Action Content"
+when
+    $action: Action( 
+        $templateId : this["templateId"] != null,
+        this["header"] == null,
+        this["body"] == null
+    )
+    $context: ActionContentTemplateContext (action == $action,
+                                            $variables: variables)
+then
+    //get template data
+    TemplateEntry template = TemplateManager.getInstance().getTemplate((String)$templateId);
+    String body = template.getBody();
+    String header = template.getHeader();
+
+    //replace header template
+    String finalHeader = TemplateBuilder.applyTemplate( (String) header, (Map<String,Object>) $variables ).replace( "\n", "" );
+
+    //replace body template
+    String finalBody = TemplateBuilder.applyTemplate( (String) body, (Map<String,Object>) $variables ).replace( "\n", "" );
+
+    
+    //prepare 'body' and 'header' entries for Action 
+    MyMapArgsEntryType headerEntry = new MyMapArgsEntryType();
+    headerEntry.setKey("header");
+    headerEntry.setValue(finalHeader);
+
+    MyMapArgsEntryType bodyEntry = new MyMapArgsEntryType();
+    bodyEntry.setKey("body");
+    bodyEntry.setValue(finalBody);
+
+
+    //Add 'body' and 'header' to Action
+    $action.getArgs().add(headerEntry);
+    $action.getArgs().add(bodyEntry);
+
+    update($action);
+    
+    //we don't need the context anymore
+    retract($context); 
+end
+
+
+

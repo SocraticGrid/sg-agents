@@ -52,6 +52,7 @@
 package org.drools.mas;
 
 import java.sql.SQLException;
+import java.util.Properties;
 import org.drools.mas.core.DroolsAgent;
 import org.h2.tools.DeleteDbFiles;
 import org.h2.tools.Server;
@@ -69,11 +70,22 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class KnowledgeResourcesCompilationTest {
     private static Logger logger = LoggerFactory.getLogger(KnowledgeResourcesCompilationTest.class);
     private Server server;
+    
+    private static String agentName;
+    private static String agentEndpoint;
+    private static String agentPort;
+    
     public KnowledgeResourcesCompilationTest() {
     }
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        Properties p = new Properties();
+        p.load(KnowledgeResourcesCompilationTest.class.getResourceAsStream("/agentsConfig.properties"));
+        
+        agentName = p.getProperty("agent.name");
+        agentEndpoint = p.getProperty("agent.endpoint.ip");
+        agentPort = p.getProperty("agent.endpoint.port");
     }
 
     @AfterClass

@@ -1,26 +1,30 @@
-package org.drools.mas;
+package org.socraticgrid.taps.ds.agent;
+
+import org.socraticgrid.taps.aa.log.RulesLoggerHelper;
 
 import org.drools.mas.body.content.*;
 import org.drools.mas.action.message.*;
 import org.drools.mas.action.message.types.*;
 import org.drools.mas.action.message.invokers.*;
 import org.drools.mas.*;
-import org.drools.informer.interaction.TemplateBuilder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Date;
 import org.drools.mas.util.MessageContentEncoder;
 import org.drools.mas.action.helpers.*;
 import org.drools.mas.util.helper.*;
 import org.drools.mas.util.*;
 
+import org.slf4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Date;
+
 import javax.xml.ws.BindingProvider;
 
 
 global java.util.Map channels;
-
+global Logger logger;
 
 declare Entity
     @Traitable
@@ -134,7 +138,7 @@ when
     $id : String() from $subjectAbout
 then
     Entity $ent = new Entity( $id, (String) $cnvId );
-    System.out.println( "I'm calling the LDAP Service here for " + $id +"..." );
+    RulesLoggerHelper.debug(logger, drools, "I'm calling the LDAP Service here for '{}'...", $id);
    
     Map<String, String> results = LDAPHelper.queryEntity( EndPointHelper.getEndPoint( "DSAIntegration" ),
                                                           $id );
@@ -144,7 +148,7 @@ then
         $ent.setDisplayName( (String) results.get( "displayNumber" ) );
         $ent.setGender( (String) results.get( "gender" ) );
 
-        System.out.println("Entity: (id="+$ent.getId()+"):"+$ent);
+        RulesLoggerHelper.debug(logger, drools, "Entity: (id='{}'): {}", $ent.getId(), $ent);
 
     $ent.setResolved( true );
     insertLogical( $ent );
@@ -160,11 +164,9 @@ when
     $pid : String() from ( (String[]) $subjectAbout )[0]
     $ent : Entity( id == $pid, messageId == $cnvId, resolved == true ) 
 then
-    System.out.println( "The patient ID IS  " + $pid );
+    RulesLoggerHelper.debug(logger, drools, "The patient ID IS: '{}'", $pid);
     Patient pat = don( $ent, Patient.class, true );
-
 end
-
 
 rule "Resolve Main Recipients"
 when
@@ -176,7 +178,7 @@ when
     $rid : String() from ( (String[]) $recipients )
     $ent : Entity( id == $rid, messageId == $cnvId, resolved == true ) 
 then
-    System.out.println( "The recipient ID IS  " + $rid );
+    RulesLoggerHelper.debug(logger, drools, "The recipient ID IS: '{}'", $rid);
     MainRecipient rec = don( $ent, MainRecipient.class, true );
 
 end
@@ -191,7 +193,7 @@ when
                        )
     $ent : Entity( id == $sender, messageId == $cnvId, resolved == true )
 then
-    System.out.println( "The provider ID IS  " + $sender );
+    RulesLoggerHelper.debug(logger, drools, "The provider ID IS: '{}'", $sender);
     Provider pro = don( $ent, Provider.class, true );
 
 end
@@ -233,38 +235,31 @@ end
 
 
 
-rule "Construct Alert Body"
+rule "Send Alert"
 when
     $action: Action( actionName == "deliverMessage",
                      $refId          : this["refId"],
                      $convoId        : this["conversationId"],
                      $about          : this["subjectAbout"],
-   			         $sender		   : this["sender"],
+                     $sender         : this["sender"],
                      $mainRec        : this["mainRecipients"],
                      $secRec         : this["secondaryRecipients"],
                      $hiddenRec      : this["hiddenRecipients"],
                      $type           : this["type"] == "ALERT",
-                     $header         : this["header"],
-                     $body           : this["body"],
+                     $header         : this["header"] != null,
+                     $body           : this["body"] != null,
                      $priority       : this["priority"],
                      $deliveryDate   : this["deliveryDate"],
                      $status         : this["status"]
                    )
-    $pat :   Patient( messageId == $convoId )
-    $pro :   Provider( messageId == $convoId )
     $rec :   Recipient( messageId == $convoId )
 then
-    System.out.println( ">>> Sending an ALERT Message" );
-    Map args = new HashMap();
-        args.put( "recipient", $rec );
-        args.put( "patient", $pat );
-        args.put( "provider", $pro );
+    RulesLoggerHelper.debug(logger, drools, ">>> Sending an ALERT Message");
 
-    String finalBody = TemplateBuilder.applyTemplate( (String) $body, args ).replace( "\n", "" );
     DeliverMessageHelper.sendAlert( EndPointHelper.getEndPoint( "DSAIntegration" ),
                                     (String) $convoId,
                                     (String) $header,
-                                    finalBody,
+                                    (String) $body,
                                     (String) $sender,
                                     $rec.getId(),
                                     (String[])$about );
@@ -272,7 +267,7 @@ end
 
 
 
-rule "Construct Update Body"
+rule "Send Update Alert"
 when
     $action: Action( actionName == "deliverMessage",
                      $refId          : this["refId"],
@@ -283,10 +278,11 @@ when
                      $about          : this["subjectAbout"],
                      $deliveryDate   : this["deliveryDate"],
                      $status         : this["status"],
-                     $header         : this["header"]
+                     $header         : this["header"] != null
                    )
     $rec :   Recipient( messageId == $convoId )
 then
+    RulesLoggerHelper.debug(logger, drools, ">>> Sending an ALERT Message 2");
     DeliverMessageHelper.sendAlert( EndPointHelper.getEndPoint( "DSAIntegration" ),
    	                                (String)  $convoId,
    	                                (String)  $header,
@@ -310,8 +306,8 @@ when
                      $secRec         : this["secondaryRecipients"],
                      $hiddenRec      : this["hiddenRecipients"],
                      $type           : this["type"],
-                     $header         : this["header"],
-                     $body           : this["body"],
+                     $header         : this["header"] != null,
+                     $body           : this["body"] != null,
                      $priority       : this["priority"],
                      $deliveryDate   : this["deliveryDate"],
                      $status         : this["status"],

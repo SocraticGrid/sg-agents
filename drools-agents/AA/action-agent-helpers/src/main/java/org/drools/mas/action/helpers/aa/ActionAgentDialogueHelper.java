@@ -15,38 +15,62 @@ import org.drools.mas.util.EndPointHelper;
 
 /**
  * Specialized DialogueHelper to deal with Action-Agent
+ *
  * @author esteban
  */
 public class ActionAgentDialogueHelper {
+
     /**
-     * This value can be used in META-INF/service.endpoint.properties 
-     * in order to use a mocked action-agent
+     * This value can be used in META-INF/service.endpoint.properties in order
+     * to use a mocked action-agent
      */
-    public final static String MOCK_ENDPOINT = "MOCK"; 
-    public final static String AA_ENDPOINT_KEY = "AAEndpoint"; 
-    
-    public final static String SENDER_NAME = "ActionAgentDialogueHelper"; 
-    public final static String RECEIVER_NAME = "Action-Agent"; 
-    
-    
+    public final static String MOCK_ENDPOINT = "MOCK";
+    public final static String AA_ENDPOINT_KEY = "AAEndpoint";
+    public final static String SENDER_NAME = "ActionAgentDialogueHelper";
+    public final static String RECEIVER_NAME = "Action-Agent";
     private DialogueHelperWrapper dialogueHelperWrapper;
-    
     private List<ActionAgentDialogueHelperListener> listeners = Collections.synchronizedList(new ArrayList<ActionAgentDialogueHelperListener>());
+
+    /**
+     * Creates an instance of ActionAgentDialogueHelper pointing to the provided
+     * endpoint. ActionAgentDialogueHelper.MOCK_ENDPOINT can be used as parameter
+     * ins order to use a mocked endpoint.
+     * @param aaEndPoint 
+     */
+    public ActionAgentDialogueHelper(String aaEndPoint) {
+        this.configureDialogueHelperWrapper(aaEndPoint);
+    }
     
+    /**
+     * Creates an instance of ActionAgentDialogueHelper taking the configuration
+     * from /META-INF/service.endpoint.properties
+     */
     public ActionAgentDialogueHelper() {
         String aaEndPoint = EndPointHelper.getEndPoint(AA_ENDPOINT_KEY);
-        
-        if (aaEndPoint == null || aaEndPoint.equals(MOCK_ENDPOINT)){
+        this.configureDialogueHelperWrapper(aaEndPoint);
+    }
+    
+    private final void configureDialogueHelperWrapper(String endpoint){
+        if (endpoint == null || endpoint.equals(MOCK_ENDPOINT)) {
             dialogueHelperWrapper = new InnocuousDialogueHelperWrapper();
-        } else{
-            dialogueHelperWrapper = new DialogueHelperWrapperImpl(aaEndPoint);
+        } else {
+            dialogueHelperWrapper = new DialogueHelperWrapperImpl(endpoint);
         }
     }
 
-    public void invokeActionAgent(CommunicationHandlerConfiguration data){
+    public void invokeActionAgent(List<String> receivers, List<String> channels, List<String> templates, List<String> timeouts) {
+        CommunicationHandlerConfiguration configuration = new CommunicationHandlerConfiguration();
+        configuration.setReceivers(receivers);
+        configuration.setChannels(channels);
+        configuration.setTemplates(templates);
+        configuration.setTimeouts(timeouts);
         
-        this.dialogueHelperWrapper.invokeInform(SENDER_NAME, RECEIVER_NAME, data, new DialogueHelperCallbackImpl(){
+        this.invokeActionAgent(configuration);
+    }
 
+    public void invokeActionAgent(CommunicationHandlerConfiguration data) {
+
+        this.dialogueHelperWrapper.invokeInform(SENDER_NAME, RECEIVER_NAME, data, new DialogueHelperCallbackImpl() {
             @Override
             public void onSuccess(List<ACLMessage> messages) {
                 for (ActionAgentDialogueHelperListener listener : listeners) {
@@ -65,9 +89,8 @@ public class ActionAgentDialogueHelper {
             public int getExpectedResponsesNumber() {
                 return 0;
             }
-            
         });
-        
+
     }
 
     public boolean addListener(ActionAgentDialogueHelperListener e) {
@@ -77,8 +100,4 @@ public class ActionAgentDialogueHelper {
     public boolean removeListener(ActionAgentDialogueHelperListener o) {
         return listeners.remove(o);
     }
-    
-    
-    
-    
 }
