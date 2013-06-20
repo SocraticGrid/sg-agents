@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 
 global Logger logger;
+global TemplateManager templateManager;
 
 rule "Process Action Content"
 when
@@ -27,7 +28,7 @@ when
                                             $variables: variables)
 then
     //get template data
-    TemplateEntry template = TemplateManager.getInstance().getTemplate((String)$templateId);
+    TemplateEntry template = templateManager.getTemplate((String)$templateId);
     String body = template.getBody();
     String header = template.getHeader();
 
@@ -37,7 +38,8 @@ then
     //replace body template
     String finalBody = TemplateBuilder.applyTemplate( (String) body, (Map<String,Object>) $variables ).replace( "\n", "" );
 
-    
+    RulesLoggerHelper.info(logger, drools, "Template '{}' processed. Final Result:\n{}\n{}", $templateId, finalHeader, finalBody );
+
     //prepare 'body' and 'header' entries for Action 
     MyMapArgsEntryType headerEntry = new MyMapArgsEntryType();
     headerEntry.setKey("header");

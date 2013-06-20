@@ -33,7 +33,9 @@ package org.drools.mas.action.communication;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -44,6 +46,7 @@ public class CommunicationHandlerConfiguration implements Serializable {
     private List<String> channels = new ArrayList<String>();
     private List<String> templates = new ArrayList<String>();
     private List<String> timeouts = new ArrayList<String>();
+    private Map<String, Object> templateVariables = new HashMap<String, Object>();
 
     public List<String> getChannels() {
         return channels;
@@ -76,5 +79,15 @@ public class CommunicationHandlerConfiguration implements Serializable {
     public void setTimeouts(List<String> timeouts) {
         this.timeouts = timeouts;
     }
+
+    public Map<String, Object> getTemplateVariables() {
+        return templateVariables;
+    }
+
+    public void setTemplateVariables(Map<String, Object> templateVariables) {
+        this.templateVariables = templateVariables;
+    }
+    
+    
     
 }

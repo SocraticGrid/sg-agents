@@ -316,6 +316,11 @@
                 <artifactId>spring-web</artifactId>
                 <version>${springframework.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
             
             <!-- Apache dependencies -->
             <dependency>

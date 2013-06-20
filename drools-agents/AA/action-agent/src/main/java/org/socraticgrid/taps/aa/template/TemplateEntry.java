@@ -4,11 +4,13 @@
  */
 package org.socraticgrid.taps.aa.template;
 
+import java.io.Serializable;
+
 /**
  *
  * @author esteban
  */
-public class TemplateEntry {
+public class TemplateEntry implements Serializable{
 
     private final String id;
     private final String header;

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <template id="test-template-1">
+        <header>
+            <![CDATA[
+            @{greetingMessage}
+            ]]>
+        </header>
+        <body>
+            <![CDATA[
+            @{person},<br> It is recommended that invasive breast cancer patients be offered Breast MRI if there is<br>a) discrepancy regarding the extent of disease from clinical examination, mammography or ultrasound assessment, b) if breast density precludes accurate mammographic assessment, or c) to assess tumour size if breast conserving surgery is being considered for invasive lobular cancer.
+            ]]>
+        </body>
+    </template>
+</templates>

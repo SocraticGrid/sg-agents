@@ -54,47 +54,51 @@
  */
 package org.drools.mas;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import org.drools.mas.action.communication.CommunicationHandlerConfiguration;
 import org.drools.mas.action.helpers.aa.ActionAgentDialogueHelper;
 
 import org.drools.mas.body.acts.Inform;
 import org.drools.mas.body.content.Action;
 import org.drools.mas.core.DroolsAgent;
-import org.drools.mas.helpers.DialogueHelper;
 import org.drools.mas.util.ACLMessageFactory;
 import org.drools.mas.util.MessageContentFactory;
 import org.h2.tools.DeleteDbFiles;
 import org.h2.tools.Server;
 import org.junit.*;
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author salaboy
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath*:META-INF/test-templateManagerContext.xml", "classpath*:META-INF/applicationContext.xml"})
 public class InteractionTest {
 
     private static Logger logger = LoggerFactory.getLogger(InteractionTest.class);
-    private Server server;
+    private static Server server;
     private static String agentName;
     private static String agentEndpoint;
     private static String agentPort;
     private static String agentUrl;
 
+    @Autowired
+    private DroolsAgent agent;
+    
     public InteractionTest() {
     }
 
@@ -107,35 +111,36 @@ public class InteractionTest {
         agentEndpoint = p.getProperty("agent.endpoint.ip");
         agentPort = p.getProperty("agent.endpoint.port");
         agentUrl = p.getProperty("agent.endpoint.url");
-    }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
 
-    @Before
-    public void setUp() {
         DeleteDbFiles.execute("~", "mydb", false);
 
         logger.info("Staring DB for white pages ...");
         try {
-            server = Server.createTcpServer(null).start();
+            server = Server.createTcpServer().start();
         } catch (SQLException ex) {
             logger.error(ex.getMessage());
         }
         logger.info("DB for white pages started! ");
     }
 
-    @After
-    public void tearDown() throws InterruptedException {
-
+    @AfterClass
+    public static void tearDownClass() throws Exception {
         logger.info("Stopping DB ...");
         server.stop();
         logger.info("DB Stopped!");
     }
 
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() throws InterruptedException {
+    }
+
     private List<ACLMessage> waitForResponse(DroolsAgent agent, String id, int numAns) {
-        List<ACLMessage> responses = new ArrayList<ACLMessage>(numAns);
+        List<ACLMessage> responses = new ArrayList<>(numAns);
         do {
             try {
                 System.out.println("Waiting for messages, now : " + responses.size());
@@ -143,7 +148,7 @@ public class InteractionTest {
                 responses.addAll(agent.getAgentAnswers(id));
             } catch (InterruptedException e) {
                 fail(e.getMessage());
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                logger.error("Error waiting for responses", e);
             }
         } while (responses.size() < numAns);
         return responses;
@@ -152,8 +157,6 @@ public class InteractionTest {
     @Test
     public void testCommunicationHandlerConfiguration() throws Exception {
         
-        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/applicationContext.xml");
-        DroolsAgent agent = (DroolsAgent) context.getBean("agent");
         assertNotNull(agent);
         
         ActionAgentDialogueHelper helper = new ActionAgentDialogueHelper(agentUrl);
@@ -162,13 +165,16 @@ public class InteractionTest {
         List<String> channels = new ArrayList<>();
         List<String> templates = new ArrayList<>();
         List<String> timeouts = new ArrayList<>();
+        Map<String,Object> templateVariables = new HashMap<>();
 
         receivers.add("1");
         channels.add("ALERT");
-        templates.add("template1");
+        templates.add("test-template-1");
         timeouts.add("10s");
+        templateVariables.put("greetingMessage", "Hi There!");
+        templateVariables.put("person", "Mr. Patient");
 
-        helper.invokeActionAgent(receivers, channels, templates, timeouts);
+        helper.invokeActionAgent(receivers, channels, templates, timeouts, templateVariables);
         
         Thread.sleep(15000);
         
@@ -177,11 +183,9 @@ public class InteractionTest {
     @Test
     public void testdirectRequestToDeliverMessage() throws InterruptedException {
 
-        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/applicationContext.xml");
-        DroolsAgent agent = (DroolsAgent) context.getBean("agent");
         assertNotNull(agent);
 
-        LinkedHashMap<String, Object> args = new LinkedHashMap<String, Object>();
+        LinkedHashMap<String, Object> args = new LinkedHashMap<>();
         args.put("refId", "284d7e8d-6853-46cb-bef2-3c71e565f90d");
         args.put("conversationId", "502ed27e-682d-43b3-ac2a-8bba3b597d13");
         args.put("subjectAbout", new String[]{"patient1", "docx", "id1", "id2", "id3"});
@@ -242,47 +246,4 @@ public class InteractionTest {
         agent.dispose();
     }
 
-    @Test
-    public void testCommunicationHandlerConfigurationInsertion() throws InterruptedException {
-
-        String configString = "[{\"receiver\": \"actor1\", \"channel\": \"ALERT\", \"template\": \"template1\", \"timeout\": \"0s\"}, {\"receiver\": \"actor2\", \"channel\": \"ALERT\", \"template\": \"template2\", \"timeout\": \"120s\"}]";
-
-        CommunicationHandlerConfiguration configuration = new CommunicationHandlerConfiguration();
-        List<String> receivers = new ArrayList<String>();
-        List<String> channels = new ArrayList<String>();
-        List<String> templates = new ArrayList<String>();
-        List<String> timeouts = new ArrayList<String>();
-
-        //parse the string
-        JsonParser parser = new JsonParser();
-        JsonElement parsedContent = parser.parse(configString);
-
-        JsonArray array = parsedContent.getAsJsonArray();
-        Iterator<JsonElement> iterator = array.iterator();
-        while (iterator.hasNext()) {
-            JsonObject jsonObject = (JsonObject) iterator.next();
-            receivers.add(jsonObject.get("receiver").getAsString());
-            channels.add(jsonObject.get("channel").getAsString());
-            templates.add(jsonObject.get("template").getAsString());
-            timeouts.add(jsonObject.get("timeout").getAsString());
-        }
-
-        configuration.setReceivers(receivers);
-        configuration.setChannels(channels);
-        configuration.setTemplates(templates);
-        configuration.setTimeouts(timeouts);
-
-        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/applicationContext.xml");
-        DroolsAgent agent = (DroolsAgent) context.getBean("agent");
-
-        assertNotNull(agent);
-
-        String url = "http://${agent.endpoint.ip}:${agent.endpoint.port}/${agent.name}/services/AsyncAgentService?wsdl";
-        DialogueHelper helper = new DialogueHelper(url);
-
-        helper.invokeInform("me", "you", configuration, null);
-
-        Thread.sleep(3000);
-
-    }
 }

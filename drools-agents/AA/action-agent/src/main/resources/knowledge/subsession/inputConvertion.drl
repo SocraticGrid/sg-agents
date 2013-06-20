@@ -18,11 +18,12 @@ rule "InteractionTicket Convertion"
 when
     $chc: CommunicationHandlerConfiguration()
 then
+    RulesLoggerHelper.debug(logger, drools, "CommunicationHandlerConfiguration found: {}", $chc);
+
     InteractionTicket ticket = new InteractionTicket( java.util.UUID.randomUUID().toString(),
                                                       new java.util.ArrayList(),
-                                                      "" );
+                                                      $chc );
     
-
     Interaction ti1 = new Interaction();
     ti1.setType( InteractionTypes.NOTIFICATION );
     ti1.setBodyTemplateIds($chc.getTemplates());
@@ -33,6 +34,8 @@ then
 
     ticket.getInteractions().add( ti1 );
 
+    RulesLoggerHelper.debug(logger, drools, "new InteractionTicket created: {}", ticket);
+    
     insert(ticket);
 
     retract($chc);
@@ -76,7 +79,7 @@ then
     map.put("status", "New" );                       
     map.put("templateId", templateId );                       
 
-    //Header and Body are set in "Create ActionContentTemplateContext for Action" rule
+    //Header and Body are set in "Create ActionContentTemplateContext for deliverMessage Action" rule
     //map.put("header", header );
     //map.put("body", body );
     
@@ -93,9 +96,12 @@ when
     $action: Action(
         actionName == "deliverMessage",
         $convoId        : this["conversationId"],
+        $ticketId       : this["refId"],
         this["body"]    == null,
         this["header"]  == null
     )
+    $ticket : InteractionTicket( id == $ticketId,
+                                 $source : source  )
     $pat :   Patient( messageId == $convoId )
     $pro :   Provider( messageId == $convoId )
     $rec :   Recipient( messageId == $convoId )
@@ -105,6 +111,12 @@ then
     args.put( "recipient", $rec );
     args.put( "patient", $pat );
     args.put( "provider", $pro );
+
+    //Add the original template variables that came with the 
+    //CommunicationHandlerConfiguration request
+    if ($source != null && $source instanceof CommunicationHandlerConfiguration){
+        args.putAll(((CommunicationHandlerConfiguration)$source).getTemplateVariables());
+    }
 
     insert(new ActionContentTemplateContext($action, args));
 end

@@ -6,12 +6,16 @@ package org.drools.mas.action.helpers.aa;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.drools.mas.ACLMessage;
 import org.drools.mas.action.communication.CommunicationHandlerConfiguration;
 import org.drools.mas.action.helpers.aa.listener.ActionAgentDialogueHelperListener;
 import org.drools.mas.helpers.DialogueHelperCallbackImpl;
 import org.drools.mas.util.EndPointHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Specialized DialogueHelper to deal with Action-Agent
@@ -20,6 +24,8 @@ import org.drools.mas.util.EndPointHelper;
  */
 public class ActionAgentDialogueHelper {
 
+    private static Logger logger = LoggerFactory.getLogger(ActionAgentDialogueHelper.class);
+    
     /**
      * This value can be used in META-INF/service.endpoint.properties in order
      * to use a mocked action-agent
@@ -50,8 +56,9 @@ public class ActionAgentDialogueHelper {
         this.configureDialogueHelperWrapper(aaEndPoint);
     }
     
-    private final void configureDialogueHelperWrapper(String endpoint){
+    private void configureDialogueHelperWrapper(String endpoint){
         if (endpoint == null || endpoint.equals(MOCK_ENDPOINT)) {
+            logger.debug("No Agent endpoint provided, using MOCKED endpoint!");
             dialogueHelperWrapper = new InnocuousDialogueHelperWrapper();
         } else {
             dialogueHelperWrapper = new DialogueHelperWrapperImpl(endpoint);
@@ -59,11 +66,16 @@ public class ActionAgentDialogueHelper {
     }
 
     public void invokeActionAgent(List<String> receivers, List<String> channels, List<String> templates, List<String> timeouts) {
+        this.invokeActionAgent(receivers, channels, templates, timeouts, new HashMap<String, Object>());
+    }
+    
+    public void invokeActionAgent(List<String> receivers, List<String> channels, List<String> templates, List<String> timeouts, Map<String, Object> templateVariables) {
         CommunicationHandlerConfiguration configuration = new CommunicationHandlerConfiguration();
         configuration.setReceivers(receivers);
         configuration.setChannels(channels);
         configuration.setTemplates(templates);
         configuration.setTimeouts(timeouts);
+        configuration.setTemplateVariables(templateVariables);
         
         this.invokeActionAgent(configuration);
     }

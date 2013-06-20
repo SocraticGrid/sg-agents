@@ -5,18 +5,32 @@
 package org.socraticgrid.taps.aa.template;
 
 import org.junit.Assert;
+import static org.junit.Assert.assertNotNull;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author esteban
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations={"classpath*:META-INF/templateManagerContext.xml"})
 public class TemplateManagerTest {
+    
+    @Autowired
+    private TemplateManager templateManager;
+    
+    @Before
+    public void getContext(){
+        assertNotNull(templateManager);
+    }
     
     @Test
     public void basicTest(){
-        
-        TemplateManager templateManager = TemplateManager.getInstance();
         
         TemplateEntry template = templateManager.getTemplate("template1");
         Assert.assertNotNull(template);
@@ -25,8 +39,6 @@ public class TemplateManagerTest {
     
     @Test
     public void testNonExistingTemplate(){
-        
-        TemplateManager templateManager = TemplateManager.getInstance();
         
         try{
             TemplateEntry template = templateManager.getTemplate("templateXXX");
