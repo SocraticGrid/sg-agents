@@ -87,7 +87,7 @@
     </pluginRepositories-->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <wsdlURL>http://192.168.1.90:9763/PresentationServices/DSAIntegration</wsdlURL>
+        <wsdlURL>http://10.255.167.124:8080/DSAServiceWeb/DSAIntegration</wsdlURL>
     </properties>
 
     <dependencies>

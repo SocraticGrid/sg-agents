@@ -49,7 +49,7 @@
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
                 
-                <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
+                <dsa.endpoint>http://devtools04:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
                 
                 <aa.endpoint>MOCK</aa.endpoint>
             </properties>
@@ -58,7 +58,7 @@
             <id>local</id>
             <properties>
                 <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.connectionURL>jdbc:mysql://localhost:3306/drools-grid</db.connectionURL>
+                <db.connectionURL>jdbc:mysql://localhost:3306/drools-grid-aa</db.connectionURL>
                 <db.username>root</db.username>
                 <db.password>root</db.password>
                 <db.dialect>org.hibernate.dialect.MySQL5Dialect</db.dialect>
@@ -66,10 +66,34 @@
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
                 <agent.port>8000</agent.port>
-                <agent.endpoint.ip>192.168.5.46</agent.endpoint.ip>
+                <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
                 
-                <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
+                <dsa.endpoint>http://devtools04:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>devtools02</id>
+            <properties>
+                <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
+                <db.connectionURL>jdbc:mysql://devtools02:3306/drools-grid-aa</db.connectionURL>
+                <db.username>sguser</db.username>
+                <db.password>sgpass</db.password>
+                <db.dialect>org.hibernate.dialect.MySQL5Dialect</db.dialect>
+                
+                <agent.name>action-agent</agent.name>
+                <agent.node>action-agent-localnode</agent.node>
+                <agent.port>8001</agent.port>
+                <agent.endpoint.ip>devtools02</agent.endpoint.ip>
+                <agent.endpoint.port>8081</agent.endpoint.port>
+                
+                <dsa.endpoint>http://devtools04:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
             </properties>
             <dependencies>
                 <dependency>
