@@ -37,15 +37,8 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <db.driverClass>org.h2.Driver</db.driverClass>
-                <db.connectionURL>jdbc:h2:tcp://localhost/~/mydb</db.connectionURL>
-                <db.username>sa</db.username>
-                <db.password>sasa</db.password>
-                <db.dialect>org.hibernate.dialect.H2Dialect</db.dialect>
-                
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
-                <agent.port>8000</agent.port>
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
                 
@@ -57,15 +50,8 @@
         <profile>
             <id>local</id>
             <properties>
-                <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.connectionURL>jdbc:mysql://localhost:3306/drools-grid</db.connectionURL>
-                <db.username>root</db.username>
-                <db.password>root</db.password>
-                <db.dialect>org.hibernate.dialect.MySQL5Dialect</db.dialect>
-                
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
-                <agent.port>8000</agent.port>
                 <agent.endpoint.ip>192.168.5.46</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
                 
@@ -204,42 +190,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.2</version>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-                        <id>delefe-files</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.h2.tools.DeleteDbFiles</mainClass>
-                            <commandlineArgs>
-                                -dir ~
-                            </commandlineArgs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>start-db</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.h2.tools.Server</mainClass>
-                            <arguments>
-                                <argument>-tcp</argument>
-                                <argument>-tcpAllowOthers</argument>
-                                <argument>-tcpDaemon</argument>
-                                <argument>-trace</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>

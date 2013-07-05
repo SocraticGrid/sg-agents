@@ -254,9 +254,10 @@ when
                    )
     $rec :   Recipient( messageId == $convoId )
 then
-    RulesLoggerHelper.debug(logger, drools, ">>> Sending an ALERT Message");
+    String endpoint = EndPointHelper.getEndPoint( "DSAIntegration" );
+    RulesLoggerHelper.debug(logger, drools, ">>> Sending an ALERT Message using endpoint '{}' to receiver '{}'", endpoint, $rec);
 
-    DeliverMessageHelper.sendAlert( EndPointHelper.getEndPoint( "DSAIntegration" ),
+    DeliverMessageHelper.sendAlert( endpoint,
                                     (String) $convoId,
                                     (String) $header,
                                     (String) $body,

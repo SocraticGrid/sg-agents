@@ -54,7 +54,6 @@
  */
 package org.drools.mas;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -68,16 +67,12 @@ import org.drools.mas.body.content.Action;
 import org.drools.mas.core.DroolsAgent;
 import org.drools.mas.util.ACLMessageFactory;
 import org.drools.mas.util.MessageContentFactory;
-import org.h2.tools.DeleteDbFiles;
-import org.h2.tools.Server;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -90,7 +85,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class InteractionTest {
 
     private static Logger logger = LoggerFactory.getLogger(InteractionTest.class);
-    private static Server server;
     private static String agentName;
     private static String agentEndpoint;
     private static String agentPort;
@@ -111,24 +105,10 @@ public class InteractionTest {
         agentEndpoint = p.getProperty("agent.endpoint.ip");
         agentPort = p.getProperty("agent.endpoint.port");
         agentUrl = p.getProperty("agent.endpoint.url");
-
-
-        DeleteDbFiles.execute("~", "mydb", false);
-
-        logger.info("Staring DB for white pages ...");
-        try {
-            server = Server.createTcpServer().start();
-        } catch (SQLException ex) {
-            logger.error(ex.getMessage());
-        }
-        logger.info("DB for white pages started! ");
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        logger.info("Stopping DB ...");
-        server.stop();
-        logger.info("DB Stopped!");
     }
 
     @Before
