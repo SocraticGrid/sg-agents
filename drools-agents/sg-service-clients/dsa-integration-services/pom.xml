@@ -38,7 +38,11 @@
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>${project.basedir}/src/main/resources/DSAIntegration.wsdl</wsdl>
-                                    <wsdlLocation>classpath:META-INF/wsdl/DSAIntegration.wsdl</wsdlLocation>
+                                    <!--<wsdlLocation>classpath:META-INF/wsdl/DSAIntegration.wsdl</wsdlLocation>-->
+                                    <extraargs> 
+                                        <extraarg>-catalog</extraarg> 
+                                        <extraarg>${basedir}/src/jax-ws-catalog.xml</extraarg> 
+                                    </extraargs>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
@@ -54,14 +58,14 @@
                         <version>1.4</version>
                     </dependency>
                 </dependencies>
-                <configuration>
+                <!--configuration>
                     <sei/>
                     <sourceDestDir>${project.build.directory}/generated-sources/jaxws-wsimport</sourceDestDir>
                     <xnocompile>true</xnocompile>
                     <verbose>true</verbose>
                     <extension>true</extension>
                     <catalog>${basedir}/src/jax-ws-catalog.xml</catalog>
-                </configuration>
+                </configuration-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

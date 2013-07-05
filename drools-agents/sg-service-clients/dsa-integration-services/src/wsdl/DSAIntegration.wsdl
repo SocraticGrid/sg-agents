@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Display Data Aggregator WSDL
+  WSDL using during compilation time
 -->
 <definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
    xmlns="http://schemas.xmlsoap.org/wsdl/"
@@ -73,7 +73,7 @@
     <service name="DSAIntegration">
         <port name="DSAIntegrationPortSoap11"
           binding="tns:DSAIntegrationBindingSoap11">
-            <soap:address location="http://192.168.1.90:9763/PresentationServices/DSAIntegration" />
+            <soap:address location="http://locahost:8080/PresentationServices/DSAIntegration" />
         </port>
     </service>
 </definitions>
