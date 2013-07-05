@@ -64,9 +64,6 @@
     <logger name="org.drools.mas">
         <level value="ERROR"/>
     </logger>
-    <logger name="org.drools.grid">
-        <level value="ERROR"/>
-    </logger>
     <root>
         <priority value ="ERROR" />
         <appender-ref ref="console" />
