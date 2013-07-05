@@ -60,8 +60,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 /**
  *
  * @author salaboy
@@ -87,7 +87,7 @@ public class SimpleServiceTest {
     public void tearDown() {
     }
 
-    @Test
+    @Ignore(value = "Need to find a way to test this integration")
     public void hello() {
         RegistriesServicePortType service = new RegistriesService().getRegistriesServicePort();
         RegisterPersonRequestType params = new RegisterPersonRequestType();

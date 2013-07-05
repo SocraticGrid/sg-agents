@@ -71,8 +71,6 @@ public class DSAIntegrationTest {
 
     public static final String ENDPT_LOCAL =
             "http://localhost:8080/PresentationServices/DSAIntegration";
-    public static final String ENDPT_47 =
-            "http://192.168.1.90:9763/PresentationServices/DSAIntegration";
 
     public DSAIntegrationTest() {
     }
@@ -93,7 +91,7 @@ public class DSAIntegrationTest {
     public void tearDown() {
     }
 
-    @Test
+    @Ignore(value = "Need to find a way to test this integration")
     public void testGetDirectoryAttribute() {
         String uid = "1";
         List<String> names = Arrays.asList(new String[]{"mobile", "employeeNumber"});
@@ -111,7 +109,7 @@ public class DSAIntegrationTest {
 
     }
     
-     @Test
+    @Ignore(value = "Need to find a way to test this integration")
     public void testDeliverMsgCreate() {
         DSAIntegrationPortType port = getPort();
         DeliverMessageRequestType request = new DeliverMessageRequestType();
@@ -128,7 +126,7 @@ public class DSAIntegrationTest {
         System.out.println("DELIVER MESSAGE RESPONSE IS " + response.getStatus());
     }
 
-    @Test
+    @Ignore(value = "Need to find a way to test this integration")
     public void testDeliverMsgUpdate() {
         DSAIntegrationPortType port = getPort();
         DeliverMessageRequestType request = new DeliverMessageRequestType();
@@ -150,7 +148,7 @@ public class DSAIntegrationTest {
         DSAIntegration service = new DSAIntegration();
         DSAIntegrationPortType port = service.getDSAIntegrationPortSoap11();
         ((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                ENDPT_47);
+                ENDPT_LOCAL);
         return port;
     }
 }

@@ -87,7 +87,7 @@ public class DisplayDataAggregatorTest {
     public void tearDown() {
     }
 
-    @Test
+    @Ignore(value = "Need to find a way to test this integration")
     public void testGetDirectoryAttribute() {
         DisplayDataAggregatorPortType service = new DisplayDataAggregator().getDisplayDataAggregatorPortSoap();
         GetDirectoryAttributeRequestType request = new GetDirectoryAttributeRequestType();
@@ -106,7 +106,7 @@ public class DisplayDataAggregatorTest {
         assert (values.get(1).contains("21777989-09"));
     }
 
-    @Test
+    @Ignore(value = "Need to find a way to test this integration")
     public void testDeliverMessageAlert() {
         DisplayDataAggregatorPortType service = new DisplayDataAggregator().getDisplayDataAggregatorPortSoap();
 
