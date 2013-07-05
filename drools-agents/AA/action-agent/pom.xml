@@ -42,9 +42,7 @@
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
                 
-                <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
-                
-                <aa.endpoint>MOCK</aa.endpoint>
+                <dsa.endpoint>MOCK</dsa.endpoint>
             </properties>
         </profile>
         <profile>
