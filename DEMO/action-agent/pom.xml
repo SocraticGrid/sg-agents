@@ -37,73 +37,32 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <!--db.driverClass>org.h2.Driver</db.driverClass>
-                <db.connectionURL>jdbc:h2:tcp://localhost/~/mydb</db.connectionURL>
-                <db.username>sa</db.username>
-                <db.password>sasa</db.password>
-                <db.dialect>org.hibernate.dialect.H2Dialect</-->
-                <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.connectionURL>jdbc:mysql://localhost:3306/drools-grid</db.connectionURL>
-                <db.username>root</db.username>
-                <db.password>root</db.password>
-                <db.dialect>org.hibernate.dialect.MySQL5Dialect</db.dialect>
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
-                <agent.port>8000</agent.port>
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
                 <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.connectionURL>jdbc:mysql://192.168.1.90:3306/drools-grid</db.connectionURL>
-                <db.username>kmruser</db.username>
-                <db.password>kmrpass</db.password>
-                <db.dialect>org.hibernate.dialect.MySQL5Dialect</db.dialect>
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
-                <agent.port>8000</agent.port>
                 <agent.endpoint.ip>192.168.1.91</agent.endpoint.ip>
                 <agent.endpoint.port>8083</agent.endpoint.port>
                 <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
 	<profile>
             <id>prod90</id>
             <properties>
-                <db.driverClass>com.mysql.jdbc.Driver</db.driverClass>
-                <db.connectionURL>jdbc:mysql://192.168.1.90:3306/drools-grid</db.connectionURL>
-                <db.username>kmruser</db.username>
-                <db.password>kmrpass</db.password>
-                <db.dialect>org.hibernate.dialect.MySQL5Dialect</db.dialect>
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
-                <agent.port>8000</agent.port>
                 <agent.endpoint.ip>192.168.1.90</agent.endpoint.ip>
                 <agent.endpoint.port>8083</agent.endpoint.port>
                 <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
 
     </profiles>
@@ -121,12 +80,10 @@
         <dependency>
             <groupId>org.socraticgrid</groupId>
             <artifactId>WorkItemHandlers</artifactId>
-	    <version>1.0-SNAPSHOT</version>
         </dependency>
 	<dependency>
             <groupId>org.socraticgrid</groupId>
 	    <artifactId>fact-data-usecase1</artifactId>
-	    <version>1.0-SNAPSHOT</version>
 	    <exclusions>
 	     <exclusion>
 	      <artifactId>ejb3-persistence</artifactId>
@@ -231,53 +188,9 @@
                 <version>2.2</version>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-                        <id>delefe-files</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.h2.tools.DeleteDbFiles</mainClass>
-                            <commandlineArgs>
-                                -dir ~
-                            </commandlineArgs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>start-db</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.h2.tools.Server</mainClass>
-                            <arguments>
-                                <argument>-tcp</argument>
-                                <argument>-tcpAllowOthers</argument>
-                                <argument>-tcpDaemon</argument>
-                                <argument>-trace</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>7.6.0.RC2</version>
-                <!--executions>
-                    <execution>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions-->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

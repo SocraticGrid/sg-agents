@@ -301,7 +301,7 @@ end
 
 rule " response collector - deliverMessage"
 when
-    $s : SessionLocator($nodeId: nodeId, $sessionId: sessionId, mind == true)
+    $s : SessionLocator($sessionId: sessionId, mind == true)
     $action: Action( $msgId: msgId, actionName == "deliverMessage",
                      $refId          : this["refId"],
                      $cnvId          : this["conversationId"],
@@ -321,7 +321,7 @@ when
                     $body , $priority , $deliveryDate, $status , $return; )
 then
     retract( $action );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse( $sessionId, $msgId, $return, null, true );
 end
 
 
