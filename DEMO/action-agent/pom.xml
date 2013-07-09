@@ -79,7 +79,7 @@
         </dependency>
         <dependency>
             <groupId>org.socraticgrid</groupId>
-            <artifactId>WorkItemHandlers</artifactId>
+            <artifactId>sg-workItemHandlers</artifactId>
         </dependency>
 	<dependency>
             <groupId>org.socraticgrid</groupId>

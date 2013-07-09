@@ -35,7 +35,7 @@
             <!-- Internal dependencies -->
             <dependency>
                 <groupId>org.socraticgrid</groupId>
-                <artifactId>WorkItemHandlers</artifactId>
+                <artifactId>sg-workItemHandlers</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
