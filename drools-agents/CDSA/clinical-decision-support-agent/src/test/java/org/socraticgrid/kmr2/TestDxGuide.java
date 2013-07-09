@@ -56,43 +56,56 @@ package org.socraticgrid.kmr2;
 
 import org.drools.mas.core.DroolsAgent;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath*:META-INF/test-dxGuide-applicationContext.xml"})
 public class TestDxGuide extends BaseTest {
 
-    private static DroolsAgent mainAgent;
+    @Autowired
+    private DroolsAgent agent;
+    
     private static Logger logger = LoggerFactory.getLogger(TestDxGuide.class);
 
     @BeforeClass
-    public static void createAgents() {
-        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/test-dxGuide-applicationContext.xml");
-        mainAgent = (DroolsAgent) context.getBean("agent");
+    public static void setUp() {
     }
 
     @AfterClass
-    public static void destroyAgents() {
-        if (mainAgent != null) {
-            mainAgent.dispose();
-        }
+    public static void cleanUp() {
     }
 
     
     @Test
+    public void testAgent() throws InterruptedException {
+        Assert.assertNotNull(agent);
+    }
+    
+    @Test
+    public void testProbe() throws InterruptedException {
+        System.out.println(probe(agent, "123456"));
+    }
+    
+    
+    @Test
     public void testDifferentialSetSurvey() {
 
-        String dxProcessReturn = startDiagnosticGuideProcess(mainAgent, "docX", "123456", "Post Traumatic Stress Disorder");
+        String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "Post Traumatic Stress Disorder");
         String dxProcessId = getValue(dxProcessReturn, "//dxProcessId");
 
         assertNotNull(dxProcessId);
 
-        String statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        String statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
 
         System.err.println(statusXML);
@@ -104,42 +117,42 @@ public class TestDxGuide extends BaseTest {
         assertNotNull(testActionId);
 //        assertNotNull( testQuestId );
 
-        String stat1 = setDiagnosticActionStatus(mainAgent, "drX", "123456", dxProcessId, testActionQuestId, "Started");
+        String stat1 = setDiagnosticActionStatus(agent, "drX", "123456", dxProcessId, testActionQuestId, "Started");
         assertEquals("Started", stat1);
 
         String testQuestId = lookupInBody(statusXML, "DoExcruciatinglyPainfulTest");
 
-        String survXML = getSurvey(mainAgent, "drX", "123456", testQuestId);
+        String survXML = getSurvey(agent, "drX", "123456", testQuestId);
         String confirmQid = getValue(survXML, "//questionName[.='confirm']/../itemId");
 
 
         String set;
-        set = setSurvey(mainAgent, "drx", "123456", testQuestId, confirmQid, "invalidAnswerForBoolean");
+        set = setSurvey(agent, "drx", "123456", testQuestId, confirmQid, "invalidAnswerForBoolean");
         System.err.println(set);
         assertEquals("invalid", getValue(set, "//updatedQuestions//itemId[.='" + confirmQid + "']/../successType"));
 
 
-        set = setSurvey(mainAgent, "drx", "123456", testQuestId, confirmQid, "true");
+        set = setSurvey(agent, "drx", "123456", testQuestId, confirmQid, "true");
 
         System.err.println(set);
 
 
-        statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 //        assertEquals( "true", getValue( statusXML, "//" + testDecModel + ".DoExcruciatinglyPainfulTest/confirm" ) );
         assertEquals("Started", getValue(statusXML, "//" + testDecModel + ".DoExcruciatinglyPainfulTest/status"));
 
         sleep(2500);
 
-        set = setSurvey(mainAgent, "drx", "123456", testQuestId, confirmQid, "false");
+        set = setSurvey(agent, "drx", "123456", testQuestId, confirmQid, "false");
         System.out.println(set);
 
         // no longer holds since we don't have autocompleting forms
         //assertEquals( "disable", getValue( set, "//updatedQuestions//itemId[.='"+ confirmQid+"']/../action" ) );
 
 
-        completeDiagnosticGuideProcess(mainAgent, "docX", "123456", dxProcessId, "Complete");
+        completeDiagnosticGuideProcess(agent, "docX", "123456", dxProcessId, "Complete");
 
-        statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
     }
 
@@ -148,13 +161,13 @@ public class TestDxGuide extends BaseTest {
         System.out.println("STARtING testSetDiagnostic ");
 
 
-        String dxProcessReturn = startDiagnosticGuideProcess(mainAgent, "docX", "123456", "Post Traumatic Stress Disorder");
+        String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "Post Traumatic Stress Disorder");
         String dxProcessId = getValue(dxProcessReturn, "//dxProcessId");
         System.out.println("THE NEW DX PROCESS FOR testSetDiagnostic IS " + dxProcessId);
 
         assertNotNull(dxProcessId);
 
-        String statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        String statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
         String actionId = getValue(statusXML, "//" + testDecModel + ".AskAlcohol/actionId");
         String actionQuestId = getValue(statusXML, "//" + testDecModel + ".AskAlcohol/questionnaireId");
@@ -163,19 +176,19 @@ public class TestDxGuide extends BaseTest {
 
         System.err.println(statusXML);
 
-        String stat1 = setDiagnosticActionStatus(mainAgent, "drX", "123456", dxProcessId, actionQuestId, "Started");
+        String stat1 = setDiagnosticActionStatus(agent, "drX", "123456", dxProcessId, actionQuestId, "Started");
         
 
         assertEquals("Started", stat1);
 
 
-        String stat3 = setDiagnosticActionStatus(mainAgent, "drX", "123456", dxProcessId, actionQuestId, "Complete");
+        String stat3 = setDiagnosticActionStatus(agent, "drX", "123456", dxProcessId, actionQuestId, "Complete");
         assertEquals("Completed", stat3);
 
-        statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
         System.out.println(statusXML);
 
-        completeDiagnosticGuideProcess(mainAgent, "drX", "123456", dxProcessId, "Complete");
+        completeDiagnosticGuideProcess(agent, "drX", "123456", dxProcessId, "Complete");
 
     }
 
@@ -183,13 +196,13 @@ public class TestDxGuide extends BaseTest {
     public void testDiagnostic() {
         System.out.println("STARtING testDiagnostic ");
 
-        String dxProcessReturn = startDiagnosticGuideProcess(mainAgent, "docX", "123456", "Post Traumatic Stress Disorder");
+        String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "Post Traumatic Stress Disorder");
         String dxProcessId = getValue(dxProcessReturn, "//dxProcessId");
 
         assertNotNull(dxProcessId);
         System.out.println("THE NEW DX PROCESS FOR testDiagnostic IS " + dxProcessId);
 
-        String statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        String statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
         System.err.println(statusXML);
 
@@ -198,7 +211,7 @@ public class TestDxGuide extends BaseTest {
         String actionQuestId = getValue(statusXML, "//" + testDecModel + ".AskAlcohol/questionnaireId");
         assertNotNull(actionId);
 
-        String stat1 = setDiagnosticActionStatus(mainAgent, "drX", "123456", dxProcessId, actionQuestId, "Started");
+        String stat1 = setDiagnosticActionStatus(agent, "drX", "123456", dxProcessId, actionQuestId, "Started");
 
         assertEquals("Started", stat1);
 
@@ -206,36 +219,36 @@ public class TestDxGuide extends BaseTest {
 
         String actionBodyId = lookupInBody(statusXML, "AskAlcohol");
 
-        String survXML = getSurvey(mainAgent, "drX", "123456", actionBodyId);
+        String survXML = getSurvey(agent, "drX", "123456", actionBodyId);
         String alcoholQid = getValue(survXML, "//questionName[.='question']/../itemId");
 
         System.err.println(alcoholQid);
 
 
 
-        statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
         assertEquals("false", getValue(statusXML, "//canAdvance"));
 
 
 
-        setSurvey(mainAgent, "drX", "123456", actionBodyId, alcoholQid, "true");
+        setSurvey(agent, "drX", "123456", actionBodyId, alcoholQid, "true");
 
 
 
-        survXML = getSurvey(mainAgent, "drX", "123456", actionBodyId);
+        survXML = getSurvey(agent, "drX", "123456", actionBodyId);
 
 
         System.err.println(survXML);
 
 
 
-        String stat = setDiagnosticActionStatus(mainAgent, "drX", "123456", dxProcessId, actionQuestId, "Complete");
+        String stat = setDiagnosticActionStatus(agent, "drX", "123456", dxProcessId, actionQuestId, "Complete");
         assertEquals("Completed", stat);
 
 
 
 
-        statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
 
 
@@ -249,13 +262,13 @@ public class TestDxGuide extends BaseTest {
 
 
 
-        advanceDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId);
+        advanceDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId);
 
 
 
 
 
-        statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
 
 
@@ -263,9 +276,9 @@ public class TestDxGuide extends BaseTest {
         assertEquals("true", getValue(statusXML, "//canAdvance"));
 
 
-        completeDiagnosticGuideProcess(mainAgent, "rdrX", "123456", dxProcessId, "Complete");
+        completeDiagnosticGuideProcess(agent, "rdrX", "123456", dxProcessId, "Complete");
 
-        statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
 
         System.err.println(statusXML);
@@ -276,37 +289,32 @@ public class TestDxGuide extends BaseTest {
     }
 
     @Test
-    public void testProbe() throws InterruptedException {
-        System.out.println(probe(mainAgent, "123456"));
-    }
-
-    @Test
     public void testGetDiagnosticActionStatus() {
 
 
-        String dxProcessReturn = startDiagnosticGuideProcess(mainAgent, "docX", "123456", "Post Traumatic Stress Disorder");
+        String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "Post Traumatic Stress Disorder");
         String dxProcessId = getValue(dxProcessReturn, "//dxProcessId");
 
         assertNotNull(dxProcessId);
 
-        String statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        String statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
         String actionId = getValue(statusXML, "//" + testDecModel + ".AskAlcohol/actionId");
 
-        String actStatusXML = getDiagnosticActionStatus(mainAgent, "drX", "123456", dxProcessId, actionId);
+        String actStatusXML = getDiagnosticActionStatus(agent, "drX", "123456", dxProcessId, actionId);
 
         System.err.println(actStatusXML);
 
         assertEquals("true", getValue(statusXML, "//canAdvance"));
         assertEquals("true", getValue(statusXML, "//canCancel"));
 
-        advanceDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId);
+        advanceDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId);
 
-        String actStatusXML2 = getDiagnosticActionStatus(mainAgent, "drX", "123456", dxProcessId, actionId);
+        String actStatusXML2 = getDiagnosticActionStatus(agent, "drX", "123456", dxProcessId, actionId);
 
         System.err.println(actStatusXML);
 
-        statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
         System.out.println(statusXML);
 
 
@@ -319,11 +327,11 @@ public class TestDxGuide extends BaseTest {
     @Test
     public void testEmptyDiagnostic() {
 
-        String dxProcessReturn = startDiagnosticGuideProcess(mainAgent, "docX", "123456", "MockCold");
+        String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "MockCold");
         String dxProcessId = getValue(dxProcessReturn, "//dxProcessId");
         assertNotNull(dxProcessId);
 
-        String statusXML = getDiagnosticProcessStatus(mainAgent, "drX", "123456", dxProcessId, true);
+        String statusXML = getDiagnosticProcessStatus(agent, "drX", "123456", dxProcessId, true);
 
         System.err.println(statusXML);
 
@@ -332,7 +340,7 @@ public class TestDxGuide extends BaseTest {
     @Test
     public void testNonExistingDiagnostic() {
 
-        String dxProcessReturn = startDiagnosticGuideProcess(mainAgent, "docX", "123456", "Imaginary Disease");
+        String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "Imaginary Disease");
         assertTrue(dxProcessReturn.startsWith("FAILURE:"));
         System.err.println(dxProcessReturn);
 

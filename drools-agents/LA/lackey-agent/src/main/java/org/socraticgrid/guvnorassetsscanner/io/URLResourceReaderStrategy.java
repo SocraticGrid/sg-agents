@@ -65,7 +65,7 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
 import org.apache.commons.io.IOUtils;
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 
 /**
  *

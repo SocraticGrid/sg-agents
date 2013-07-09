@@ -70,7 +70,7 @@ import org.drools.informer.generator.annotations.AllowedAnswers;
 
 import org.drools.informer.interaction.TemplateBuilder;
 
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 
 import org.drools.informer.interaction.*;
 import org.drools.informer.generator.Surveyable;

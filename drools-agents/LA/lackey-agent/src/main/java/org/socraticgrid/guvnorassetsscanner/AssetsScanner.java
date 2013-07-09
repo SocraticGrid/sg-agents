@@ -56,8 +56,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.drools.grid.api.CompositeResourceDescriptor;
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.CompositeResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 
 /**
  *

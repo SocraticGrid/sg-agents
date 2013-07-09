@@ -59,7 +59,7 @@ import org.drools.pmml.pmml_4_1.ModelMarker;
 import org.drools.mas.util.MessageContentEncoder;
 import org.drools.mas.Encodings;
 
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 
 
 rule "Action_Request : setRiskThreshold"
@@ -126,7 +126,7 @@ end
 rule "Action_Request : setRiskThreshold Cleanup"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator( $sessionId: sessionId, mind == true )
     $a : Action( actionName == "setRiskThreshold", $msgId : msgId,
                      $userId    : this["userId"],
                      $patientId : this["patientId"],
@@ -138,7 +138,7 @@ when
 then
     retract($a);
     System.out.println( "Cleanup setRiskThreshold after executing action " + $return );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
 end
 
 

@@ -52,23 +52,10 @@
 
 package org.socraticgrid.kmr2;
 
-import org.drools.mas.ACLMessage;
-import org.drools.mas.Act;
-import org.drools.mas.Encodings;
-import org.drools.mas.body.acts.Failure;
-import org.drools.mas.body.acts.Inform;
 import org.drools.mas.core.DroolsAgent;
-import org.drools.mas.util.ACLMessageFactory;
-import org.drools.mas.util.MessageContentEncoder;
-import org.h2.tools.DeleteDbFiles;
-import org.h2.tools.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -78,112 +65,34 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.sql.SQLException;
 
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath*:META-INF/test-fact-applicationContext.xml"})
 public class TestAgentFactLoading {
 
-    private static DroolsAgent mainAgent;
-
-    private ACLMessageFactory factory = new ACLMessageFactory( Encodings.XML );
-
-    private static Logger logger = LoggerFactory.getLogger( TestAgentFactLoading.class );
-    private static Server server;
+    @Autowired
+    private DroolsAgent agent;
 
     private static PrintStream testout;
 
     @BeforeClass
-    public static void createAgents() {
-
-        DeleteDbFiles.execute("~", "mydb", false);
-
-        logger.info("Staring DB for white pages ...");
-        try {
-            server = Server.createTcpServer(new String[] {"-tcp","-tcpAllowOthers","-tcpDaemon","-trace"}).start();
-        } catch (SQLException ex) {
-            logger.error(ex.getMessage());
-        }
-        logger.info("DB for white pages started! ");
-
-        //GridHelper.reset();
-
+    public static void setUp() {
         testout = new EavesdroppingPrintStream( System.out );
         System.setOut( testout );
-
-
-        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/test-fact-applicationContext.xml");
-
-
-        mainAgent = (DroolsAgent) context.getBean( "agent" );
-
     }
 
 
     @AfterClass
     public static void cleanUp() {
-        if (mainAgent != null) {
-            mainAgent.dispose();
-        }
-
-        logger.info("Stopping DB ...");
-        try {
-            Server.shutdownTcpServer( server.getURL(), "", false, false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            fail ( e.getMessage() );
-        }
-        logger.info("DB Stopped!");
-
     }
-
-
-    private void sleep( long millis ) {
-        try {
-            Thread.sleep( millis );
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void waitForResponse( String id ) {
-        do {
-            try {
-                Thread.sleep( 1000 );
-                System.out.println( "Waiting for messages, now : " + mainAgent.peekAgentAnswers( id ).size() );
-            } catch (InterruptedException e) {
-                fail( e.getMessage() );
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-        } while ( mainAgent.peekAgentAnswers( id ).size() < 2);
-
-    }
-
-
-
-
-
-    private static class FailureException extends Exception {
-        private FailureException(String message) {
-            super( "FAILURE:" + message );
-        }
-    }
-
-    private String ret(ACLMessage ans) throws FailureException {
-
-        if ( ! ans.getPerformative().equals( Act.INFORM ) ) {
-            System.err.println( ans );
-        }
-
-        if ( ans.getPerformative().equals( Act.FAILURE ) ) {
-            throw new FailureException( ((Failure) ans.getBody()).getCause().getData().toString() );
-        }
-        assertEquals(Act.INFORM, ans.getPerformative());
-        MessageContentEncoder.decodeBody(ans.getBody(), Encodings.XML);
-        return (String) ((Inform) ans.getBody()).getProposition().getData();
-
-    }
-
 
     public String getValue(String xml, String xpath) {
         try {
@@ -198,16 +107,13 @@ public class TestAgentFactLoading {
         return null;
     }
 
-
-
-
-
-
+    @DirtiesContext
     @Test
     public void testAgentCreation() {
         // nothing, just see that the agent is loaded
-        assertNotNull(mainAgent);
+        assertNotNull(agent);
         assertEquals( 2, ((EavesdroppingPrintStream) testout).getCounter() );
+        agent.dispose();
     }
 
 

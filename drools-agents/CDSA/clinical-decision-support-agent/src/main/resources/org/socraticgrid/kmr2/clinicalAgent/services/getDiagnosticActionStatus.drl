@@ -80,7 +80,7 @@ end
 rule "Action_Request : getDiagnosticActionStatus"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator($sessionId: sessionId, mind == true )
     $a : Action( actionName == "getDiagnosticActionStatus", $msgId : msgId,
                  $userId      : this["userId"],
                  $patientId   : this["patientId"],
@@ -90,7 +90,7 @@ when
     getDiagnosticActionStatus( $userId, $patientId, $dxProcessId, $actionId, $return ; )
 then
     retract( $a );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
 end
 
 
@@ -98,7 +98,7 @@ end
 rule "Action_Request : getDiagnosticActionStatus failure"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator($sessionId: sessionId, mind == true )
     $a : Action( actionName == "getDiagnosticActionStatus", $msgId : msgId,
                  $userId      : this["userId"],
                  $patientId   : this["patientId"],
@@ -109,7 +109,7 @@ when
 then
     System.out.println( "Received getDXAS and fail" );
     retract( $a );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, null,
+    ResponseContent.deliverResponse($sessionId, $msgId, null,
                                      new ExecutionFault( $msgId, "Could not locate action " + $actionId ),
                                      true );
 end

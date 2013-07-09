@@ -65,8 +65,8 @@ import java.util.Date;
 import org.drools.mas.AgentID;
 import org.drools.mas.action.helpers.*;
 import org.drools.mas.util.helper.*;
-import org.drools.grid.api.ResourceDescriptor;
-import org.drools.grid.api.impl.ResourceDescriptorImpl;
+import org.drools.mas.util.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptorImpl;
 import org.drools.mas.util.MessageContentEncoder;
 import org.drools.mas.helpers.DialogueHelper;
 import org.socraticgrid.guvnorassetsscanner.ScannerTask;
@@ -78,8 +78,6 @@ import org.socraticgrid.lackey.fact.EndpointsConfiguration;
 
 import java.net.URL;
 
-
-global org.drools.grid.Grid grid;
 
 declare AgentNotified
     aid : String
@@ -113,7 +111,7 @@ end
 
 rule " inform collector - forceInform"
     when
-        $s : SessionLocator($nodeId: nodeId, $sessionId: sessionId, mind == true)
+        $s : SessionLocator($sessionId: sessionId, mind == true)
         $action: Action( $msgId: msgId, actionName == "forceInform",
                          $desc      : this["descriptor"],
                          $aid      : this["agentID"]
@@ -121,6 +119,6 @@ rule " inform collector - forceInform"
         forceInform( $aid, $desc, $return; )
     then
         System.out.println(" >>>>>>>>>>>>>>>>> agent notified "+$return);
-        ResponseContent.deliverResponse(grid, $nodeId, $sessionId, $msgId, $return, null);
+        ResponseContent.deliverResponse($sessionId, $msgId, $return, null);
         retract( $action );
 end

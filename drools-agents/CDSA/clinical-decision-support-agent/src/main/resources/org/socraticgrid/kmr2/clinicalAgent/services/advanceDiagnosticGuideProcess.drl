@@ -93,7 +93,7 @@ end
 rule "Action_Request : advanceDiagnosticGuideProcess - clean"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator($sessionId: sessionId, mind == true )
     $a : Action( actionName == "advanceDiagnosticGuideProcess", $msgId : msgId,
                  $userId      : this["userId"],
                  $patientId   : this["patientId "],
@@ -104,5 +104,5 @@ when
 then
     retract( $a );
     retract( $b );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse( $sessionId, $msgId, $return, null, true );
 end

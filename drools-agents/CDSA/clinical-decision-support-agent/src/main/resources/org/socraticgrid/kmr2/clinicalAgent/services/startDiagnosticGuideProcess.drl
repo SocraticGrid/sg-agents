@@ -56,7 +56,7 @@ import org.drools.mas.body.content.Action;
 import org.socraticgrid.kmr2.clinicalAgent.models.decision.*;
 
 import org.drools.informer.interaction.*;
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -182,13 +182,13 @@ when
     DiagnosticGuideProcess( status == "Started", $dxModel : diagModel )
 //    not   ModelMarker( modelName == $dxModel )
     $rs : ResourceDescriptor( name == $dxModel, $disease : description, loaded == false )
-    SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == false )
+    SessionLocator( $sessionId: sessionId, mind == false )
 then
     String defPack = PMML4Helper.getPack();
     PMML4Helper.setPack( "org.drools.pmml.pmml_4_1.diag.ptsd" );
 
     System.out.println(" LOADING DIAGNOSTIC " + $rs );
-    SessionManager.addResource( grid, $nodeId, $sessionId, $rs );
+    SessionManager.addResource($sessionId, $rs );
 //    PMML4Helper.setPack( defPack );
 end
 
@@ -197,10 +197,10 @@ when
     $dx : DiagnosticGuideProcess( status == "Started", $decModel : decModel )
 //    not   ModelMarker( modelName == $decModel )
     $rs : ResourceDescriptor( name == $decModel, $disease : description, loaded == false )
-    SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == false )
+    SessionLocator( $sessionId: sessionId, mind == false )
 then
     System.out.println(" LOADING DECISION ");
-    SessionManager.addResource( grid, $nodeId, $sessionId, $rs );
+    SessionManager.addResource( $sessionId, $rs );
 end
 
 
@@ -236,7 +236,7 @@ end
 rule "Action_Request : startDiagnosticGuideProcess Clean"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator( $sessionId: sessionId, mind == true )
     $a : Action( actionName == "startDiagnosticGuideProcess", $msgId : msgId,
                      $provId      : this["userId"],
                      $patientId   : this["patientId"],
@@ -248,7 +248,7 @@ when
 then
     System.out.println( "Returning from Dx Start Process " + $return  );
     retract( $a );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse( $sessionId, $msgId, $return, null, true );
 end
 
 
@@ -257,7 +257,7 @@ end
 rule "Action_Request : startDiagnosticGuideProcess Failure"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator( $sessionId: sessionId, mind == true )
     $a : Action( actionName == "startDiagnosticGuideProcess", $msgId : msgId,
                      $provId      : this["userId"],
                      $patientId   : this["patientId"],
@@ -266,7 +266,7 @@ when
     not  ResourceDescriptor( $decModelId  : name, description == $disease, categories contains "Decision" )
 then
     retract( $a );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, null,
+    ResponseContent.deliverResponse($sessionId, $msgId, null,
                                      new ExecutionFault( $msgId, "Unable to start a Dx Process, no decision model found" ),
                                      true );
 end

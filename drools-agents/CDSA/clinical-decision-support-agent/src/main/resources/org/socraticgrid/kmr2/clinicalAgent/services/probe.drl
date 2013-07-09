@@ -75,12 +75,12 @@ end
 
 rule "Action_Request : probe --- "
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator($sessionId: sessionId, mind == true )
     $a : Action( actionName == "probe", $msgId : msgId,
                  $patientId : this["patientId"] )
     ?probe( $patientId, $return ; )
 then
     retract($a);
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
 end
 

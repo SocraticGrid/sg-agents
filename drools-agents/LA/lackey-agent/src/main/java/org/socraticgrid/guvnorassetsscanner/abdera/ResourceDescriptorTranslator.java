@@ -62,10 +62,10 @@ import org.apache.abdera.model.AtomDate;
 import org.apache.abdera.model.Element;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.ExtensibleElement;
-import org.drools.grid.api.ResourceDescriptor;
-import org.drools.grid.api.impl.CompositeResourceDescriptorImpl;
-import org.drools.grid.api.impl.ResourceDescriptorImpl;
 import org.drools.builder.ResourceType;
+import org.drools.mas.util.CompositeResourceDescriptorImpl;
+import org.drools.mas.util.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptorImpl;
 /**
  *
  * @author esteban

@@ -102,7 +102,6 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
         <property name="defaultSubsessionChangeSet"  value="config/subsession_default.xml" />
 
         <property name="mindNodeLocation" value="${agent.node}"/>
-        <property name="port" value="${agent.port}"/>
         <property name="subSessions">
             <list>
                 <!--ref local="agent-test-session"/-->

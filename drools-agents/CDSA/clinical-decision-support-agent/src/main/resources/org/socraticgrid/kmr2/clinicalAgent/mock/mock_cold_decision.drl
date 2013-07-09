@@ -57,7 +57,7 @@ import org.drools.mas.*;
 
 
 
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 
 
 

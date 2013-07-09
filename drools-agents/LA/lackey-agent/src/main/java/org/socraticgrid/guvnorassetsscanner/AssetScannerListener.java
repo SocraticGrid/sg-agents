@@ -52,7 +52,7 @@
 package org.socraticgrid.guvnorassetsscanner;
 
 import java.util.List;
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 
 /**
  *

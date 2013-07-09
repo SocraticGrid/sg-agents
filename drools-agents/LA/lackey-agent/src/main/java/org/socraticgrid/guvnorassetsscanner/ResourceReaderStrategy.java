@@ -51,10 +51,9 @@
  ******************************************************************************/
 package org.socraticgrid.guvnorassetsscanner;
 
-import org.socraticgrid.guvnorassetsscanner.authenticator.GuvnorAuthenticatorProvider;
 import java.io.IOException;
 import java.util.List;
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 
 /**
  *

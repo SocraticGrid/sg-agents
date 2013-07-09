@@ -52,7 +52,7 @@
 
 package org.socraticgrid.kmr2.clinicalAgent.services;
 
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -166,7 +166,7 @@ end
 rule "Action_Request : getModels Clear"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator( $sessionId: sessionId, mind == true )
     $a : Action( actionName == "getModels", $msgId : msgId,
                       $userId    : this["userId"],
                       $types     : this["types"],
@@ -175,13 +175,13 @@ when
     getModels( $userId, $patientId, $types, $return ; )
 then
     retract( $a );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
 end
 
 rule "Action_Request : getRiskModels Clear"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator( $sessionId: sessionId, mind == true )
     $a : Action( actionName == "getRiskModels", $msgId : msgId,
                       $userId    : this["userId"],
                       $patientId : this["patientId"]
@@ -189,5 +189,5 @@ when
     getRiskModels( $userId, $patientId, $return ; )
 then
     retract( $a );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
 end

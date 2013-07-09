@@ -63,8 +63,8 @@ import java.util.List;
 import junit.framework.Assert;
 import org.antlr.stringtemplate.StringTemplate;
 import org.apache.commons.io.IOUtils;
-import org.drools.grid.api.CompositeResourceDescriptor;
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.CompositeResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 import org.junit.Ignore;
 import org.junit.Test;
 

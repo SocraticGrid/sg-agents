@@ -184,7 +184,7 @@ end
 
 rule "Action_Request : setDxActionStatus Return"
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator( $sessionId: sessionId, mind == true )
     $a  : Action( actionName == "setDiagnosticActionStatus", $msgId : msgId,
                   $userId       : this["userId"],
                   $patientId    : this["patientId"],
@@ -196,5 +196,5 @@ when
 then
     retract( $a );
     retract( $return );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse( $sessionId, $msgId, $return, null, true );
 end

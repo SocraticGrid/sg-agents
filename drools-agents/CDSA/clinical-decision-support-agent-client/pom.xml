@@ -43,49 +43,9 @@
         </resources>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                    <execution>
-
-                        <id>delefe-files</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.h2.tools.DeleteDbFiles</mainClass>
-                            <commandlineArgs>
-                                -dir ~
-                            </commandlineArgs>
-                        </configuration>
-                    </execution>
-                    <execution>
-
-                        <id>start-db</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>org.h2.tools.Server</mainClass>
-                            <arguments>
-                                <argument>-tcp</argument>
-                                <argument>-tcpAllowOthers</argument>
-                                <argument>-tcpDaemon</argument>
-                                <argument>-trace</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>7.6.0.RC2</version>
+                <version>7.5.3.v20111011</version>
                 <configuration>
                     <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
                         <port>8082</port>
@@ -122,9 +82,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
-                <version>1.10</version>
+                <version>2.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -162,50 +122,19 @@
 
         </plugins>
     </build>
-    <!--repositories>
-        <repository>
-            <url>http://download.java.net/maven/2</url>
-            <id>metro</id>
-            <layout>default</layout>
-            <name>Repository for library[metro]</name>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <name>java.net</name>
-            <id>java.net</id>
-            <url>http://download.java.net/maven/2/</url>
-        </pluginRepository>
-    </pluginRepositories-->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
-        <!-- Internal dependencies -->
+        
         <!-- Drools dependencies -->
-        <dependency>
-            <groupId>org.drools.mas</groupId>
-            <artifactId>drools-mas-util</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.drools.mas</groupId>
             <artifactId>drools-mas-generic-client</artifactId>
         </dependency>
-        
-        <!-- Logging dependencies -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        
-        <!-- Persistence dependencies -->
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.drools.mas</groupId>
+            <artifactId>drools-mas-util</artifactId>
         </dependency>
         
         <!-- Misc. dependencies -->
@@ -217,6 +146,16 @@
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>webservices-rt</artifactId>
             <scope>provided</scope>
+        </dependency>
+        
+        <!-- Logging dependencies -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
         </dependency>
         
         <!-- Test dependencies -->

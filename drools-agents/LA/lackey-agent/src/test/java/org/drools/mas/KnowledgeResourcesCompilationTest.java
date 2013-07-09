@@ -63,7 +63,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import org.drools.grid.api.impl.ResourceDescriptorImpl;
 import org.drools.mas.body.content.Action;
 import org.drools.mas.core.DroolsAgent;
 import org.drools.mas.util.ACLMessageFactory;
@@ -80,6 +79,7 @@ import org.drools.builder.ResourceType;
 import org.drools.mas.body.acts.Failure;
 import org.drools.mas.body.acts.Inform;
 import org.drools.mas.util.MessageContentEncoder;
+import org.drools.mas.util.ResourceDescriptorImpl;
 import org.socraticgrid.lackey.fact.EndpointsConfiguration;
 import org.w3c.dom.Document;
 

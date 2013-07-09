@@ -52,7 +52,6 @@
 
 package org.socraticgrid.kmr2;
 
-import org.drools.grid.helper.GridHelper;
 import org.drools.mas.ACLMessage;
 import org.drools.mas.Act;
 import org.drools.mas.Encodings;
@@ -62,15 +61,11 @@ import org.drools.mas.core.DroolsAgent;
 import org.drools.mas.util.ACLMessageFactory;
 import org.drools.mas.util.MessageContentEncoder;
 import org.drools.mas.util.MessageContentFactory;
-import org.h2.tools.DeleteDbFiles;
-import org.h2.tools.Server;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -78,93 +73,48 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static org.junit.Assert.*;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath*:META-INF/test-survey-applicationContext.xml"})
 public class TestAgentSurvey {
 
-    private static DroolsAgent mainAgent;
+    @Autowired
+    private DroolsAgent agent;
 
     private ACLMessageFactory factory = new ACLMessageFactory( Encodings.XML );
 
     private static Logger logger = LoggerFactory.getLogger( TestAgentSurvey.class );
-    private static Server server;
 
     @BeforeClass
-    public static void createAgents() {
-
-        DeleteDbFiles.execute("~", "mydb", false);
-
-        logger.info("Staring DB for white pages ...");
-        try {
-            server = Server.createTcpServer(new String[] {"-tcp","-tcpAllowOthers","-tcpDaemon","-trace"}).start();
-        } catch (SQLException ex) {
-            logger.error(ex.getMessage());
-        }
-        logger.info("DB for white pages started! ");
-
-//        GridHelper.reset();
-
-
-        ApplicationContext context = new ClassPathXmlApplicationContext("META-INF/test-survey-applicationContext.xml");
-        mainAgent = (DroolsAgent) context.getBean( "agent" );
+    public static void setUp() {
 
     }
 
 
     @AfterClass
     public static void cleanUp() {
-        if (mainAgent != null) {
-            mainAgent.dispose();
-        }
-
-        logger.info("Stopping DB ...");
-        try {
-            Server.shutdownTcpServer( server.getURL(), "", false, false);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            fail ( e.getMessage() );
-        }
-        logger.info("DB Stopped!");
-
     }
-
-
-
-
-    private void sleep( long millis ) {
-        try {
-            Thread.sleep( millis );
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-
-
-
 
     private void waitForResponse( String id ) {
         do {
             try {
                 Thread.sleep( 1000 );
-                System.out.println( "Waiting for messages, now : " + mainAgent.peekAgentAnswers( id ).size() );
+                System.out.println( "Waiting for messages, now : " + agent.peekAgentAnswers( id ).size() );
             } catch (InterruptedException e) {
                 fail( e.getMessage() );
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-        } while ( mainAgent.peekAgentAnswers( id ).size() < 2);
+        } while ( agent.peekAgentAnswers( id ).size() < 2);
 
     }
-
-
-
-
 
     private static class FailureException extends Exception {
         private FailureException(String message) {
@@ -195,11 +145,11 @@ public class TestAgentSurvey {
         args.put("surveyId",surveyId);
 
         ACLMessage req = factory.newRequestMessage("me","you", MessageContentFactory.newActionContent("getSurvey", args));
-        mainAgent.tell(req);
+        agent.tell(req);
 
         waitForResponse( req.getId() );
 
-        ACLMessage ans = mainAgent.getAgentAnswers(req.getId()).get(1);
+        ACLMessage ans = agent.getAgentAnswers(req.getId()).get(1);
         try {
             return ret(ans);
         } catch (FailureException e) {
@@ -216,11 +166,11 @@ public class TestAgentSurvey {
         args.put("answer",value);
 
         ACLMessage set = factory.newRequestMessage("me","you", MessageContentFactory.newActionContent("setSurvey", args) );
-        mainAgent.tell(set);
+        agent.tell(set);
 
         waitForResponse( set.getId() );
 
-        ACLMessage ans = mainAgent.getAgentAnswers(set.getId()).get(1);
+        ACLMessage ans = agent.getAgentAnswers(set.getId()).get(1);
         try {
             return ret(ans);
         } catch (FailureException e) {
@@ -241,30 +191,17 @@ public class TestAgentSurvey {
         }
         return null;
     }
-
-
-
-
-
-
+    
     @Test
     public void testAgentCreation() {
         // nothing, just see that the agent is loaded
-        assertNotNull (mainAgent );
+        assertNotNull (agent );
     }
-
-
-
-
-
-
-
 
     @Test
     public void testSetSurvey() {
         String[] qid = new String[8];
         String[] values = new String[8];
-        XPath finder = XPathFactory.newInstance().newXPath();
 
 
         String xmlSurv = getSurvey( "drX", "99990070", "123456UNIQUESURVEYID" );
@@ -343,8 +280,6 @@ public class TestAgentSurvey {
 
     }
 
-
-
     @Test
     public void testUnroutableMessage() {
         Map<String,Object> args = new LinkedHashMap<String,Object>();
@@ -352,20 +287,17 @@ public class TestAgentSurvey {
         args.put("surveyId","123");
 
         ACLMessage req = factory.newRequestMessage("me","you", MessageContentFactory.newActionContent("getSurvey", args));
-        mainAgent.tell(req);
+        agent.tell(req);
 
-        for ( Object o : mainAgent.getMind().getObjects() ) {
+        for ( Object o : agent.getMind().getObjects() ) {
             System.out.println( "MIND OBEJT " +o );
         }
 
-        List<ACLMessage> resp =  mainAgent.getAgentAnswers(req.getId());
+        List<ACLMessage> resp =  agent.getAgentAnswers(req.getId());
         assertEquals( 1, resp.size() );
         assertEquals( Act.NOT_UNDERSTOOD, resp.get( 0 ).getPerformative() );
 
     }
-
-
-
 
 }
 

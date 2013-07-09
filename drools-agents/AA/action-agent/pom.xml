@@ -50,19 +50,14 @@
             <properties>
                 <agent.name>action-agent</agent.name>
                 <agent.node>action-agent-localnode</agent.node>
-                <agent.endpoint.ip>192.168.5.46</agent.endpoint.ip>
+                <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
-                
-                <dsa.endpoint>http://192.168.1.90:9763/PresentationServices/DSAIntegration</dsa.endpoint>
+
+                <dsa.endpoint>http://devtools04:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>mysql</groupId>
-                    <artifactId>mysql-connector-java</artifactId>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

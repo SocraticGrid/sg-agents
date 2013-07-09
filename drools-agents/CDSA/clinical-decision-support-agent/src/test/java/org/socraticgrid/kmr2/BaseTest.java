@@ -55,29 +55,10 @@ public class BaseTest {
 
     @BeforeClass
     public static void startDB() {
-        DeleteDbFiles.execute("~", "mydb", false);
-
-        logger.info("Staring DB for white pages ...");
-        try {
-            server = Server.createTcpServer(new String[]{"-tcp", "-tcpAllowOthers", "-tcpDaemon", "-trace"}).start();
-        } catch (SQLException ex) {
-            logger.error(ex.getMessage());
-        }
-        logger.info("DB for white pages started! ");
     }
 
     @AfterClass
     public static void stopDB() {
-
-        logger.info("Stopping DB ...");
-        try {
-            Server.shutdownTcpServer(server.getURL(), "", false, false);
-        } catch (SQLException e) {
-            logger.error("Error while stopping DB", e);
-            fail(e.getMessage());
-        }
-        logger.info("DB Stopped!");
-
     }
 
     protected void waitForAnswers(DroolsAgent agent, String id, int expectedSize) {

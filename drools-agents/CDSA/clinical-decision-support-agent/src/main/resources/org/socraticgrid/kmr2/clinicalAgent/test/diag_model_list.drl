@@ -54,7 +54,7 @@ package org.socraticgrid.kmr2.clinicalAgent.models;
 import org.drools.builder.ResourceType;
 
 import org.drools.io.impl.*;
-import org.drools.grid.api.impl.ResourceDescriptorImpl;
+import org.drools.mas.util.ResourceDescriptorImpl;
 import java.util.*;
 import java.net.URL;
 

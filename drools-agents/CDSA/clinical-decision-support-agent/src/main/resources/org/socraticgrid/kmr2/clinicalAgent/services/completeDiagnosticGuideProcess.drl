@@ -102,7 +102,7 @@ end
 rule "Action_Request : completeDiagnosticGuideProcess - Result"
 salience -100
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator($sessionId: sessionId, mind == true )
     $a  : Action( actionName == "completeDiagnosticGuideProcess", $msgId : msgId,
                   $userId      : this["userId"],
                   $patientId   : this["patientId "],
@@ -112,5 +112,5 @@ when
     ?completeDiagnosticGuideProcess( $userId, $patientId, $dxProcessId, $status, $return ; )
 then
     retract( $a );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
 end

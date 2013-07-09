@@ -62,7 +62,7 @@ import org.drools.informer.presentation.*;
 
 import org.drools.interaction.*;
 
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -127,12 +127,12 @@ when
     $id : String() from $modelIds
     not   ModelMarker( modelName == $id )
     $rs : ResourceDescriptor( name == $id )
-    SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == false )
+    SessionLocator( $sessionId: sessionId, mind == false )
 then
     String defPack = PMML4Helper.getPack();
     PMML4Helper.setPack( "org.drools.pmml.pmml_4_1.risk."+$id );
 
-    SessionManager.addResource( grid, $nodeId, $sessionId, $rs );
+    SessionManager.addResource($sessionId, $rs );
     System.out.println("DONE WITH THE LOAD OF A MODEL " + $id + " @ " + new java.util.Date().getTime() );
 
 //    PMML4Helper.setPack( defPack );
@@ -351,7 +351,7 @@ end
 rule "Action_Request : getRiskModelsDetail - clear"
 salience -9999
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator($sessionId: sessionId, mind == true )
     $a : Action( actionName == "getRiskModelsDetail", $msgId : msgId,
                       $userId    : this["userId"],
                       $patientId : this["patientId"],
@@ -361,7 +361,7 @@ when
 then
     retract( $a );
     retract( $return );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
 end
 
 

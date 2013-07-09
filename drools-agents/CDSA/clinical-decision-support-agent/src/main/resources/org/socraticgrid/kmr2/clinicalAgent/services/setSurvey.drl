@@ -150,7 +150,7 @@ end
 rule "Action_Request : final response"
 salience -1000
 when
-    $s : SessionLocator( $nodeId: nodeId, $sessionId: sessionId, mind == true )
+    $s : SessionLocator( $sessionId: sessionId, mind == true )
     $a : Action( actionName == "setSurvey", $msgId : msgId,
                  $userId : this["userId"],
                  $patientId : this["patientId"],
@@ -161,7 +161,7 @@ when
     ?setSurvey( $userId, $patientId, $surveyId, $questionId, $value, $return ; )
 then
     retract( $a );
-    ResponseContent.deliverResponse( grid, $nodeId, $sessionId, $msgId, $return, null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
 end
 
 

@@ -53,7 +53,7 @@ package org.kmr2.mock;
 
 import org.drools.mas.body.content.Action;
 import org.drools.mas.*;
-import org.drools.grid.api.ResourceDescriptor;
+import org.drools.mas.util.ResourceDescriptor;
 import org.drools.pmml.pmml_4_1.ModelMarker;
 import org.drools.builder.ResourceType;
 

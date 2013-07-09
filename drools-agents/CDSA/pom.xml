@@ -12,7 +12,7 @@
     <name>SG :: Clinical Decision Support Agent Master</name>
     <modules>
         <module>clinical-decision-support-agent</module>
-        <module>clinical-decision-support-agent-client</module>
+        <!--module>clinical-decision-support-agent-client</module-->
     </modules>
 
 </project>

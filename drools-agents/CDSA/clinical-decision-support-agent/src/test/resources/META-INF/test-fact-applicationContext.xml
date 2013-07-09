@@ -50,24 +50,57 @@
  ~ END OF TERMS AND CONDITIONS
  ~
 -->
-<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:orm="http://java.sun.com/xml/ns/persistence/orm" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd">
-  <persistence-unit name="org.drools.grid">
-    <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <class>org.drools.grid.service.directory.impl.GridServiceDescriptionImpl</class>
-    <class>org.drools.grid.service.directory.impl.AddressImpl</class>
-    <class>org.drools.grid.timer.impl.ScheduledJob</class>
-    <class>java.lang.String</class>
-    
-    <properties>
-      <property name="hibernate.dialect" value="${db.dialect}"/>
-      <property name="hibernate.connection.driver_class" value="${db.driverClass}"/>
-      <property name="hibernate.connection.url" value="${db.connectionURL}"/>
-      <property name="hibernate.connection.username" value="${db.username}"/>
-      <property name="hibernate.connection.password" value="${db.password}"/>
-      <property name="hibernate.connection.autocommit" value="false"/>
-      <property name="hibernate.max_fetch_depth" value="3"/>
-      <property name="hibernate.hbm2ddl.auto" value="update"/>
-      <property name="hibernate.show_sql" value="true"/>
-    </properties>
-  </persistence-unit>
-</persistence>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    <jaxws:endpoint id="agent-ws"
+                    address="http://${agent.endpoint.ip}:${agent.endpoint.port}/${agent.name}/services/SyncAgentService"
+                    implementor="#agent-service">
+    </jaxws:endpoint>
+    <jaxws:endpoint id="async-agent-ws"
+                    address="http://${agent.endpoint.ip}:${agent.endpoint.port}/${agent.name}/services/AsyncAgentService"
+                    implementor="#async-agent-service">
+    </jaxws:endpoint>
+
+    <bean id="agent-service" class="org.drools.mas.SynchronousDroolsAgentServiceImpl" >
+        <property name="agent" ref="agent"/>
+    </bean>
+    <bean id="async-agent-service" class="org.drools.mas.AsyncDroolsAgentServiceImpl" destroy-method="dispose">
+        <property name="agent" ref="agent"/>
+    </bean>
+
+    <bean id="agent-factory" class="org.drools.mas.core.DroolsAgentFactory" factory-method="getInstance"/>
+
+    <bean id="agent" class="org.drools.mas.core.DroolsAgent" factory-bean="agent-factory" factory-method="spawn">
+        <constructor-arg ref="agent1-configuration"/>
+    </bean>
+
+
+    <bean id="agent-test-session" class="org.drools.mas.core.DroolsAgentConfiguration$SubSessionDescriptor">
+        <constructor-arg value="demoSession"/>
+        <constructor-arg value="org/socraticgrid/kmr2/clinicalAgent/test/subsession_testDemo.xml"/>
+        <constructor-arg value="${agent.sub.node}"/>
+    </bean>
+
+    <bean id="agent1-configuration" class="org.drools.mas.core.DroolsAgentConfiguration">
+        <property name="agentId" value="Clinical Agent 1"/>
+        <property name="changeset" value="config/agent_changeset.xml" />
+
+        <property name="defaultSubsessionChangeSet"  value="config/subsession_default.xml" />
+
+        <property name="mindNodeLocation" value="${agent.node}"/>
+        <property name="subSessions">
+            <list>
+                <ref local="agent-test-session"/>
+            </list>
+        </property>
+    </bean>
+
+</beans>
