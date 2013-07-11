@@ -38,7 +38,8 @@
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>${project.basedir}/src/main/resources/DSAIntegration.wsdl</wsdl>
-                                    <!--<wsdlLocation>classpath:META-INF/wsdl/DSAIntegration.wsdl</wsdlLocation>-->
+                                    <!-- Avoid hardcoded .wsdl path in generated sources -->
+                                    <wsdlLocation>classpath:META-INF/wsdl/DSAIntegration.wsdl</wsdlLocation>
                                     <extraargs> 
                                         <extraarg>-catalog</extraarg> 
                                         <extraarg>${basedir}/src/jax-ws-catalog.xml</extraarg> 
