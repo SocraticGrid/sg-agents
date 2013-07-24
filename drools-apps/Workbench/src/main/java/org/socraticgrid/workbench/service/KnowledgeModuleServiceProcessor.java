@@ -31,12 +31,12 @@
  **********************************************************************************************************************/
 package org.socraticgrid.workbench.service;
 
-import org.socraticgrid.workbench.model.ext.PagedResult;
 import java.util.StringTokenizer;
-import org.socraticgrid.workbench.service.knowledgemodule.KMRKnowledgeModuleService;
+import org.socraticgrid.workbench.model.ext.PagedResult;
 import org.socraticgrid.workbench.service.knowledgemodule.KnowledgeModuleService;
 import org.socraticgrid.workbench.service.knowledgemodule.ReferenceData;
 import org.socraticgrid.workbench.service.knowledgemodule.ReferenceDataRequest;
+import org.socraticgrid.workbench.setting.ApplicationSettings;
 
 /**
  *
@@ -52,8 +52,16 @@ public class KnowledgeModuleServiceProcessor {
         }
         return instance;
     }
+    
+    private KnowledgeModuleService knowledgeModuleService;
 
     private KnowledgeModuleServiceProcessor() {
+        try {
+            String implName = ApplicationSettings.getInstance().getSetting("knowledge.module.service.impl");
+            this.knowledgeModuleService = (KnowledgeModuleService) Class.forName(implName).newInstance();
+        } catch (Exception ex) {
+            throw new IllegalStateException(ex);
+        }
     }
 
     /**
@@ -112,9 +120,6 @@ public class KnowledgeModuleServiceProcessor {
      */
     
     public synchronized PagedResult<ReferenceData> getReferenceData(String params, String requestId) {
-        //TODO: make this instance configurable
-        KnowledgeModuleService knowledgeModuleService = new KMRKnowledgeModuleService();
-        
         return knowledgeModuleService.getReferenceData(this.parseParams(params));
     }
     

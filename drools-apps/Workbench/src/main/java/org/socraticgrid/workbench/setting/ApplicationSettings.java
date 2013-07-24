@@ -52,6 +52,11 @@ public class ApplicationSettings {
         String getKey();
     }
     
+    /**
+     * The most important properties have an enum counterpart. For the rest of
+     * the properties you can use {@link #getSetting(java.lang.String)} or
+     * {@link #getSetting(java.lang.String, java.lang.String) }.
+     */
     public static enum APPLICATION_SETTINGS implements SettingKey{
         PACKAGE("package"),
         WORKING_SET("workingSet");
