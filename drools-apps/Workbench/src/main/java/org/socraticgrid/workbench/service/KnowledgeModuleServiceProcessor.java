@@ -31,20 +31,12 @@
  **********************************************************************************************************************/
 package org.socraticgrid.workbench.service;
 
-import com.socraticgrid.kmr.knowledgemodule.KmrKnowledgeModule;
-import com.socraticgrid.kmr.knowledgemodule.KmrKnowledgeModuleService;
-import com.socraticgrid.kmr.knowledgemodule.ObjectFactory;
 import org.socraticgrid.workbench.model.ext.PagedResult;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
-import org.socraticgrid.kmr.kmtypes.ReferenceDataLookupRefTypeCode;
-import org.socraticgrid.kmr.kmtypes.ReferenceDataLookupRefTypeSystem;
-import org.socraticgrid.kmr.kmtypes.ReferenceDataLookupRefTypeType;
-import org.socraticgrid.kmr.kmtypes.ReferenceDataLookupType;
-import org.socraticgrid.kmr.kmtypes.ReferenceDataRefDataType;
-import org.socraticgrid.kmr.kmtypes.ReferenceDataRefRequestType;
-import org.socraticgrid.kmr.kmtypes.ReferenceDataRefResponseType;
+import org.socraticgrid.workbench.service.knowledgemodule.KMRKnowledgeModuleService;
+import org.socraticgrid.workbench.service.knowledgemodule.KnowledgeModuleService;
+import org.socraticgrid.workbench.service.knowledgemodule.ReferenceData;
+import org.socraticgrid.workbench.service.knowledgemodule.ReferenceDataRequest;
 
 /**
  *
@@ -53,7 +45,6 @@ import org.socraticgrid.kmr.kmtypes.ReferenceDataRefResponseType;
 public class KnowledgeModuleServiceProcessor {
 
     private static KnowledgeModuleServiceProcessor instance = null;
-    private String cname = "[KMRProcessor] ";  //debug purpose
 
     public static synchronized KnowledgeModuleServiceProcessor getInstance() {
         if (instance == null) {
@@ -120,217 +111,60 @@ public class KnowledgeModuleServiceProcessor {
      * @return
      */
     
-    public synchronized PagedResult<ReferenceDataRefDataType> getReferenceData(String params, String requestId) {
-
-        List<ReferenceDataRefDataType> results = new ArrayList<ReferenceDataRefDataType>();
-        ReferenceDataRefRequestType request = new ReferenceDataRefRequestType();
-        ReferenceDataLookupType lookup = new ReferenceDataLookupType();
-
+    public synchronized PagedResult<ReferenceData> getReferenceData(String params, String requestId) {
+        //TODO: make this instance configurable
+        KnowledgeModuleService knowledgeModuleService = new KMRKnowledgeModuleService();
+        
+        return knowledgeModuleService.getReferenceData(this.parseParams(params));
+    }
+    
+    private ReferenceDataRequest parseParams(String params){
         String reference = null;
+        String lookupType = null;
+        String lookupSystem = null;
+        String lookupCode = null;
 
         int maxRecordsToShow = 200;
         int startingRecNumber = 0;
 
         //parse params for the requested reference value.
         for (String pp : params.split("&")) {
-            StringTokenizer Tok = new StringTokenizer(pp, "=");
+            StringTokenizer tok = new StringTokenizer(pp, "=");
             int n = 0;
             String element;
-            while (Tok.hasMoreElements()) {
-                element = (String) Tok.nextElement();
+            while (tok.hasMoreElements()) {
+                element = (String) tok.nextElement();
                 //System.out.println("=====> " + ++n +"[getReferenceData/elem]:"+element);
 
-                if (element.equals("reference") && Tok.hasMoreElements()) {
-                    reference = (String) Tok.nextElement();
+                if (element.equals("reference") && tok.hasMoreElements()) {
+                    reference = (String) tok.nextElement();
                 }
-                if (element.equals("MaxRecordsToShow") && Tok.hasMoreElements()) {
-                    maxRecordsToShow = new Integer((String) Tok.nextElement());
+                if (element.equals("MaxRecordsToShow") && tok.hasMoreElements()) {
+                    maxRecordsToShow = new Integer((String) tok.nextElement());
                 }
-                if (element.equals("limit") && Tok.hasMoreElements()) {
+                if (element.equals("limit") && tok.hasMoreElements()) {
                     //also support default Extjs paging attributes
-                    maxRecordsToShow = new Integer((String) Tok.nextElement());
+                    maxRecordsToShow = new Integer((String) tok.nextElement());
                 }
-                if (element.equals("StartingRecNumber") && Tok.hasMoreElements()) {
-                    startingRecNumber = new Integer((String) Tok.nextElement());
+                if (element.equals("StartingRecNumber") && tok.hasMoreElements()) {
+                    startingRecNumber = new Integer((String) tok.nextElement());
                 }
-                if (element.equals("start") && Tok.hasMoreElements()) {
+                if (element.equals("start") && tok.hasMoreElements()) {
                     //also support default Extjs paging attributes
-                    startingRecNumber = new Integer((String) Tok.nextElement());
+                    startingRecNumber = new Integer((String) tok.nextElement());
+                }
+                if (element.equals("lookuptype") && tok.hasMoreElements()) {
+                    lookupType = (String) tok.nextElement();
+                } else if (element.equals("lookupsystem") && tok.hasMoreElements()) {
+                    lookupSystem = (String) tok.nextElement();
+                } else if ((element.equals("lookupcode") || element.equals("query")) && tok.hasMoreElements()) {
+                    lookupCode = (String) tok.nextElement();
                 }
             }
         }
-
-        System.out.println("\n" + this.cname + "REQUESTED REFERENCE=" + reference);
-        System.out.println(this.cname + params);
         
-        ObjectFactory objectFactory = new ObjectFactory();
+        return new ReferenceDataRequest(reference, lookupType, lookupSystem, lookupCode, startingRecNumber, maxRecordsToShow);
         
-        //----------------------------------------------------
-        //		Create KMR Service Reference Lookup request 
-        //		based on incoming params.
-        //----------------------------------------------------
-        if (reference.equalsIgnoreCase("facttype")
-                || reference.equalsIgnoreCase("tasktype")
-                || reference.equalsIgnoreCase("usedfacttype")
-                || reference.equalsIgnoreCase("useddemogtype")
-                || reference.equalsIgnoreCase("usedtasktype")) {
-            lookup.setLookupType(this.getLookupType(params));
-        }
-        if (reference.equalsIgnoreCase("factscheme")
-                || reference.equalsIgnoreCase("taskscheme")
-                || reference.equalsIgnoreCase("demogscheme")
-                || reference.equalsIgnoreCase("specialtyscheme")
-                || reference.equalsIgnoreCase("usedfactscheme")
-                || reference.equalsIgnoreCase("usedtaskscheme")
-                || reference.equalsIgnoreCase("useddemogscheme")
-                || reference.equalsIgnoreCase("usedspecialtyscheme")) {
-            lookup.setLookupSystem(this.getLookupSystem(params));
-        }
-        if (reference.equalsIgnoreCase("factcode")
-                || reference.equalsIgnoreCase("taskcode")
-                || reference.equalsIgnoreCase("demogcode")
-                || reference.equalsIgnoreCase("specialtycode")
-                || reference.equalsIgnoreCase("usedfactcode")
-                || reference.equalsIgnoreCase("usedtaskcode")
-                || reference.equalsIgnoreCase("useddemogcode")
-                || reference.equalsIgnoreCase("useddemogstatus")
-                || reference.equalsIgnoreCase("useddemogacuity")
-                || reference.equalsIgnoreCase("usedspecialtycode")
-                || reference.equalsIgnoreCase("usedkmtype")
-                || reference.equalsIgnoreCase("usedorglevel")
-                || reference.equalsIgnoreCase("usedkmstatus")) {
-            lookup.setLookupCode(this.getLookupCode(params));
-        }
-
-        //SWITCHING a demog GENDER request to be a demog VALUE request
-        //with 6 (type value for GENDER) as a hardcoded demog type.
-        if (reference.equalsIgnoreCase("useddemoggender")) {
-            lookup.setLookupCode(this.getLookupCode(params));
-            reference = "useddemogvalue";
-        }
-
-        //SWITCHING a demog AGERANGE request to be a demog VALUE request
-        //with 7 (type value for AGERANGE) as a hardcoded demog type.
-        if (reference.equalsIgnoreCase("useddemogagerange")) {
-            lookup.setLookupCode(this.getLookupCode(params));
-            reference = "useddemogvalue";
-        }
-
-        lookup.setReference(reference);
-        lookup.setMaxRecordsToShow(maxRecordsToShow);
-        lookup.setStartingRecNumber(startingRecNumber);
-        request.setLookup(lookup);
-
-
-        //----------------------------------------------------
-        //		Send KMR Service Reference Lookup request 
-        //		and retrieve the Response.
-        //----------------------------------------------------
-
-
-        
-        
-        // Call Web Service Operation
-        KmrKnowledgeModuleService service = new  KmrKnowledgeModuleService();
-        KmrKnowledgeModule port = service.getKmrKnowledgeModulePort();
-
-        ReferenceDataRefResponseType response = port.getReferenceData(request);
-
-
-
-        if (response.getResponse() != null) {
-            System.out.println(this.cname + "RESPONSE LENGTH= " + response.getResponse().getTotalReferencesFound());
-            
-            for (ReferenceDataRefDataType referenceDataRefDataType : response.getResponse().getRefData()) {
-                ReferenceDataRefDataType aRef = new ReferenceDataRefDataType();
-                aRef.setId(referenceDataRefDataType.getId());
-                aRef.setName(referenceDataRefDataType.getName());
-                aRef.setDescr(referenceDataRefDataType.getDescr());
-                results.add(aRef);
-            }
-
-        }
-
-        return new PagedResult<ReferenceDataRefDataType>(response.getResponse().getTotalReferencesFound(), startingRecNumber, maxRecordsToShow, results);
-    }
-
-    private ReferenceDataLookupRefTypeType getLookupType(String inParams) {
-
-        ObjectFactory objectFactory = new ObjectFactory();
-        
-        ReferenceDataLookupRefTypeType lookup_type = new ReferenceDataLookupRefTypeType();
-        //System.out.println("=====>getLookupType: ");
-
-        //split apart the different elements/values and set km objects as needed
-        for (String p : inParams.split("&")) {
-            StringTokenizer Tok = new StringTokenizer(p, "=");
-            int n = 0;
-            String element = null;
-            while (Tok.hasMoreElements()) {
-                element = (String) Tok.nextElement();
-                //System.out.println("=====> " + ++n +"[elem]:"+element);
-
-                if (element.equals("lookuptype") && Tok.hasMoreElements()) {
-                    lookup_type.setCodeType((String) Tok.nextElement());
-                }
-            }
-        }
-        return lookup_type;
-    }
-
-    private ReferenceDataLookupRefTypeSystem getLookupSystem(String inParams) {
-
-        ObjectFactory objectFactory = new ObjectFactory();
-        
-        ReferenceDataLookupRefTypeSystem lookup_system = new ReferenceDataLookupRefTypeSystem();
-        //System.out.println("=====>getLookupSystem");
-
-        //split apart the different elements/values and set km objects as needed
-        for (String p : inParams.split("&")) {
-            StringTokenizer Tok = new StringTokenizer(p, "=");
-            int n = 0;
-            String element;
-            while (Tok.hasMoreElements()) {
-                element = (String) Tok.nextElement();
-                //System.out.println("=====> " + ++n +"[elem]:"+element);
-
-                if (element.equals("lookuptype") && Tok.hasMoreElements()) {
-                    lookup_system.setCodeType((String) Tok.nextElement());
-                } else if (element.equals("lookupsystem") && Tok.hasMoreElements()) {
-                    lookup_system.setCodeSystem((String) Tok.nextElement());
-                }
-            }
-        }
-        return lookup_system;
-    }
-
-    private ReferenceDataLookupRefTypeCode getLookupCode(String inParams) {
-
-        ObjectFactory objectFactory = new ObjectFactory();
-        
-        ReferenceDataLookupRefTypeCode lookup_code = new ReferenceDataLookupRefTypeCode();
-
-        //System.out.println("=====>getLookupCode");
-
-        //split apart the different elements/values and set km objects as needed
-        for (String p : inParams.split("&")) {
-            StringTokenizer Tok = new StringTokenizer(p, "=");
-            int n = 0;
-            String element;
-            while (Tok.hasMoreElements()) {
-                element = (String) Tok.nextElement();
-                //System.out.println("=====> " + ++n +"[elem]:"+element);
-
-                if (element.equals("lookuptype") && Tok.hasMoreElements()) {
-                    lookup_code.setCodeType((String) Tok.nextElement());
-                } else if (element.equals("lookupsystem") && Tok.hasMoreElements()) {
-                    lookup_code.setCodeSystem((String) Tok.nextElement());
-                } else if ((element.equals("lookupcode") || element.equals("query")) && Tok.hasMoreElements()) {
-                    lookup_code.setContentCode((String) Tok.nextElement());
-                }
-            }
-        }
-        return lookup_code;
     }
 
 }

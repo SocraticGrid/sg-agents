@@ -37,14 +37,11 @@ import com.google.gson.JsonObject;
 import org.socraticgrid.workbench.model.ext.PagedResult;
 import org.socraticgrid.workbench.service.KnowledgeModuleServiceProcessor;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.socraticgrid.kmr.kmtypes.ReferenceDataRefDataType;
+import org.socraticgrid.workbench.service.knowledgemodule.ReferenceData;
 
 /**
  *
@@ -71,13 +68,11 @@ public class KnowledgeModuleServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("\n====> ENTERING KmReferencesHandler.doGet");
-
         String myparams = request.getQueryString();
         //------------------------------------------------
         //Init call to KMR Search Ref Data service
         //------------------------------------------------		
-        PagedResult<ReferenceDataRefDataType> results;
+        PagedResult<ReferenceData> results;
 
         long time1 = System.currentTimeMillis();
 	
@@ -85,15 +80,8 @@ public class KnowledgeModuleServlet extends HttpServlet {
             results = this.kmGetReferences(myparams);
         } catch (Exception ex) {
             throw new ServletException(ex);
-            //TODO: Remove this! This is only for testing when the WS is down
-            //or unreachable
-//            String limit = request.getParameter("limit");
-//            if (limit == null){
-//                limit = "10";
-//            }
-//            
-//            results = this.createMockData(Integer.parseInt(limit));
         }
+        
         long time2 = System.currentTimeMillis();
 
         System.out.println("Total Query time= " + (time2 - time1) / 1000 + " seg");
@@ -129,6 +117,7 @@ public class KnowledgeModuleServlet extends HttpServlet {
         response.getWriter().write(gson.toJson(out));
     }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         System.out.println("\n====> ENTERING KmReferencesHandler.doPost ... NOT IMPLEMENTED");
@@ -137,76 +126,10 @@ public class KnowledgeModuleServlet extends HttpServlet {
     /*
      * Returns all references that match requested type
      */
-    private PagedResult<ReferenceDataRefDataType> kmGetReferences(String params) {
-
-        //generating a random for now, cause not really needed yet. 
+    private PagedResult<ReferenceData> kmGetReferences(String params) {
         String reqId = "REF-9999";
-        
-        PagedResult<ReferenceDataRefDataType> results = KnowledgeModuleServiceProcessor.getInstance().getReferenceData(params, reqId);
-
-        /*
-         * .........DEBUG ONLY ......................
-         * System.out.println("\n====> TotalSize="+results.size()); if
-         * (results.size() > 0) { for (int i=0; i < results.size(); i++) {
-         * System.out.println("[kmGetReferences]result("+i+")="+results.get(i).getName());
-         * } } else { System.out.println("\n====> result is empty"); }
-         * .............................................
-         */
-
-        /*
-         *
-         */
-
+        PagedResult<ReferenceData> results = KnowledgeModuleServiceProcessor.getInstance().getReferenceData(params, reqId);
         return results;
     }
 
-    private PagedResult<ReferenceDataRefDataType> createMockData(int ammount) {
-
-        String[] terms = new String[]{
-            "Medical",
-            "Medication",
-            "Allergy",
-            "Clinic",
-            "Ventricular",
-            "DCIS",
-            "DDH (developmental dislocation of the hip)",
-            "De Quervain's tenosynovitis",
-            "DEA",
-            "Deafness",
-            "Deafness with goiter",
-            "Achondroplasia",
-            "Achoo syndrome",
-            "Achromatopsia",
-            "Achromycin",
-            "Acid deposition",
-            "Acid indigestion",
-            "Acid phosphatase",
-            "Acid rain",
-            "Acid reflux",
-            "Acid, amino",
-            "Acid, bile",
-            "Acid, fatty",
-            "Acid, folic",
-            "Acid, nucleic",
-            "Acid, pantothenic",
-            "Acid, trans fatty",
-            "Acid-base balance",
-            "Acidophilus",
-            "Acidosis",
-            "Acinetobacter",
-            "Acinus, pulmonary"
-        };
-
-        Random rnd = new Random();
-        List<ReferenceDataRefDataType> results = new ArrayList<ReferenceDataRefDataType>();
-        for (int i = 0; i < ammount; i++) {
-            ReferenceDataRefDataType r = new ReferenceDataRefDataType();
-            r.setName(terms[rnd.nextInt(terms.length)] + " " + terms[rnd.nextInt(terms.length)]);
-            r.setDescr(System.nanoTime() + "");
-
-            results.add(r);
-        }
-
-        return new PagedResult<ReferenceDataRefDataType>(ammount, 0, ammount, results);
-    }
 }
