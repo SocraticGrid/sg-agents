@@ -52,7 +52,7 @@
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>webservices-rt</artifactId>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.opensaml</groupId>
@@ -99,6 +99,10 @@
             <groupId>antlr</groupId>
             <artifactId>stringtemplate</artifactId>
             <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
     </dependencies>
 

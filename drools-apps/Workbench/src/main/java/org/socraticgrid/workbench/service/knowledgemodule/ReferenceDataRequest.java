@@ -77,5 +77,10 @@ public class ReferenceDataRequest {
     public int getMaxRecordsToShow() {
         return maxRecordsToShow;
     }
+
+    @Override
+    public String toString() {
+        return "ReferenceDataRequest{" + "reference=" + reference + ", lookupType=" + lookupType + ", lookupSystem=" + lookupSystem + ", lookupCode=" + lookupCode + ", startingRecNumber=" + startingRecNumber + ", maxRecordsToShow=" + maxRecordsToShow + '}';
+    }
     
 }

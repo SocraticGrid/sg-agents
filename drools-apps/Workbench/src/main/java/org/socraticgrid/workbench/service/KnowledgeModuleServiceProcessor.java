@@ -31,7 +31,12 @@
  **********************************************************************************************************************/
 package org.socraticgrid.workbench.service;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import java.util.StringTokenizer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import org.socraticgrid.workbench.model.ext.PagedResult;
 import org.socraticgrid.workbench.service.knowledgemodule.KnowledgeModuleService;
 import org.socraticgrid.workbench.service.knowledgemodule.ReferenceData;
@@ -54,11 +59,31 @@ public class KnowledgeModuleServiceProcessor {
     }
     
     private KnowledgeModuleService knowledgeModuleService;
+    private boolean useReferenceDataCache;
+    private Cache<String, PagedResult<ReferenceData>> referenceDataCache = null;
 
     private KnowledgeModuleServiceProcessor() {
         try {
             String implName = ApplicationSettings.getInstance().getSetting("knowledge.module.service.impl");
             this.knowledgeModuleService = (KnowledgeModuleService) Class.forName(implName).newInstance();
+            
+            useReferenceDataCache = Boolean.parseBoolean(ApplicationSettings.getInstance().getSetting("knowledge.module.service.cache.enabled", "false"));
+            if (useReferenceDataCache){
+                String maxCacheSize = ApplicationSettings.getInstance().getSetting("knowledge.module.service.cache.maxsize"); 
+                String cacheExpirationTime = ApplicationSettings.getInstance().getSetting("knowledge.module.service.cache.expiration"); 
+                
+                CacheBuilder<Object, Object> cacheBuilder = CacheBuilder.newBuilder();
+                
+                if (maxCacheSize != null){
+                    cacheBuilder.maximumSize(Long.parseLong(maxCacheSize));
+                }
+                if (cacheExpirationTime != null){
+                    cacheBuilder.expireAfterWrite(Long.parseLong(maxCacheSize), TimeUnit.MINUTES);
+                }
+
+                this.referenceDataCache = cacheBuilder.build();
+            }
+            
         } catch (Exception ex) {
             throw new IllegalStateException(ex);
         }
@@ -120,7 +145,23 @@ public class KnowledgeModuleServiceProcessor {
      */
     
     public synchronized PagedResult<ReferenceData> getReferenceData(String params, String requestId) {
-        return knowledgeModuleService.getReferenceData(this.parseParams(params));
+        final ReferenceDataRequest request = this.parseParams(params);
+        
+        if (this.useReferenceDataCache){
+            try {
+                return referenceDataCache.get(request.toString(), new Callable<PagedResult<ReferenceData>>() {
+                    public PagedResult<ReferenceData> call() throws Exception {
+                        return knowledgeModuleService.getReferenceData(request);
+                    }
+                });
+            } catch (ExecutionException ex) {
+                throw new IllegalStateException(ex);
+            }
+        } else{
+            return knowledgeModuleService.getReferenceData(request);
+        }
+        
+        
     }
     
     private ReferenceDataRequest parseParams(String params){
