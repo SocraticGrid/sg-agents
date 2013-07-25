@@ -36,17 +36,21 @@ package org.socraticgrid.workbench.service.knowledgemodule;
  * @author esteban
  */
 public class ReferenceData {
-    private final int id;
+    private final String id;
     private final String name;
     private final String descr;
 
     public ReferenceData(int id, String name, String descr) {
+        this(String.valueOf(id), name, descr);
+    }
+    
+    public ReferenceData(String id, String name, String descr) {
         this.id = id;
         this.name = name;
         this.descr = descr;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

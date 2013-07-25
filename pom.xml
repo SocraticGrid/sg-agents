@@ -412,6 +412,11 @@
                 <artifactId>guava</artifactId>
                 <version>14.0.1</version>
             </dependency>
+            <dependency>
+                <groupId>edu.mayo.cts2.framework</groupId>
+                <artifactId>core</artifactId>
+                <version>0.8.3-SNAPSHOT</version>
+            </dependency>
         
             <!-- Logging dependencies -->
             <dependency>
