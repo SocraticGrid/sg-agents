@@ -43,22 +43,7 @@ rule "InteractionTicket Convertion"
 when
     $chc: CommunicationHandlerConfiguration()
 then
-    InteractionTicket ticket = new InteractionTicket( java.util.UUID.randomUUID().toString(),
-                                                      new java.util.ArrayList(),
-                                                      "" );
+    ActionAgentDialogueHelper aaHelper = new ActionAgentDialogueHelper();
+    aaHelper.invokeActionAgent($chc);
     
-
-    Interaction ti1 = new Interaction();
-    ti1.setType( InteractionTypes.NOTIFICATION );
-    ti1.setBodyTemplateIds($chc.getTemplates());
-    ti1.setReceivers($chc.getReceivers());
-    ti1.setChannels($chc.getChannels());
-    ti1.setTimeouts($chc.getTimeouts());
-
-
-    ticket.getInteractions().add( ti1 );
-
-    insert(ticket);
-
-    retract($chc);
 end
