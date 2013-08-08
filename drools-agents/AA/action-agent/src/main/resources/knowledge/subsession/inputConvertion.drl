@@ -62,14 +62,19 @@ then
     String templateId = (String) $bodies.get(0);
 
     //TODO: Why are these values hardcoded?
-    String $pro = "1"; //LDAP UID
-    String $pat = "99990070";
+    //String $pro = "1"; //LDAP UID
+    //String $pat = "99990070";
 
     java.util.LinkedHashMap map = new java.util.LinkedHashMap();
     map.put("refId", $ticketId );
     map.put("conversationId", $convoId );
-    map.put("subjectAbout", new String[] { $pat, $pro, $actorId } );  
-    map.put("sender", $pro );                 
+    
+    CommunicationHandlerConfiguration chc = (CommunicationHandlerConfiguration)$source;
+    if (chc.getSubjects() != null){
+        map.put("subjectAbout", chc.getSubjects().toArray(new String[0]));  
+    }
+
+    map.put("sender", $actorId );                 
     map.put("mainRecipients", new String[] { $actorId } );          
     map.put("secondaryRecipients", new String[0] );     
     map.put("hiddenRecipients", new String[0] ); 

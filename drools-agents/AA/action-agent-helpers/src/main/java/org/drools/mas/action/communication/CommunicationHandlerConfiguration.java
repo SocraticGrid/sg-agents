@@ -43,6 +43,7 @@ import java.util.Map;
  */
 public class CommunicationHandlerConfiguration implements Serializable {
     private List<String> receivers = new ArrayList<String>();
+    private List<String> subjects = new ArrayList<String>();
     private List<String> channels = new ArrayList<String>();
     private List<String> templates = new ArrayList<String>();
     private List<String> timeouts = new ArrayList<String>();
@@ -87,7 +88,13 @@ public class CommunicationHandlerConfiguration implements Serializable {
     public void setTemplateVariables(Map<String, Object> templateVariables) {
         this.templateVariables = templateVariables;
     }
-    
-    
-    
+
+    public List<String> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(List<String> subjects) {
+        this.subjects = subjects;
+    }
+
 }

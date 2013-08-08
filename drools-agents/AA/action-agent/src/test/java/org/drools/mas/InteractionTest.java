@@ -85,9 +85,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class InteractionTest {
 
     private static Logger logger = LoggerFactory.getLogger(InteractionTest.class);
-    private static String agentName;
-    private static String agentEndpoint;
-    private static String agentPort;
     private static String agentUrl;
 
     @Autowired
@@ -100,10 +97,6 @@ public class InteractionTest {
     public static void setUpClass() throws Exception {
         Properties p = new Properties();
         p.load(KnowledgeResourcesCompilationTest.class.getResourceAsStream("/agentsConfig.properties"));
-
-        agentName = p.getProperty("agent.name");
-        agentEndpoint = p.getProperty("agent.endpoint.ip");
-        agentPort = p.getProperty("agent.endpoint.port");
         agentUrl = p.getProperty("agent.endpoint.url");
     }
 
@@ -142,19 +135,21 @@ public class InteractionTest {
         ActionAgentDialogueHelper helper = new ActionAgentDialogueHelper(agentUrl);
 
         List<String> receivers = new ArrayList<>();
+        List<String> subjects = new ArrayList<>();
         List<String> channels = new ArrayList<>();
         List<String> templates = new ArrayList<>();
         List<String> timeouts = new ArrayList<>();
         Map<String,Object> templateVariables = new HashMap<>();
 
         receivers.add("1");
+        subjects.add("1");
         channels.add("ALERT");
         templates.add("test-template-1");
         timeouts.add("10s");
         templateVariables.put("greetingMessage", "Hi There!");
         templateVariables.put("person", "Mr. Patient");
 
-        helper.invokeActionAgent(receivers, channels, templates, timeouts, templateVariables);
+        helper.invokeActionAgent(receivers, subjects, channels, templates, timeouts, templateVariables);
         
         Thread.sleep(15000);
         

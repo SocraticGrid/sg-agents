@@ -35,7 +35,7 @@ public class ActionAgentDialogueHelper {
     public final static String SENDER_NAME = "ActionAgentDialogueHelper";
     public final static String RECEIVER_NAME = "Action-Agent";
     private DialogueHelperWrapper dialogueHelperWrapper;
-    private List<ActionAgentDialogueHelperListener> listeners = Collections.synchronizedList(new ArrayList<ActionAgentDialogueHelperListener>());
+    private final List<ActionAgentDialogueHelperListener> listeners = Collections.synchronizedList(new ArrayList<ActionAgentDialogueHelperListener>());
 
     /**
      * Creates an instance of ActionAgentDialogueHelper pointing to the provided
@@ -65,13 +65,14 @@ public class ActionAgentDialogueHelper {
         }
     }
 
-    public void invokeActionAgent(List<String> receivers, List<String> channels, List<String> templates, List<String> timeouts) {
-        this.invokeActionAgent(receivers, channels, templates, timeouts, new HashMap<String, Object>());
+    public void invokeActionAgent(List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts) {
+        this.invokeActionAgent(receivers, subjects, channels, templates, timeouts, new HashMap<String, Object>());
     }
     
-    public void invokeActionAgent(List<String> receivers, List<String> channels, List<String> templates, List<String> timeouts, Map<String, Object> templateVariables) {
+    public void invokeActionAgent(List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts, Map<String, Object> templateVariables) {
         CommunicationHandlerConfiguration configuration = new CommunicationHandlerConfiguration();
         configuration.setReceivers(receivers);
+        configuration.setSubjects(subjects);
         configuration.setChannels(channels);
         configuration.setTemplates(templates);
         configuration.setTimeouts(timeouts);

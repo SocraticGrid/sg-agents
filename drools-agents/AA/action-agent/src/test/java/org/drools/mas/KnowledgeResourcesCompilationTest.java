@@ -80,10 +80,6 @@ public class KnowledgeResourcesCompilationTest {
     private static Logger logger = LoggerFactory.getLogger(KnowledgeResourcesCompilationTest.class);
     @Autowired
     private DroolsAgent agent;
-    private static Server server;
-    private static String agentName;
-    private static String agentEndpoint;
-    private static String agentPort;
 
     public KnowledgeResourcesCompilationTest() {
     }
@@ -92,28 +88,10 @@ public class KnowledgeResourcesCompilationTest {
     public static void setUpClass() throws Exception {
         Properties p = new Properties();
         p.load(KnowledgeResourcesCompilationTest.class.getResourceAsStream("/agentsConfig.properties"));
-
-        agentName = p.getProperty("agent.name");
-        agentEndpoint = p.getProperty("agent.endpoint.ip");
-        agentPort = p.getProperty("agent.endpoint.port");
-
-
-        DeleteDbFiles.execute("~", "mydb", false);
-
-        logger.info("Staring DB for white pages ...");
-        try {
-            server = Server.createTcpServer().start();
-        } catch (SQLException ex) {
-            logger.error(ex.getMessage());
-        }
-        logger.info("DB for white pages started! ");
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        logger.info("Stopping DB ...");
-        server.stop();
-        logger.info("DB Stopped!");
     }
 
     @Before
