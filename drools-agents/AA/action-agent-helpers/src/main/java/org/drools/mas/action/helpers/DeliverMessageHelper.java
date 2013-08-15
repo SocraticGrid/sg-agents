@@ -51,7 +51,6 @@
  ******************************************************************************/
 package org.drools.mas.action.helpers;
 
-import java.lang.reflect.Array;
 import java.util.*;
 import javax.xml.ws.BindingProvider;
 import org.slf4j.Logger;
@@ -66,6 +65,12 @@ import org.socraticgrid.dsa.DeliverMessageResponseType;
  * @author salaboy
  */
 public class DeliverMessageHelper {
+
+    /**
+     * This value can be used in META-INF/service.endpoint.properties in order
+     * to use a mocked endpoint
+     */
+    public final static String MOCK_ENDPOINT = "MOCK";
     
     private static Logger logger = LoggerFactory.getLogger(DeliverMessageHelper.class);
     
@@ -85,9 +90,18 @@ public class DeliverMessageHelper {
         request.getSecondaryRecipients().addAll(getParameterAsList("secondaryRecipients", params));
         request.getHiddenRecipients().addAll(getParameterAsList("hiddenRecipients", params));
         request.getType().addAll(getParameterAsList("type", params));
+        
         if(logger.isInfoEnabled()){
             logger.info(" >>> DeliveryMessageHelper: Trying to Delivere Message: "+request);
         }
+        
+        if (endpoint == null || endpoint.equals(MOCK_ENDPOINT)) {
+            String response = "OK";
+            logger.debug("No endpoint provided, using MOCKED endpoint!");
+            logger.info(" >>> DeliveryMessageHelper: Message Delivered to MOCKED endpoint, with response =  " + response);
+            return response;
+        }
+        
         DSAIntegrationPortType port;
         try{
             port = getPort(endpoint);

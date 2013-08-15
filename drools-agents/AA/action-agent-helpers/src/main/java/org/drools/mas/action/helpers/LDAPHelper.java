@@ -68,33 +68,41 @@ import org.socraticgrid.dsa.GetDirectoryAttributeResponseType;
  * @author salaboy
  */
 public class LDAPHelper {
-    private static Logger logger = LoggerFactory.getLogger(LDAPHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(LDAPHelper.class);
+    
+    /**
+     * This value can be used in META-INF/service.endpoint.properties in order
+     * to use a mocked data
+     */
+    public final static String MOCK_ENDPOINT = "MOCK";
     
     public static Map<String, String> queryEntity(String endpoint, String id, List<String> names){
-
-        System.err.println( "LDAP HELPER CALLED USING  " + endpoint );
         Map<String, String> result = new HashMap<String, String>();
-        GetDirectoryAttributeRequestType request = new GetDirectoryAttributeRequestType();
-        request.setUid(id);
-        if(names != null){
-            request.getNames().addAll(names);
-        }
-        DSAIntegrationPortType port;
-        try{
-            port = getPort(endpoint);
-        } catch ( Exception e ) {
-            e.printStackTrace();
-            logger.error( e.getMessage() );
-            logger.error(" ??? LDAPHelper: Query Entity Failed: "+e);
-            logger.error(" ??? LDAPHelper: Returning Mock Data ... ");
-
+        
+        if (endpoint == null || endpoint.equals(MOCK_ENDPOINT)) {
+            logger.debug("No LDAP endpoint provided, returning MOCKED data!");
             result.put("cn", "cn_"+id);
             result.put("mobile", "mobile_"+id);
             result.put("employeeNumber", "employeeNumber_"+id);
             result.put("displayName", "displayName_"+id);
             result.put("gender", "gender_"+id);
             return result;
-            
+        } 
+        logger.debug("LDAP HELPER CALLED USING  " + endpoint );
+        
+        
+        GetDirectoryAttributeRequestType request = new GetDirectoryAttributeRequestType();
+        request.setUid(id);
+        if(names != null){
+            request.getNames().addAll(names);
+        }
+        DSAIntegrationPortType port = null;
+        try{
+            port = getPort(endpoint);
+        } catch ( Exception e ) {
+            logger.error( e.getMessage() );
+            logger.error(" ??? LDAPHelper: Query Entity Failed: "+e);
+            logger.error(" ??? LDAPHelper: Returning Mock Data ... ");
         }
         GetDirectoryAttributeResponseType response = port.getDirectoryAttribute(request);
         

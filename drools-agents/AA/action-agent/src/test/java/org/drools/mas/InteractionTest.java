@@ -54,12 +54,16 @@
  */
 package org.drools.mas;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.drools.mas.action.helpers.aa.ActionAgentDialogueHelper;
 
 import org.drools.mas.body.acts.Inform;
@@ -72,6 +76,7 @@ import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.socraticgrid.taps.aa.log.RulesLoggerHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -89,7 +94,7 @@ public class InteractionTest {
 
     @Autowired
     private DroolsAgent agent;
-    
+
     public InteractionTest() {
     }
 
@@ -128,10 +133,13 @@ public class InteractionTest {
     }
 
     @Test
-    public void testCommunicationHandlerConfiguration() throws Exception {
-        
+    public void testCommunicationHandlerConfigurationWithNoSubject() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        RulesLoggerHelper.setBuffer(ps);
+
         assertNotNull(agent);
-        
+
         ActionAgentDialogueHelper helper = new ActionAgentDialogueHelper(agentUrl);
 
         List<String> receivers = new ArrayList<>();
@@ -139,8 +147,82 @@ public class InteractionTest {
         List<String> channels = new ArrayList<>();
         List<String> templates = new ArrayList<>();
         List<String> timeouts = new ArrayList<>();
-        Map<String,Object> templateVariables = new HashMap<>();
+        Map<String, Object> templateVariables = new HashMap<>();
 
+        String sender = "CDS";
+        receivers.add("1");
+        channels.add("ALERT");
+        templates.add("test-template-1");
+        timeouts.add("10s");
+        templateVariables.put("greetingMessage", "Hi There!");
+        templateVariables.put("person", "Mr. Patient");
+
+        helper.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, templateVariables);
+
+        Thread.sleep(15000);
+        ps.flush();
+        String output = baos.toString();
+
+        Assert.assertEquals(0, countOccurences(output, "'Add Patient to template variables'"));
+        Assert.assertEquals(0, countOccurences(output, "'Add Provider to template variables'"));
+        Assert.assertEquals(1, countOccurences(output, "'Send Alert'"));
+    }
+
+    @Test
+    public void testCommunicationHandlerConfigurationWith1Subject() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        RulesLoggerHelper.setBuffer(ps);
+        
+        assertNotNull(agent);
+
+        ActionAgentDialogueHelper helper = new ActionAgentDialogueHelper(agentUrl);
+
+        List<String> receivers = new ArrayList<>();
+        List<String> subjects = new ArrayList<>();
+        List<String> channels = new ArrayList<>();
+        List<String> templates = new ArrayList<>();
+        List<String> timeouts = new ArrayList<>();
+        Map<String, Object> templateVariables = new HashMap<>();
+
+        String sender = "CDS";
+        receivers.add("1");
+        subjects.add("2");
+        channels.add("ALERT");
+        templates.add("test-template-1");
+        timeouts.add("10s");
+        templateVariables.put("greetingMessage", "Hi There!");
+        templateVariables.put("person", "Mr. Patient");
+
+        helper.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, templateVariables);
+
+        Thread.sleep(15000);
+        ps.flush();
+        String output = baos.toString();
+        
+        Assert.assertEquals(1, countOccurences(output, "'Add Patient to template variables'"));
+        Assert.assertEquals(0, countOccurences(output, "'Add Provider to template variables'"));
+        Assert.assertEquals(1, countOccurences(output, "'Send Alert'"));
+    }
+    
+    @Test
+    public void testCommunicationHandlerConfigurationWithSameSubjectAndReceiver() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        RulesLoggerHelper.setBuffer(ps);
+        
+        assertNotNull(agent);
+
+        ActionAgentDialogueHelper helper = new ActionAgentDialogueHelper(agentUrl);
+
+        List<String> receivers = new ArrayList<>();
+        List<String> subjects = new ArrayList<>();
+        List<String> channels = new ArrayList<>();
+        List<String> templates = new ArrayList<>();
+        List<String> timeouts = new ArrayList<>();
+        Map<String, Object> templateVariables = new HashMap<>();
+
+        String sender = "CDS";
         receivers.add("1");
         subjects.add("1");
         channels.add("ALERT");
@@ -149,13 +231,59 @@ public class InteractionTest {
         templateVariables.put("greetingMessage", "Hi There!");
         templateVariables.put("person", "Mr. Patient");
 
-        helper.invokeActionAgent(receivers, subjects, channels, templates, timeouts, templateVariables);
-        
+        helper.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, templateVariables);
+
         Thread.sleep(15000);
+        ps.flush();
+        String output = baos.toString();
         
+        Assert.assertEquals(1, countOccurences(output, "'Add Patient to template variables'"));
+        Assert.assertEquals(0, countOccurences(output, "'Add Provider to template variables'"));
+        Assert.assertEquals(1, countOccurences(output, "'Send Alert'"));
     }
 
     @Test
+    public void testCommunicationHandlerConfigurationWith2Subjects() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        RulesLoggerHelper.setBuffer(ps);
+        
+        assertNotNull(agent);
+
+        ActionAgentDialogueHelper helper = new ActionAgentDialogueHelper(agentUrl);
+
+        List<String> receivers = new ArrayList<>();
+        List<String> subjects = new ArrayList<>();
+        List<String> channels = new ArrayList<>();
+        List<String> templates = new ArrayList<>();
+        List<String> timeouts = new ArrayList<>();
+        Map<String, Object> templateVariables = new HashMap<>();
+
+        
+        String sender = "CDS";
+        receivers.add("1");
+        subjects.add("1");
+        subjects.add("2");
+        channels.add("ALERT");
+        templates.add("test-template-1");
+        timeouts.add("10s");
+        templateVariables.put("greetingMessage", "Hi There!");
+        templateVariables.put("person", "Mr. Patient");
+
+        helper.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, templateVariables);
+
+        Thread.sleep(15000);
+        
+        ps.flush();
+        String output = baos.toString();
+        
+        Assert.assertEquals(1, countOccurences(output, "'Add Patient to template variables'"));
+        Assert.assertEquals(1, countOccurences(output, "'Add Provider to template variables'"));
+        Assert.assertEquals(1, countOccurences(output, "'Send Alert'"));
+
+    }
+
+    //@Test
     public void testdirectRequestToDeliverMessage() throws InterruptedException {
 
         assertNotNull(agent);
@@ -183,13 +311,10 @@ public class InteractionTest {
         args.put("deliveryDate", "Tue Oct 11 23:46:36 CEST 2011");
         args.put("status", "New");
 
-
-
         ACLMessageFactory factory = new ACLMessageFactory(Encodings.XML);
 
         Action action = MessageContentFactory.newActionContent("deliverMessage", args);
         ACLMessage req = factory.newRequestMessage("", "", action);
-
 
         agent.tell(req);
 
@@ -204,9 +329,6 @@ public class InteractionTest {
         assertTrue(result.toString().contains("refId"));
         assertTrue(result.toString().contains("convoId"));
 
-
-
-
         action = MessageContentFactory.newActionContent("deliverMessage", args);
         ACLMessage req2 = factory.newRequestMessage("", "", action);
 
@@ -219,6 +341,16 @@ public class InteractionTest {
         assertEquals(Act.INFORM, ans.get(1).getPerformative());
 
         agent.dispose();
+    }
+
+    private int countOccurences(String str, String pattern) {
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(str);
+        int count = 0;
+        while (m.find()) {
+            count += 1;
+        }
+        return count;
     }
 
 }

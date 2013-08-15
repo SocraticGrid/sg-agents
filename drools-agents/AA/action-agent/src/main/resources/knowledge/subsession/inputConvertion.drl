@@ -74,7 +74,7 @@ then
         map.put("subjectAbout", chc.getSubjects().toArray(new String[0]));  
     }
 
-    map.put("sender", $actorId );                 
+    map.put("sender", chc.getSender() );                 
     map.put("mainRecipients", new String[] { $actorId } );          
     map.put("secondaryRecipients", new String[0] );     
     map.put("hiddenRecipients", new String[0] ); 
@@ -107,15 +107,10 @@ when
     )
     $ticket : InteractionTicket( id == $ticketId,
                                  $source : source  )
-    $pat :   Patient( messageId == $convoId )
-    $pro :   Provider( messageId == $convoId )
     $rec :   Recipient( messageId == $convoId )
-    //Add more facts if required
 then
     Map args = new HashMap();
     args.put( "recipient", $rec );
-    args.put( "patient", $pat );
-    args.put( "provider", $pro );
 
     //Add the original template variables that came with the 
     //CommunicationHandlerConfiguration request
@@ -123,5 +118,8 @@ then
         args.putAll(((CommunicationHandlerConfiguration)$source).getTemplateVariables());
     }
 
-    insert(new ActionContentTemplateContext($action, args));
+    ActionContentTemplateContext $actc = new ActionContentTemplateContext($action, args);
+    RulesLoggerHelper.debug(logger, drools, "New ActionContentTemplateContext created: {}", $actc);
+
+    insert($actc);
 end

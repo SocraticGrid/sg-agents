@@ -17,6 +17,28 @@ import java.util.HashMap;
 global Logger logger;
 global TemplateManager templateManager;
 
+rule "Add Patient to template variables"
+salience 1
+when
+    $action: Action( $convoId : this["conversationId"] )
+    $context: ActionContentTemplateContext ($variables: variables, variables["patient"] == null)
+    $pat :   Patient( messageId == $convoId )
+then
+    RulesLoggerHelper.info(logger, drools, "Adding patient ({}) to template variables", $pat);
+    $variables.put("patient", $pat);
+end
+
+rule "Add Provider to template variables"
+salience 1
+when
+    $action: Action( $convoId : this["conversationId"] )
+    $context: ActionContentTemplateContext ($variables: variables, variables["provider"] == null)
+    $pro :   Provider( messageId == $convoId )
+then
+    RulesLoggerHelper.info(logger, drools, "Adding provider ({}) to template variables", $pro);
+    $variables.put("provider", $pro);
+end
+
 rule "Process Action Content"
 when
     $action: Action( 

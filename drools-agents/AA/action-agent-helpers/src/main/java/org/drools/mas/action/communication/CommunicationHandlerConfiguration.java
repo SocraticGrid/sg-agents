@@ -42,12 +42,21 @@ import java.util.Map;
  * @author esteban
  */
 public class CommunicationHandlerConfiguration implements Serializable {
+    private String sender;
     private List<String> receivers = new ArrayList<String>();
     private List<String> subjects = new ArrayList<String>();
     private List<String> channels = new ArrayList<String>();
     private List<String> templates = new ArrayList<String>();
     private List<String> timeouts = new ArrayList<String>();
     private Map<String, Object> templateVariables = new HashMap<String, Object>();
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
 
     public List<String> getChannels() {
         return channels;

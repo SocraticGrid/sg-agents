@@ -4,6 +4,7 @@
  */
 package org.socraticgrid.taps.aa.log;
 
+import java.io.PrintStream;
 import org.drools.spi.KnowledgeHelper;
 import org.slf4j.Logger;
 
@@ -13,8 +14,18 @@ import org.slf4j.Logger;
  */
 public class RulesLoggerHelper {
     
+    private static PrintStream buffer;
+    
+    public static void setBuffer(PrintStream buffer ){
+        RulesLoggerHelper.buffer = buffer;
+    }
+    
     private static String formatMessage(KnowledgeHelper helper, String originalMessageFormat){
-        return "\t[Rule: '"+helper.getRule().getName()+"'] ->   "+originalMessageFormat;
+        String result = "\t[Rule: '"+helper.getRule().getName()+"'] ->   "+originalMessageFormat;
+        if (buffer != null){
+            buffer.println(result);
+        }
+        return result;
     }  
     
     public static void debug(Logger logger, KnowledgeHelper helper, String messageFormat, Object... args){

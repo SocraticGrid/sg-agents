@@ -11,8 +11,8 @@ global Logger logger;
 /**
 Configures the session's logger global.
 **/
-rule "Logger Configuration"
-salience 1000
+rule "[CONFIG] Logger Configuration"
+salience 100000
 when
 then
     Logger sessionLogger = LoggerFactory.getLogger("subsession");
@@ -22,10 +22,9 @@ then
 end
 
 
-rule "Event Listeners Configuration"
+rule "[CONFIG] Event Listeners Configuration"
 when
 then
     //((org.drools.impl.StatefulKnowledgeSessionImpl)kcontext.getKnowledgeRuntime()).addEventListener(new org.drools.event.rule.DebugWorkingMemoryEventListener(System.out));
     //((org.drools.impl.StatefulKnowledgeSessionImpl)kcontext.getKnowledgeRuntime()).addEventListener(new org.drools.event.rule.DebugAgendaEventListener(System.out));
 end
-

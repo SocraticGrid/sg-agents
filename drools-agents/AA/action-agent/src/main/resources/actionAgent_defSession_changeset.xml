@@ -65,5 +65,6 @@
         <resource type="DRL" source="classpath:knowledge/subsession/actionContentHandling.drl" />
         <resource type="DRL" source="classpath:knowledge/subsession/inputConvertion.drl" />
         <resource type="DRL" source="classpath:knowledge/subsession/delivery.drl" />
+        <resource type="DRL" source="classpath:knowledge/subsession/cleanup.drl" />
     </add>
 </change-set>

@@ -48,11 +48,17 @@ declare trait OrgEntity
     gender              : String
 end
 
+/**
+TODO: This rule is implementation dependent and should be removed in the future
+**/
 declare trait Patient extends OrgEntity
     id                  : String        @key
     messageId           : String        @key
 end
 
+/**
+TODO: This rule is implementation dependent and should be removed in the future
+**/
 declare trait Provider extends OrgEntity
     id                  : String        @key
     messageId           : String        @key
@@ -127,6 +133,34 @@ then
 end
 
 
+rule "Insert Recipient Entities"
+when
+    $action: Action( actionName == "deliverMessage",
+                     $refId        : this["refId"],
+                     $cnvId        : this["conversationId"],
+                     $recipients : this["mainRecipients"] != null
+                   )
+    $id : String() from $recipients
+    not Entity(id == $id, messageId == $cnvId)
+then
+    Entity $ent = new Entity( $id, (String) $cnvId );
+    RulesLoggerHelper.debug(logger, drools, "I'm calling the LDAP Service here for Recipient '{}'...", $id);
+   
+    Map<String, String> results = LDAPHelper.queryEntity( EndPointHelper.getEndPoint( "DSAIntegration" ),
+                                                          $id );
+    $ent.setCn( (String) results.get( "cn" ) );
+    $ent.setMobile( (String) results.get( "mobile" ) );
+    $ent.setEmployeeNumber( (String) results.get( "employerNumber" ) );
+    $ent.setDisplayName( (String) results.get( "displayNumber" ) );
+    $ent.setGender( (String) results.get( "gender" ) );
+
+    $ent.setResolved( true );
+
+    RulesLoggerHelper.debug(logger, drools, "Entity: (id='{}'): {}", $ent.getId(), $ent);
+
+    //insertLogical( $ent );
+    insert( $ent );
+end
 
 rule "Insert Subject-About Entities"
 when
@@ -136,39 +170,73 @@ when
                      $subjectAbout : this["subjectAbout"] != null
                    )
     $id : String() from $subjectAbout
+    not Entity(id == $id, messageId == $cnvId)
 then
     Entity $ent = new Entity( $id, (String) $cnvId );
-    RulesLoggerHelper.debug(logger, drools, "I'm calling the LDAP Service here for '{}'...", $id);
+    RulesLoggerHelper.debug(logger, drools, "I'm calling the LDAP Service here for Subject '{}'...", $id);
    
     Map<String, String> results = LDAPHelper.queryEntity( EndPointHelper.getEndPoint( "DSAIntegration" ),
                                                           $id );
-        $ent.setCn( (String) results.get( "cn" ) );
-        $ent.setMobile( (String) results.get( "mobile" ) );
-        $ent.setEmployeeNumber( (String) results.get( "employerNumber" ) );
-        $ent.setDisplayName( (String) results.get( "displayNumber" ) );
-        $ent.setGender( (String) results.get( "gender" ) );
-
-        RulesLoggerHelper.debug(logger, drools, "Entity: (id='{}'): {}", $ent.getId(), $ent);
+    $ent.setCn( (String) results.get( "cn" ) );
+    $ent.setMobile( (String) results.get( "mobile" ) );
+    $ent.setEmployeeNumber( (String) results.get( "employerNumber" ) );
+    $ent.setDisplayName( (String) results.get( "displayNumber" ) );
+    $ent.setGender( (String) results.get( "gender" ) );
 
     $ent.setResolved( true );
-    insertLogical( $ent );
+
+    RulesLoggerHelper.debug(logger, drools, "Entity: (id='{}'): {}", $ent.getId(), $ent);
+
+    //insertLogical( $ent );
+    insert( $ent );
 end
 
+/**
+TODO: This rule is implementation dependent and should be removed in the future
+**/
 rule "Resolve Patient"
+salience 5
 when
     $action: Action( actionName == "deliverMessage",
                          $refId : this["refId"],
                          $cnvId : this["conversationId"],
-                         $subjectAbout : this["subjectAbout"] != null
+                         this["subjectAbout"] != null,
+                         this["subjectAbout"].size() > 0,
+                         $subjectAbout : this["subjectAbout"]
                    )
+    //The first subject-about is considered the patient                   
     $pid : String() from ( (String[]) $subjectAbout )[0]
-    $ent : Entity( id == $pid, messageId == $cnvId, resolved == true ) 
+    $ent : Entity( id == $pid, messageId == $cnvId, resolved == true, this not isA Patient.class ) 
 then
     RulesLoggerHelper.debug(logger, drools, "The patient ID IS: '{}'", $pid);
-    Patient pat = don( $ent, Patient.class, true );
+    Patient pat = don( $ent, Patient.class, false );
 end
 
+/**
+TODO: This rule is implementation dependent and should be removed in the future
+**/
+rule "Resolve Provider"
+salience 5
+when
+    $action: Action( actionName == "deliverMessage",
+                         $refId      : this["refId"],
+                         $cnvId      : this["conversationId"],
+                         this["subjectAbout"] != null,
+                         this["subjectAbout"].size() > 1,
+                         $subjectAbout : this["subjectAbout"]
+                       )
+    //The second subject-about is considered the provider                   
+    $pid : String() from ( (String[]) $subjectAbout )[1]
+    $ent : Entity( id == $pid, messageId == $cnvId, resolved == true, this not isA Provider.class )
+then
+    RulesLoggerHelper.debug(logger, drools, "The provider ID IS: '{}'", $pid);
+    Provider pro = don( $ent, Provider.class, false );
+
+end
+
+
 rule "Resolve Main Recipients"
+salience 5
 when
     $action: Action( actionName == "deliverMessage",
                          $refId      : this["refId"],
@@ -176,30 +244,12 @@ when
                          $recipients : this["mainRecipients"] != null
                        )
     $rid : String() from ( (String[]) $recipients )
-    $ent : Entity( id == $rid, messageId == $cnvId, resolved == true ) 
+    $ent : Entity( id == $rid, messageId == $cnvId, resolved == true, this not isA MainRecipient.class ) 
 then
-    RulesLoggerHelper.debug(logger, drools, "The recipient ID IS: '{}'", $rid);
-    MainRecipient rec = don( $ent, MainRecipient.class, true );
+    RulesLoggerHelper.debug(logger, drools, "The recipient ID IS: '{}': {}", $rid, $ent);
+    MainRecipient rec = don( $ent, MainRecipient.class, false );
 
 end
-
-
-rule "Resolve Sender as Provider"
-when
-    $action: Action( actionName == "deliverMessage",
-                         $refId      : this["refId"],
-                         $cnvId      : this["conversationId"],
-                         $sender     : this["sender"]
-                       )
-    $ent : Entity( id == $sender, messageId == $cnvId, resolved == true )
-then
-    RulesLoggerHelper.debug(logger, drools, "The provider ID IS: '{}'", $sender);
-    Provider pro = don( $ent, Provider.class, true );
-
-end
-
-
-
 
 
 

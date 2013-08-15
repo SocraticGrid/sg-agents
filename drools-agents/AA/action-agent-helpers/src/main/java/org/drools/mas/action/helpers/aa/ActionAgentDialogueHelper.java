@@ -65,12 +65,13 @@ public class ActionAgentDialogueHelper {
         }
     }
 
-    public void invokeActionAgent(List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts) {
-        this.invokeActionAgent(receivers, subjects, channels, templates, timeouts, new HashMap<String, Object>());
+    public void invokeActionAgent(String sender, List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts) {
+        this.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, new HashMap<String, Object>());
     }
     
-    public void invokeActionAgent(List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts, Map<String, Object> templateVariables) {
+    public void invokeActionAgent(String sender, List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts, Map<String, Object> templateVariables) {
         CommunicationHandlerConfiguration configuration = new CommunicationHandlerConfiguration();
+        configuration.setSender(sender);
         configuration.setReceivers(receivers);
         configuration.setSubjects(subjects);
         configuration.setChannels(channels);
