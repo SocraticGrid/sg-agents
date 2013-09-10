@@ -50,4 +50,4 @@
  ~ END OF TERMS AND CONDITIONS
  ~
 -->
-<Context antiJARLocking="true" path="action-agent"/>
+<Context antiJARLocking="true" path="/action-agent"/>

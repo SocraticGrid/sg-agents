@@ -41,6 +41,7 @@
                 <agent.node>action-agent-localnode</agent.node>
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
+                <agent.logfile>/tmp/action-agent.log</agent.logfile>
                 
                 <dsa.endpoint>MOCK</dsa.endpoint>
             </properties>
@@ -52,7 +53,8 @@
                 <agent.node>action-agent-localnode</agent.node>
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8081</agent.endpoint.port>
-
+                <agent.logfile>/tmp/action-agent.log</agent.logfile>
+                
                 <dsa.endpoint>http://devtools04:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
             </properties>
         </profile>
@@ -105,7 +107,6 @@
         <dependency>
             <groupId>org.drools.mas</groupId>
             <artifactId>drools-mas-generic-client</artifactId>
-            <scope>test</scope>
         </dependency>
         
         
@@ -153,6 +154,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+        </dependency>
+        
+        
+        <!-- Google dependencies -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
         
         <!-- Test dependencies -->
