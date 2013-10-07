@@ -62,7 +62,6 @@ import java.util.ArrayList;
 
 import org.socraticgrid.kmr2.simulatorAgent.SimulatorModelMarker;
 
-global org.drools.grid.Grid grid;
 
 declare ConfigurationDetail
     config              : Configuration
@@ -131,7 +130,7 @@ end
 
 rule "Action_Request : getConfigurationDetail Result"
 when
-    $s : SessionLocator($nodeId: nodeId, $sessionId: sessionId, mind == true)
+    $s : SessionLocator($sessionId: sessionId, mind == true)
     $a : Action( actionName == "getConfigurationDetail",
                   $userId           : this["userId"],
                   $modelId          : this["modelId"],
@@ -146,6 +145,6 @@ when
                             $return;
     )
 then
-     ResponseContent.deliverResponse(grid, $nodeId, $sessionId, $msgId, $return, null, true );
+     ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
      retract ($a);
 end

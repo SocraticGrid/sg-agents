@@ -62,7 +62,6 @@ import java.util.ArrayList;
 import org.drools.mas.util.helper.SessionLocator;
 import org.drools.mas.util.helper.ResponseContent;
 
-global org.drools.grid.Grid grid;
 
 declare ResultCommandResult
     resId           : String
@@ -125,7 +124,7 @@ end
 rule "Action_Request : requestResultOperation Result"
 salience 10
 when
-    $s : SessionLocator($nodeId: nodeId, $sessionId: sessionId, mind == true)
+    $s : SessionLocator($sessionId: sessionId, mind == true)
     $a :  Action( actionName == "requestResultOperation",
                   $userId               : this["userId"],
                   $resultId             : this["resultId"],
@@ -134,6 +133,6 @@ when
                 )
     requestResultOperation($userId, $resultId, $action, $return;)
 then
-     ResponseContent.deliverResponse(grid, $nodeId, $sessionId, $msgId, $return, null, true );
+     ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
      retract ($a);
 end

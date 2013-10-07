@@ -59,8 +59,6 @@ import java.util.List;
 import java.util.Date;
 import java.util.ArrayList;
 
-global org.drools.grid.Grid grid;
-
 declare SimCommand
     simId           : String
     successStatus   : boolean   = true;
@@ -295,7 +293,7 @@ end
 rule "Action_Request : commandSimulation Result"
 salience 5
 when
-    $s : SessionLocator($nodeId: nodeId, $sessionId: sessionId, mind == true)
+    $s : SessionLocator($sessionId: sessionId, mind == true)
     $a : CommandSimulationActionRecord(
                     $userId               : userId,
                     $modelId              : modelId,
@@ -310,6 +308,6 @@ when
                         $return;
     )
 then
-     ResponseContent.deliverResponse(grid, $nodeId, $sessionId, $msgId, $return, null, true );
+     ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
      retract ($a);
 end

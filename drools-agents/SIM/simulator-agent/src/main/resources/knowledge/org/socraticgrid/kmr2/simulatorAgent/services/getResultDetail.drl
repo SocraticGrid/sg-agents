@@ -63,8 +63,6 @@ import java.util.ArrayList;
 import org.drools.mas.util.helper.SessionLocator;
 import org.drools.mas.util.helper.ResponseContent;
 
-global org.drools.grid.Grid grid;
-
 declare ResultDetail
     configId            : String
     results             : Results
@@ -127,7 +125,7 @@ end
 rule "Action_Request : getResultDetail Result"
 salience 10
 when
-    $s : SessionLocator($nodeId: nodeId, $sessionId: sessionId, mind == true)
+    $s : SessionLocator($sessionId: sessionId, mind == true)
     $a :  Action( actionName == "getResultDetail",
                   $userId           : this["userId"],
                   $resultId         : this["resultId"],
@@ -136,6 +134,6 @@ when
                 )
     getResultDetail($userId, $resultId, $modelId, $return;)
 then
-     ResponseContent.deliverResponse(grid, $nodeId, $sessionId, $msgId, $return, null, true );
+     ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
      retract ($a);
 end

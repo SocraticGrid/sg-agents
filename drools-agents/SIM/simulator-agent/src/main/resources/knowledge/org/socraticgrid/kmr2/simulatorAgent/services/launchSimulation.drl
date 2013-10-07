@@ -61,8 +61,6 @@ import java.util.ArrayList;
 import org.drools.mas.util.helper.SessionLocator;
 import org.drools.mas.util.helper.ResponseContent;
 
-global org.drools.grid.Grid grid;
-
 declare SimStart
     simId           : String
     modelId         : String @key
@@ -78,7 +76,7 @@ end
 rule "Action_Request : launchSimulation Return"
 salience 10
 when
-    $s : SessionLocator($nodeId: nodeId, $sessionId: sessionId, mind == true)
+    $s : SessionLocator($sessionId: sessionId, mind == true)
     $a :  Action( actionName == "launchSimulation",
                   $userId               : this["userId"],
                   $modelId              : this["modelId"],
@@ -88,7 +86,7 @@ when
                 )
     launchSimulation ($userId, $modelId, $configuration, $startingSolutionId, $return;)
 then
-    ResponseContent.deliverResponse(grid, $nodeId, $sessionId, $msgId, ((SimStart)$return).getSimId(), null, true );
+    ResponseContent.deliverResponse($sessionId, $msgId, ((SimStart)$return).getSimId(), null, true );
     retract($a);
 end
 
