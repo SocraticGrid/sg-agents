@@ -144,6 +144,11 @@
             </dependency>
             <dependency>
                 <groupId>org.drools</groupId>
+                <artifactId>drools-informer-pmml</artifactId>
+                <version>${drools.chance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.drools</groupId>
                 <artifactId>drools-informer-interaction</artifactId>
                 <version>${drools.chance.version}</version>
             </dependency>
