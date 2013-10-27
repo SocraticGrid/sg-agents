@@ -114,12 +114,7 @@ public class TestModels extends BaseTest {
 
 
 
-    /**
-     * TODO: Fix this test!
-     * The failure could be caused by the kagent updating the session and an 
-     * accumulate function being triggered.
-     */
-    @Ignore("TODO: Fix this test!")
+    @Test
     public void testGetModels() {
 
         String diagModels = getModels(agent, "drX", "patient33", Arrays.asList("Diagnostic") );
@@ -158,10 +153,7 @@ public class TestModels extends BaseTest {
 
 
 
-    /**
-     * TODO: Fix this test!
-     */
-    @Ignore("TODO: Fix this test!")
+    @Test
     public void testGetRiskModelsDetail() {
 
         List<String> modelsIds = getElements(getRiskModels(agent, "docX", "patient33"), "//modelId");
@@ -265,11 +257,7 @@ public class TestModels extends BaseTest {
     }
     
 
-
-    /**
-     * TODO: Fix this test!
-     */
-    @Ignore("TODO: Fix this test!")
+    @Test
     public void testExceedAndReset() {
 
         List<String> modelsIds = getElements(getRiskModels(agent, "docX", "patient33"), "//modelId");
@@ -517,7 +505,7 @@ public class TestModels extends BaseTest {
 
     @Test
     public void testExceedRiskThreshold() {
-
+        
         List<String> modelsIds = getElements(getRiskModels(agent, "docX", "patient33"), "//modelId");
         String modelStats = getRiskModelsDetail(agent, "docX", "patient33", modelsIds.toArray(new String[modelsIds.size()]));
 
@@ -607,28 +595,6 @@ public class TestModels extends BaseTest {
     public void testProbe() throws InterruptedException {
         logger.debug( probe(agent, "patient33" ) );
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

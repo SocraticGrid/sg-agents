@@ -65,6 +65,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Timed;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -97,7 +98,7 @@ public class TestDxGuide extends BaseTest {
     }
     
     
-    @Test
+    @Test(timeout = 20000)
     public void testDifferentialSetSurvey() {
 
         String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "Post Traumatic Stress Disorder");
@@ -156,7 +157,7 @@ public class TestDxGuide extends BaseTest {
 
     }
 
-    @Test
+    @Test(timeout = 20000)
     public void testSetDiagnostic() {
         System.out.println("STARtING testSetDiagnostic ");
 
@@ -192,7 +193,7 @@ public class TestDxGuide extends BaseTest {
 
     }
 
-    @Test
+    @Test(timeout = 20000)
     public void testDiagnostic() {
         System.out.println("STARtING testDiagnostic ");
 
@@ -288,7 +289,7 @@ public class TestDxGuide extends BaseTest {
 
     }
 
-    @Test
+    @Test(timeout = 20000)
     public void testGetDiagnosticActionStatus() {
 
 
@@ -324,7 +325,7 @@ public class TestDxGuide extends BaseTest {
 
     }
 
-    @Test
+    @Test(timeout = 20000)
     public void testEmptyDiagnostic() {
 
         String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "MockCold");
@@ -337,7 +338,7 @@ public class TestDxGuide extends BaseTest {
 
     }
 
-    @Test
+    @Test(timeout = 20000)
     public void testNonExistingDiagnostic() {
 
         String dxProcessReturn = startDiagnosticGuideProcess(agent, "docX", "123456", "Imaginary Disease");

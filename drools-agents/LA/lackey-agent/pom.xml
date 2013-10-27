@@ -54,7 +54,6 @@
             <properties>
                 <agent.name>lackey-agent</agent.name>
                 <agent.node>lackey-agent-localnode</agent.node>
-                <agent.port>8000</agent.port>
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8083</agent.endpoint.port>
             </properties>
