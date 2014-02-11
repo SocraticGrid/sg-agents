@@ -144,9 +144,9 @@ when
     not Entity(id == $id, messageId == $cnvId)
 then
     Entity $ent = new Entity( $id, (String) $cnvId );
-    RulesLoggerHelper.debug(logger, drools, "I'm calling the LDAP Service here for Recipient '{}'...", $id);
+    RulesLoggerHelper.debug(logger, drools, "I'm calling the ContactHelper Service here for Recipient '{}'...", $id);
    
-    Map<String, String> results = LDAPHelper.queryEntity( EndPointHelper.getEndPoint( "DSAIntegration" ),
+    Map<String, String> results = ContactHelper.queryEntity( EndPointHelper.getEndPoint( "DSAIntegration" ),
                                                           $id );
     $ent.setCn( (String) results.get( "cn" ) );
     $ent.setMobile( (String) results.get( "mobile" ) );
@@ -173,9 +173,9 @@ when
     not Entity(id == $id, messageId == $cnvId)
 then
     Entity $ent = new Entity( $id, (String) $cnvId );
-    RulesLoggerHelper.debug(logger, drools, "I'm calling the LDAP Service here for Subject '{}'...", $id);
+    RulesLoggerHelper.debug(logger, drools, "I'm calling the ContactHelper Service here for Subject '{}'...", $id);
    
-    Map<String, String> results = LDAPHelper.queryEntity( EndPointHelper.getEndPoint( "DSAIntegration" ),
+    Map<String, String> results = ContactHelper.queryEntity( EndPointHelper.getEndPoint( "DSAIntegration" ),
                                                           $id );
     $ent.setCn( (String) results.get( "cn" ) );
     $ent.setMobile( (String) results.get( "mobile" ) );

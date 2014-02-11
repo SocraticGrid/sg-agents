@@ -55,7 +55,7 @@
                 <agent.endpoint.port>8081</agent.endpoint.port>
                 <agent.logfile>/tmp/action-agent.log</agent.logfile>
                 
-                <dsa.endpoint>http://devtools04:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
+                <dsa.endpoint>http://localhost:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
             </properties>
         </profile>
     </profiles>
