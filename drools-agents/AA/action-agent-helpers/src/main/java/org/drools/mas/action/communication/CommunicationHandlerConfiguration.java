@@ -43,6 +43,8 @@ import java.util.Map;
  */
 public class CommunicationHandlerConfiguration implements Serializable {
     private String sender;
+    private String source;
+    private String originator;
     private List<String> receivers = new ArrayList<String>();
     private List<String> subjects = new ArrayList<String>();
     private List<String> channels = new ArrayList<String>();
@@ -56,6 +58,22 @@ public class CommunicationHandlerConfiguration implements Serializable {
 
     public void setSender(String sender) {
         this.sender = sender;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getOriginator() {
+        return originator;
+    }
+
+    public void setOriginator(String originator) {
+        this.originator = originator;
     }
 
     public List<String> getChannels() {

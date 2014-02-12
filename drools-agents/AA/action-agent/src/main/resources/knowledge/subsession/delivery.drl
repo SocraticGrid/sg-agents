@@ -296,8 +296,11 @@ when
                      $secRec         : this["secondaryRecipients"],
                      $hiddenRec      : this["hiddenRecipients"],
                      $type           : this["type"] == "ALERT",
+                     $title          : this["title"] != null,
                      $header         : this["header"] != null,
                      $body           : this["body"] != null,
+                     $source         : this["source"],
+                     $originator     : this["originator"],
                      $priority       : this["priority"],
                      $deliveryDate   : this["deliveryDate"],
                      $status         : this["status"]
@@ -309,11 +312,14 @@ then
 
     DeliverMessageHelper.sendAlert( endpoint,
                                     (String) $convoId,
+                                    (String) $title,
                                     (String) $header,
                                     (String) $body,
                                     (String) $sender,
                                     $rec.getId(),
-                                    (String[])$about );
+                                    (String[])$about,
+                                    (String) $source,
+                                    (String) $originator );
 end
 
 
@@ -322,25 +328,31 @@ rule "Send Update Alert"
 when
     $action: Action( actionName == "deliverMessage",
                      $refId          : this["refId"],
-   			         $sender		: this["sender"],
+                     $sender	     : this["sender"],
                      $convoId        : this["conversationId"],
                      $type           : this["type"] == "UPDATE",
                      $priority       : this["priority"],
                      $about          : this["subjectAbout"],
                      $deliveryDate   : this["deliveryDate"],
                      $status         : this["status"],
-                     $header         : this["header"] != null
+                     $header         : this["header"] != null,
+                     $title          : this["title"] != null,
+                     $source         : this["source"],
+                     $originator     : this["originator"]
                    )
     $rec :   Recipient( messageId == $convoId )
 then
     RulesLoggerHelper.debug(logger, drools, ">>> Sending an ALERT Message 2");
     DeliverMessageHelper.sendAlert( EndPointHelper.getEndPoint( "DSAIntegration" ),
    	                                (String)  $convoId,
+                                        (String)  $title,
    	                                (String)  $header,
    	                                (String)  $status,
    	                                (String)  $sender,
    	                                $rec.getId() ,
-                                    (String[]) $about );
+                                        (String[]) $about,
+                                        (String)  $source,
+                                        (String)  $originator );
 end
 
 

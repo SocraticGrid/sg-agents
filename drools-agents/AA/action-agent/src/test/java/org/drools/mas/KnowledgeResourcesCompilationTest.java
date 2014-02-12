@@ -54,11 +54,8 @@
  */
 package org.drools.mas;
 
-import java.sql.SQLException;
 import java.util.Properties;
 import org.drools.mas.core.DroolsAgent;
-import org.h2.tools.DeleteDbFiles;
-import org.h2.tools.Server;
 import org.junit.*;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;

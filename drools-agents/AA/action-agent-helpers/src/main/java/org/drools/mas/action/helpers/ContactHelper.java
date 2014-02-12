@@ -109,7 +109,7 @@ import javax.xml.ws.BindingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.socraticgrid.dsa.DSAIntegration;
-import org.socraticgrid.dsa.DSAIntegrationPortType;
+import org.socraticgrid.dsa.DSAIntegrationService;
 import org.socraticgrid.dsa.GetDirectoryAttributeRequestType;
 import org.socraticgrid.dsa.GetDirectoryAttributeResponseType;
 
@@ -146,7 +146,7 @@ public class ContactHelper {
         if(names != null){
             request.getNames().addAll(names);
         }
-        DSAIntegrationPortType port = null;
+        DSAIntegrationService port = null;
         try{
             port = getPort(endpoint);
         } catch ( Exception e ) {
@@ -182,9 +182,9 @@ public class ContactHelper {
     }
     
     
-    private static DSAIntegrationPortType getPort(String endpoint) {
+    private static DSAIntegrationService getPort(String endpoint) {
         DSAIntegration service = new DSAIntegration();
-        DSAIntegrationPortType port = service.getDSAIntegrationPortSoap11();
+        DSAIntegrationService port = service.getDSAIntegrationPortSoap11();
         ((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                 endpoint);
         return port;

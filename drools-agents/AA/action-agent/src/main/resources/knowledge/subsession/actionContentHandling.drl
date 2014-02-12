@@ -43,6 +43,7 @@ rule "Process Action Content"
 when
     $action: Action( 
         $templateId : this["templateId"] != null,
+        this["title"] == null,
         this["header"] == null,
         this["body"] == null
     )
@@ -51,8 +52,12 @@ when
 then
     //get template data
     TemplateEntry template = templateManager.getTemplate((String)$templateId);
-    String body = template.getBody();
+    String title = template.getTitle();
     String header = template.getHeader();
+    String body = template.getBody();
+
+    //replace title template
+    String finalTitle = TemplateBuilder.applyTemplate( (String) title, (Map<String,Object>) $variables ).replace( "\n", "" );
 
     //replace header template
     String finalHeader = TemplateBuilder.applyTemplate( (String) header, (Map<String,Object>) $variables ).replace( "\n", "" );
@@ -60,9 +65,13 @@ then
     //replace body template
     String finalBody = TemplateBuilder.applyTemplate( (String) body, (Map<String,Object>) $variables ).replace( "\n", "" );
 
-    RulesLoggerHelper.info(logger, drools, "Template '{}' processed. Final Result:\n{}\n{}", $templateId, finalHeader, finalBody );
+    RulesLoggerHelper.info(logger, drools, "Template '{}' processed. Final Result:\nTitle: {}\nHeader: {}\nBody: {}", $templateId, finalTitle, finalHeader, finalBody );
 
-    //prepare 'body' and 'header' entries for Action 
+    //prepare 'title', 'header' and 'body' entries for Action 
+    MyMapArgsEntryType titleEntry = new MyMapArgsEntryType();
+    titleEntry.setKey("title");
+    titleEntry.setValue(finalTitle);
+
     MyMapArgsEntryType headerEntry = new MyMapArgsEntryType();
     headerEntry.setKey("header");
     headerEntry.setValue(finalHeader);
@@ -72,11 +81,12 @@ then
     bodyEntry.setValue(finalBody);
 
 
-    //Add 'body' and 'header' to Action
-    $action.getArgs().add(headerEntry);
-    $action.getArgs().add(bodyEntry);
-
-    update($action);
+    //Add 'title', 'header' and 'body' to Action
+    modify($action){
+        getArgs().add(titleEntry),
+        getArgs().add(headerEntry),
+        getArgs().add(bodyEntry)
+    }
     
     //we don't need the context anymore
     retract($context); 

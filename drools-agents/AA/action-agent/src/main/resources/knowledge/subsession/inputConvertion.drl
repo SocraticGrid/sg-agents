@@ -61,10 +61,6 @@ when
 then
     String templateId = (String) $bodies.get(0);
 
-    //TODO: Why are these values hardcoded?
-    //String $pro = "1"; //LDAP UID
-    //String $pat = "99990070";
-
     java.util.LinkedHashMap map = new java.util.LinkedHashMap();
     map.put("refId", $ticketId );
     map.put("conversationId", $convoId );
@@ -82,6 +78,8 @@ then
     map.put("priority", "High" );
     map.put("deliveryDate", new java.util.Date() );
     map.put("status", "New" );                       
+    map.put("source", chc.getSource() );                       
+    map.put("originator", chc.getOriginator() );                       
     map.put("templateId", templateId );                       
 
     //Header and Body are set in "Create ActionContentTemplateContext for deliverMessage Action" rule

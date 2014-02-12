@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author esteban
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath*:META-INF/templateManagerContext.xml"})
+@ContextConfiguration(locations={"classpath*:META-INF/test-templateManagerContext.xml"})
 public class TemplateManagerTest {
     
     @Autowired
@@ -32,9 +32,10 @@ public class TemplateManagerTest {
     @Test
     public void basicTest(){
         
-        TemplateEntry template = templateManager.getTemplate("template1");
+        TemplateEntry template = templateManager.getTemplate("test-template-1");
         Assert.assertNotNull(template);
-        Assert.assertEquals("Recommendation 1", template.getHeader());
+        Assert.assertEquals("Test title for @{person}", template.getTitle());
+        Assert.assertEquals("@{greetingMessage}", template.getHeader());
     }
     
     @Test

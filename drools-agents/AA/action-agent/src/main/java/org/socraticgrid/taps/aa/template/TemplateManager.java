@@ -62,6 +62,7 @@ public class TemplateManager implements Serializable{
                 Node template = templates.item(i);
 
                 String id = template.getAttributes().getNamedItem("id").getNodeValue();
+                String title = null;
                 String header = null;
                 String body = null;
 
@@ -69,14 +70,16 @@ public class TemplateManager implements Serializable{
                 for (int j = 0; j < childNodes.getLength(); j++) {
                     Node child = childNodes.item(j);
 
-                    if ("header".equalsIgnoreCase(child.getNodeName())) {
+                    if ("title".equalsIgnoreCase(child.getNodeName())) {
+                        title = child.getTextContent().trim();
+                    } else if ("header".equalsIgnoreCase(child.getNodeName())) {
                         header = child.getTextContent().trim();
                     } else if ("body".equalsIgnoreCase(child.getNodeName())) {
                         body = child.getTextContent().trim();
                     }
                 }
 
-                templateEntries.put(id, new TemplateEntry(id, header, body));
+                templateEntries.put(id, new TemplateEntry(id, title, header, body));
 
             }
         }

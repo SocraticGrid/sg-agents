@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
     <template id="test-template-1">
+        <title>
+            <![CDATA[
+            Test title for @{person}
+            ]]>
+        </title>
         <header>
             <![CDATA[
             @{greetingMessage}

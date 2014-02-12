@@ -57,7 +57,7 @@ import java.util.List;
 import javax.xml.ws.BindingProvider;
 import org.junit.*;
 import org.socraticgrid.dsa.DSAIntegration;
-import org.socraticgrid.dsa.DSAIntegrationPortType;
+import org.socraticgrid.dsa.DSAIntegrationService;
 import org.socraticgrid.dsa.DeliverMessageRequestType;
 import org.socraticgrid.dsa.DeliverMessageResponseType;
 import org.socraticgrid.dsa.GetDirectoryAttributeRequestType;
@@ -111,7 +111,7 @@ public class DSAIntegrationTest {
     
     @Ignore(value = "Need to find a way to test this integration")
     public void testDeliverMsgCreate() {
-        DSAIntegrationPortType port = getPort();
+        DSAIntegrationService port = getPort();
         DeliverMessageRequestType request = new DeliverMessageRequestType();
         request.setRefId("888888");
         request.getSubject().add("1");
@@ -128,7 +128,7 @@ public class DSAIntegrationTest {
 
     @Ignore(value = "Need to find a way to test this integration")
     public void testDeliverMsgUpdate() {
-        DSAIntegrationPortType port = getPort();
+        DSAIntegrationService port = getPort();
         DeliverMessageRequestType request = new DeliverMessageRequestType();
         request.setRefId("888888");
         request.getSubject().add("1");
@@ -144,9 +144,9 @@ public class DSAIntegrationTest {
     }
 
 
-    private DSAIntegrationPortType getPort() {
+    private DSAIntegrationService getPort() {
         DSAIntegration service = new DSAIntegration();
-        DSAIntegrationPortType port = service.getDSAIntegrationPortSoap11();
+        DSAIntegrationService port = service.getDSAIntegrationPortSoap11();
         ((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                 ENDPT_LOCAL);
         return port;

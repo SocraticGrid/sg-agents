@@ -20,7 +20,8 @@
                 <directory>src</directory>
                 <includes>
                     <include>jax-ws-catalog.xml</include>
-                    <include>wsdl/**</include>
+                    <include>main/resources/DSAIntegration.wsdl</include>
+                    <include>main/resources/DSAIntegration.xsd</include>
                 </includes>
             </resource>
         </resources>
@@ -39,7 +40,7 @@
                                 <wsdlOption>
                                     <wsdl>${project.basedir}/src/wsdl/DSAIntegration.wsdl</wsdl>
                                     <!-- Avoid hardcoded .wsdl path in generated sources -->
-                                    <wsdlLocation>classpath:META-INF/wsdl/DSAIntegration.wsdl</wsdlLocation>
+                                    <wsdlLocation>classpath:META-INF/main/resources/DSAIntegration.wsdl</wsdlLocation>
                                     <extraargs> 
                                         <extraarg>-catalog</extraarg> 
                                         <extraarg>${basedir}/src/jax-ws-catalog.xml</extraarg> 

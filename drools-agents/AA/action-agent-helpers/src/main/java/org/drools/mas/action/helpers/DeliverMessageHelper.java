@@ -56,7 +56,7 @@ import javax.xml.ws.BindingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.socraticgrid.dsa.DSAIntegration;
-import org.socraticgrid.dsa.DSAIntegrationPortType;
+import org.socraticgrid.dsa.DSAIntegrationService;
 import org.socraticgrid.dsa.DeliverMessageRequestType;
 import org.socraticgrid.dsa.DeliverMessageResponseType;
 
@@ -79,10 +79,13 @@ public class DeliverMessageHelper {
         DeliverMessageRequestType request = new DeliverMessageRequestType();
         request.setRefId((String) ((params.get("refId") != null)?params.get("refId"):"") );
         request.setPriority((String) ((params.get("priority") != null)?params.get("priority"):""));
-        request.setBody((String) ((params.get("body") != null)?params.get("body"):""));
+        request.setTitle((String) ((params.get("title") != null)?params.get("title"):""));
         request.setHeader((String) ((params.get("header") != null)?params.get("header"):""));
+        request.setBody((String) ((params.get("body") != null)?params.get("body"):""));
         request.setDeliveryDate((String) ((params.get("deliveryDate") != null)?params.get("deliveryDate"):""));
         request.setSender((String) ((params.get("sender") != null)?params.get("sender"):""));
+        request.setSource((String) ((params.get("source") != null)?params.get("source"):""));
+        request.setOriginator((String) ((params.get("originator") != null)?params.get("originator"):""));
         request.setStatus((String) ((params.get("status") != null)?params.get("status"):""));
 
         request.getSubject().addAll(getParameterAsList("subjectAbout", params));
@@ -102,7 +105,7 @@ public class DeliverMessageHelper {
             return response;
         }
         
-        DSAIntegrationPortType port;
+        DSAIntegrationService port;
         try{
             port = getPort(endpoint);
         }catch(Exception e){
@@ -137,12 +140,15 @@ public class DeliverMessageHelper {
         deliverMessage(endpoint, params);
     }
     
-    public static void sendAlert(String endpoint, String refId, String header, String body, String sender, String recipient, String[] subjectAbout ) {
+    public static void sendAlert(String endpoint, String refId, String title, String header, String body, String sender, String recipient, String[] subjectAbout, String source, String originator ) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("refId", refId);
-        params.put("body", body);
+        params.put("title", title);
         params.put("header", header);
+        params.put("body", body);
         params.put("sender", sender);
+        params.put("source", source);
+        params.put("originator", originator);
         params.put("priority", "HIGH");
         params.put("deliveryDate", new Date().toString());
         
@@ -184,9 +190,9 @@ public class DeliverMessageHelper {
     }
     
    
-    private static DSAIntegrationPortType getPort(String endpoint) {
+    private static DSAIntegrationService getPort(String endpoint) {
         DSAIntegration service = new DSAIntegration();
-        DSAIntegrationPortType port = service.getDSAIntegrationPortSoap11();
+        DSAIntegrationService port = service.getDSAIntegrationPortSoap11();
         ((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                 endpoint);
         return port;

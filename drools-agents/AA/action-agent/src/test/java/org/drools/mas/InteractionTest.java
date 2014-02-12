@@ -150,6 +150,8 @@ public class InteractionTest {
         Map<String, Object> templateVariables = new HashMap<>();
 
         String sender = "CDS";
+        String source = "CDS-Srouce";
+        String originator = "CDS-Orig";
         receivers.add("1");
         channels.add("ALERT");
         templates.add("test-template-1");
@@ -157,7 +159,7 @@ public class InteractionTest {
         templateVariables.put("greetingMessage", "Hi There!");
         templateVariables.put("person", "Mr. Patient");
 
-        helper.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, templateVariables);
+        helper.invokeActionAgent(sender, source, originator, receivers, subjects, channels, templates, timeouts, templateVariables);
 
         Thread.sleep(15000);
         ps.flush();
@@ -186,6 +188,8 @@ public class InteractionTest {
         Map<String, Object> templateVariables = new HashMap<>();
 
         String sender = "CDS";
+        String source = "CDS-Srouce";
+        String originator = "CDS-Orig";
         receivers.add("1");
         subjects.add("2");
         channels.add("ALERT");
@@ -194,7 +198,7 @@ public class InteractionTest {
         templateVariables.put("greetingMessage", "Hi There!");
         templateVariables.put("person", "Mr. Patient");
 
-        helper.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, templateVariables);
+        helper.invokeActionAgent(sender, source, originator, receivers, subjects, channels, templates, timeouts, templateVariables);
 
         Thread.sleep(15000);
         ps.flush();
@@ -223,6 +227,8 @@ public class InteractionTest {
         Map<String, Object> templateVariables = new HashMap<>();
 
         String sender = "CDS";
+        String source = "CDS-Srouce";
+        String originator = "CDS-Orig";
         receivers.add("1");
         subjects.add("1");
         channels.add("ALERT");
@@ -231,7 +237,7 @@ public class InteractionTest {
         templateVariables.put("greetingMessage", "Hi There!");
         templateVariables.put("person", "Mr. Patient");
 
-        helper.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, templateVariables);
+        helper.invokeActionAgent(sender, source, originator, receivers, subjects, channels, templates, timeouts, templateVariables);
 
         Thread.sleep(15000);
         ps.flush();
@@ -261,6 +267,8 @@ public class InteractionTest {
 
         
         String sender = "CDS";
+        String source = "CDS-Srouce";
+        String originator = "CDS-Orig";
         receivers.add("1");
         subjects.add("1");
         subjects.add("2");
@@ -270,7 +278,7 @@ public class InteractionTest {
         templateVariables.put("greetingMessage", "Hi There!");
         templateVariables.put("person", "Mr. Patient");
 
-        helper.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, templateVariables);
+        helper.invokeActionAgent(sender, source, originator, receivers, subjects, channels, templates, timeouts, templateVariables);
 
         Thread.sleep(15000);
         
