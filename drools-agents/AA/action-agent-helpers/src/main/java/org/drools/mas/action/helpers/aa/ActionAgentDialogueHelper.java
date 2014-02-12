@@ -37,6 +37,8 @@ public class ActionAgentDialogueHelper {
     private DialogueHelperWrapper dialogueHelperWrapper;
     private final List<ActionAgentDialogueHelperListener> listeners = Collections.synchronizedList(new ArrayList<ActionAgentDialogueHelperListener>());
 
+    private final String aaEndPoint;
+    
     /**
      * Creates an instance of ActionAgentDialogueHelper pointing to the provided
      * endpoint. ActionAgentDialogueHelper.MOCK_ENDPOINT can be used as parameter
@@ -44,7 +46,7 @@ public class ActionAgentDialogueHelper {
      * @param aaEndPoint 
      */
     public ActionAgentDialogueHelper(String aaEndPoint) {
-        this.configureDialogueHelperWrapper(aaEndPoint);
+        this.aaEndPoint = aaEndPoint;
     }
     
     /**
@@ -52,26 +54,27 @@ public class ActionAgentDialogueHelper {
      * from /META-INF/service.endpoint.properties
      */
     public ActionAgentDialogueHelper() {
-        String aaEndPoint = EndPointHelper.getEndPoint(AA_ENDPOINT_KEY);
-        this.configureDialogueHelperWrapper(aaEndPoint);
+        this.aaEndPoint = EndPointHelper.getEndPoint(AA_ENDPOINT_KEY);
     }
     
-    private void configureDialogueHelperWrapper(String endpoint){
-        if (endpoint == null || endpoint.equals(MOCK_ENDPOINT)) {
+    private void configureDialogueHelperWrapper(){
+        if (this.aaEndPoint == null || this.aaEndPoint.equals(MOCK_ENDPOINT)) {
             logger.debug("No Agent endpoint provided, using MOCKED endpoint!");
             dialogueHelperWrapper = new InnocuousDialogueHelperWrapper();
         } else {
-            dialogueHelperWrapper = new DialogueHelperWrapperImpl(endpoint);
+            dialogueHelperWrapper = new DialogueHelperWrapperImpl(this.aaEndPoint);
         }
     }
 
-    public void invokeActionAgent(String sender, List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts) {
-        this.invokeActionAgent(sender, receivers, subjects, channels, templates, timeouts, new HashMap<String, Object>());
+    public void invokeActionAgent(String sender, String source, String originator, List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts) {
+        this.invokeActionAgent(sender, source, originator, receivers, subjects, channels, templates, timeouts, new HashMap<String, Object>());
     }
     
-    public void invokeActionAgent(String sender, List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts, Map<String, Object> templateVariables) {
+    public void invokeActionAgent(String sender, String source, String originator, List<String> receivers, List<String> subjects, List<String> channels, List<String> templates, List<String> timeouts, Map<String, Object> templateVariables) {
         CommunicationHandlerConfiguration configuration = new CommunicationHandlerConfiguration();
         configuration.setSender(sender);
+        configuration.setSource(source);
+        configuration.setOriginator(originator);
         configuration.setReceivers(receivers);
         configuration.setSubjects(subjects);
         configuration.setChannels(channels);
@@ -84,6 +87,10 @@ public class ActionAgentDialogueHelper {
 
     public void invokeActionAgent(CommunicationHandlerConfiguration data) {
 
+        if (this.dialogueHelperWrapper == null){
+            this.configureDialogueHelperWrapper();
+        }
+        
         this.dialogueHelperWrapper.invokeInform(SENDER_NAME, RECEIVER_NAME, data, new DialogueHelperCallbackImpl() {
             @Override
             public void onSuccess(List<ACLMessage> messages) {
