@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+<<<<<<< HEAD
+    <system systemId="http://localhost:8080/DisplayDataAggregatorWeb/DSAIntegration?wsdl" uri="wsdl/DSAIntegration.wsdl"/>
+    <system systemId="http://localhost:8080/DSAServiceWeb/DSAIntegration?xsd=1" uri="wsdl/DSAIntegration.xsd"/>
+=======
+    <!--<systemSuffix systemIdSuffix="/src/main/resources/DSAIntegration.wsdl" uri="wsdl/DSAIntegration.wsdl"/>-->
+    <system name="http://localhost:8080/DSAServiceWeb/DSAIntegration?xsd=1" uri="src/main/resources/DSAIntegration.xsd"/>
+>>>>>>> eed21da... - Added support for title, source and originator fields in Alerts
+</catalog>
