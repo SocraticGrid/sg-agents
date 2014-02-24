@@ -140,6 +140,24 @@ public class DeliverMessageHelper {
         deliverMessage(endpoint, params);
     }
     
+    public static void sendMobile(String endpoint, String sender, String subject, String text) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("body", text);
+        params.put("header", text);
+        params.put("sender", sender);
+        
+        List<String> recipients = new ArrayList<String>();
+        recipients.add(subject);
+        params.put("mainRecipients", recipients);
+        List<String> types = new ArrayList<String>();
+        types.add("MOBILE");
+        params.put("type", types);
+        if(logger.isInfoEnabled()){
+            logger.info(" >>> DeliveryMessageHelper: Sending a MOBILE ALERT: "+subject+ " - text: "+text);
+        }
+        deliverMessage(endpoint, params);
+    }
+    
     public static void sendAlert(String endpoint, String refId, String title, String header, String body, String sender, String recipient, String[] subjectAbout, String source, String originator ) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("refId", refId);

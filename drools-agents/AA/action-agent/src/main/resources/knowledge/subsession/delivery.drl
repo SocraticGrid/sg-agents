@@ -323,6 +323,29 @@ then
 end
 
 
+rule "Send Mobile Alert"
+when
+    $action: Action( actionName == "deliverMessage",
+                     $refId          : this["refId"],
+                     $convoId        : this["conversationId"],
+                     $sender         : this["sender"],
+                     $type           : this["type"] == "MOBILE",
+                     $title          : this["title"] != null,
+                     $header         : this["header"] != null,
+                     $body           : this["body"] != null
+                   )
+    $rec :   Recipient( messageId == $convoId )
+then
+    String endpoint = EndPointHelper.getEndPoint( "DSAIntegration" );
+    RulesLoggerHelper.debug(logger, drools, ">>> Sending an ALERT Message using endpoint '{}' to receiver '{}'", endpoint, $rec);
+
+    DeliverMessageHelper.sendMobile( endpoint,
+                                    (String) $sender,
+                                    $rec.getId(),
+                                    (String) $header);
+end
+
+
 
 rule "Send Update Alert"
 when

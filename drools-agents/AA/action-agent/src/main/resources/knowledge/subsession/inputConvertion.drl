@@ -74,7 +74,7 @@ then
     map.put("mainRecipients", new String[] { $actorId } );          
     map.put("secondaryRecipients", new String[0] );     
     map.put("hiddenRecipients", new String[0] ); 
-    map.put("type", $channels.get(0) );  //ALERT, SMS
+    map.put("type", $channels.get(0) );  //ALERT, SMS, MOBILE
     map.put("priority", "High" );
     map.put("deliveryDate", new java.util.Date() );
     map.put("status", "New" );                       
