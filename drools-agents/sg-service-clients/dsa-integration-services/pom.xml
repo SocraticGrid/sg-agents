@@ -37,7 +37,7 @@
                             <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
                             <wsdlOptions>
                                 <wsdlOption>
-                                    <wsdl>${project.basedir}/src/main/resources/DSAIntegration.wsdl</wsdl>
+                                    <wsdl>${project.basedir}/src/wsdl/DSAIntegration.wsdl</wsdl>
                                     <!-- Avoid hardcoded .wsdl path in generated sources -->
                                     <wsdlLocation>classpath:META-INF/wsdl/DSAIntegration.wsdl</wsdlLocation>
                                     <extraargs> 
