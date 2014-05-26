@@ -78,6 +78,7 @@ import org.drools.mas.Encodings;
 import org.drools.mas.core.SessionManager;
 
 import org.drools.mas.util.helper.*;
+import org.drools.mas.core.helpers.*;
 
 
 rule "Action_Request : getRiskModelsDetail"
@@ -116,7 +117,9 @@ end
 //end
 
 
-
+/**
+Adds .pmml resources into sub-sessions as a response to a 'getRiskModelsDetail' Action.
+**/
 rule "Action_Request : getRiskModelsDetail - init Models"
 when
     $a :  Action( actionName == "getRiskModelsDetail",
@@ -132,7 +135,7 @@ then
     String defPack = PMML4Helper.getPack();
     PMML4Helper.setPack( "org.drools.pmml.pmml_4_1.risk."+$id );
 
-    SessionManager.addResource($sessionId, $rs );
+    SessionHelper.getInstance().getSessionManager($sessionId).addResource($rs);
     System.out.println("DONE WITH THE LOAD OF A MODEL " + $id + " @ " + new java.util.Date().getTime() );
 
 //    PMML4Helper.setPack( defPack );
@@ -159,7 +162,7 @@ then
         rmd.setTitle( $descr );
         rmd.setDisease( $descr );
 
-    System.out.println(" CREATE RMD AN ADD" + rmd );
+    System.out.println(" CREATE RMD AN ADD " + rmd );
 
     insert( rmd );
     modify ( $grmd ) {

@@ -62,6 +62,8 @@ import org.socraticgrid.kmr2.clinicalAgent.models.decision.*;
 import org.drools.mas.util.MessageContentEncoder;
 import org.drools.mas.Encodings;
 
+import org.drools.mas.core.helpers.*;
+
 
 rule "Action_Request : setDiagnosticActionStatus - Complete"
 when

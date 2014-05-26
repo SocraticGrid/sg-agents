@@ -38,9 +38,9 @@
             <properties>
                 <agent.name>clinical-decision-support-agent</agent.name>
                 <agent.node>clinical-decision-support-agent-localnode</agent.node>
-                <agent.sub.node>clinical-decision-support-agent-subnode</agent.sub.node>
                 <agent.endpoint.ip>localhost</agent.endpoint.ip>
                 <agent.endpoint.port>8082</agent.endpoint.port>
+                <agent.logfile>/tmp/clinical-decision-support-agent.log</agent.logfile>
             </properties>
         </profile>
         <profile>
@@ -48,9 +48,9 @@
             <properties>
                 <agent.name>clinical-decision-support-agent</agent.name>
                 <agent.node>clinical-decision-support-agent-localnode</agent.node>
-                <agent.sub.node>clinical-decision-support-agent-subnode</agent.sub.node>
                 <agent.endpoint.ip>184.191.173.235</agent.endpoint.ip>
                 <agent.endpoint.port>8082</agent.endpoint.port>
+                <agent.logfile>/tmp/clinical-decision-support-agent.log</agent.logfile>
             </properties>
         </profile>
     </profiles>
@@ -287,8 +287,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
 

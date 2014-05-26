@@ -69,19 +69,12 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
                     implementor="#async-agent-service">
     </jaxws:endpoint>
 
-    <bean id="agent-service" class="org.drools.mas.SynchronousDroolsAgentServiceImpl" >
-        <property name="agent" ref="agent"/>
-    </bean>
     <bean id="async-agent-service" class="org.drools.mas.AsyncDroolsAgentServiceImpl" destroy-method="dispose">
         <property name="agent" ref="agent"/>
     </bean>
-
-    <bean id="agent-factory" class="org.drools.mas.core.DroolsAgentFactory" factory-method="getInstance"/>
-
-    <bean id="agent" class="org.drools.mas.core.DroolsAgent" factory-bean="agent-factory" factory-method="spawn">
-        <constructor-arg ref="agent1-configuration"/>
+    <bean id="agent-service" class="org.drools.mas.SynchronousDroolsAgentServiceImpl" >
+        <property name="agent" ref="agent"/>
     </bean>
-
 
     <!--bean id="agent-test-session" class="org.drools.mas.core.DroolsAgentConfiguration$SubSessionDescriptor">
         <constructor-arg value="sessionSurvey"/>
@@ -108,11 +101,12 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
                 <!--ref local="another-test-session"/-->
             </list>
         </property>
-        <property name="subNodes">
-          <list>
-            <value>${agent.sub.node}</value>
-          </list>
-        </property>
+    </bean>
+    
+    <bean id="agent-factory" class="org.drools.mas.core.DroolsAgentFactory" factory-method="getInstance"/>
+
+    <bean id="agent" class="org.drools.mas.core.DroolsAgent" factory-bean="agent-factory" factory-method="spawn">
+        <constructor-arg ref="agent1-configuration"/>
     </bean>
 
 </beans>

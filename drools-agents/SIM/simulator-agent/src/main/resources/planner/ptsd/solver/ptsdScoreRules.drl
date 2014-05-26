@@ -1,0 +1,578 @@
+/*******************************************************************************
+ *
+ * Copyright (C) 2012 by Cognitive Medical Systems, Inc (http://www.cognitivemedciine.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not 
+ * use this file except in compliance with the License. You may obtain a copy of 
+ * the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed 
+ * under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+ * CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ ******************************************************************************/
+ 
+ /******************************************************************************
+ * Socratic Grid contains components to which third party terms apply. To comply 
+ * with these terms, the following notice is provided:
+ *
+ * TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+ * Copyright (c) 2008, Nationwide Health Information Network (NHIN) Connect. All 
+ * rights reserved.
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions are met:
+ * 
+ * - Redistributions of source code must retain the above copyright notice, this 
+ *   list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above copyright notice, 
+ *   this list of conditions and the following disclaimer in the documentation 
+ *   and/or other materials provided with the distribution.
+ * - Neither the name of the NHIN Connect Project nor the names of its 
+ *   contributors may be used to endorse or promote products derived from this 
+ *   software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * END OF TERMS AND CONDITIONS
+ *
+ ******************************************************************************/
+
+package planner.ptsd.solver;
+    dialect "java"
+
+import org.drools.planner.core.score.buildin.hardandsoft.HardAndSoftScoreHolder;
+import org.drools.planner.core.score.constraint.IntConstraintOccurrence;
+import org.drools.planner.core.score.constraint.ConstraintType;
+
+import planner.ptsd.domain.*;
+import planner.ptsd.domain.actors.*;
+
+import java.util.Calendar;
+
+
+
+global HardAndSoftScoreHolder scoreHolder;
+
+// ############################################################################
+// Hard constraints : care provider type
+// ############################################################################
+
+rule "PTSD therapy must be provided either by a Therapist (non-MD) or a Psychiatrist (MD)"
+salience 10
+when
+    $vis : Visit( type == VisitType.THERAPY, $pro : provider)
+           Provider( this == $pro, role != ProviderRole.THERAPIST && != ProviderRole.PSYCHIATRIST )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $vis,
+                   $pro ) );
+end
+
+rule "PTSD medications must be managed by a Psychiatrist (MD)"
+salience 10
+when
+    $vis : Visit( type == VisitType.MEDICATION, $pro : provider )
+           Provider( this == $pro, role != ProviderRole.PSYCHIATRIST )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $vis,
+                   $pro ) );
+end
+
+rule "PTSD social advising must be managed by a Social Worker"
+salience 10
+when
+    $vis : Visit( type == VisitType.COUNSELING, $pro : provider )
+           Provider( this == $pro, role != ProviderRole.SOCIALWORKER )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $vis,
+                   $pro ) );
+end
+
+
+// ############################################################################
+// Hard constraints : visit weekly scheduling
+// ############################################################################
+
+rule "Therapy sessions must be scheduled regularly"
+when
+    $vis : Visit( type == VisitType.THERAPY, $date : date != null, $expectedWeek : expectedWeek > 0,
+                  $actualWeek : date.weekIndex, date.weekIndex != $expectedWeek )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   10,
+                   $vis ) );
+end
+
+
+rule "A patient getting Group Therapy should receive 6 sessions total @ 1/wk"
+when
+    $vis1 : Visit( type == VisitType.GROUP, $date1 : date != null, $seqNum : seqNum, $pat : patient,
+                   $onWeek : date.weekIndex )
+    $vis2 : Visit( this != $vis1, type == VisitType.GROUP, $date2 : date != null, patient == $pat, seqNum == $seqNum + 1,
+                   $nextWeek : date.weekIndex, date.weekIndex != $onWeek + 1 )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   10,
+                   $vis1,
+                   $vis2 ) );
+end
+
+rule "A patient getting Medication should see a Psychiatrist every month"
+when
+    $vis1 : Visit( type == VisitType.MEDICATION, $date1 : date != null, $seqNum : seqNum, $pat : patient,
+                   $onWeek : date.weekIndex )
+    $vis2 : Visit( type == VisitType.MEDICATION, $date2 : date != null, patient == $pat, seqNum == $seqNum + 1,
+                    $nextWeek : date.weekIndex, date.weekIndex != $onWeek + 4 )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $vis1,
+                   $vis2 ) );
+end
+
+rule "corollary treatments should be complete by the end of individual therapy"
+when
+    $vis : Visit( type == VisitType.GROUP || == VisitType.MEDICATION, $pat : patient, $date : date != null,
+                  $onWeek : date.weekIndex )
+           Patient( this == $pat, planCompletionWeekIndex < $onWeek )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $vis,
+                   $pat ) );
+end
+
+
+
+rule "No two therapy visits on the same day in the same week (for severe cases)"
+when
+    $vis1 : Visit( type == VisitType.THERAPY, $date1 : date != null, $pro : provider, $pat : patient,
+                   $onWeek : date.weekIndex, $onDay : date.dayIndex )
+    $vis2 : Visit( this != $vis1, type == VisitType.THERAPY, $date2 : date != null, provider == $pro, patient == $pat,
+                   date.weekIndex == $onWeek, date.dayIndex == $onDay )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $vis1,
+                   $vis2 ) );
+end
+
+
+rule "No two social assistant visits on the same week (for severe cases)"
+when
+    $vis1 : Visit( type == VisitType.COUNSELING, $date1 : date != null, $pat : patient,
+                   $onWeek : date.weekIndex )
+    $vis2 : Visit( this != $vis1, type == VisitType.COUNSELING, $date2 : date != null, patient == $pat,
+                   date.weekIndex == $onWeek )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $vis1,
+                   $vis2 ) );
+end
+
+
+// ############################################################################
+// Hard constraints : provider capacity
+// ############################################################################
+
+declare BusyWeek
+    provider  : Provider    @key
+    weekIndex : int         @key
+end
+
+declare ClinicWeek
+    weekIndex : int         @key
+    days      : int[]
+end
+
+declare GroupSession
+    provider  : Provider    @key
+    date      : VisitDate   @key
+end
+
+declare ClinicSession
+    provider  : Provider    @key
+    weekIndex : int         @key
+    dayIndex  : int         @key
+    morning   : boolean     @key
+end
+
+rule "There are weeks like this..."
+when
+then
+    for ( int j = 1; j < 52; j++ ) {
+        insert( new ClinicWeek( j, new int[] { Calendar.MONDAY, Calendar.TUESDAY, Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY } ) );
+    }
+end
+
+rule "ClinicSession"
+when
+    $vis : Visit( $pro : provider, date != null, $week : date.weekIndex, $day : date.dayIndex, $morn : date.isMorning )
+then
+    insertLogical( new ClinicSession( $pro, $week, $day, $morn ) );
+end
+
+rule "BusyWeek"
+when
+    $pro  : Provider()
+            ClinicWeek( $week : weekIndex )
+//    exists  Visit( provider == $pro, date != null, date.weekIndex == $week )
+then
+    insertLogical( new BusyWeek( $pro, $week ) );
+end
+
+
+
+rule "Group Session Open"
+when
+    $vis : Visit( type == VisitType.GROUP, $pro : provider, $date : date != null )
+then
+    insertLogical( new GroupSession( $pro, $date ) );
+end
+
+//rule "Providers have up to 4 mornings a week"
+//salience -1
+//when
+//    $bus : BusyWeek( $pro : provider, $week : weekIndex )
+//    accumulate ( Visit( provider == $pro, $date : date != null,
+//                        date.weekIndex == $week, date.isMorning == true, $day : date.dayIndex ),
+//                 $days : collectSet( $day );
+//                 $days.size() > 4 )
+//then
+////    System.err.println( $bus + " is working too much on mornings " + $days );
+//    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+//                   ConstraintType.NEGATIVE_HARD,
+//                   1,
+//                   $bus,
+//                   $days ) );
+//end
+//
+//rule "Providers have up to 4 afternoons a week"
+//when
+//    $bus : BusyWeek( $pro : provider, $week : weekIndex )
+//    accumulate ( Visit( provider == $pro, $date : date != null,
+//                        date.weekIndex == $week, date.isMorning == false, $day : date.dayIndex ),
+//                 $days : collectSet( $day );
+//                 $days.size() > 4 )
+//then
+////    System.err.println( $bus + " is working too much on afternoons " + $days );
+//    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+//                   ConstraintType.NEGATIVE_HARD,
+//                   1,
+//                   $bus,
+//                   $days ) );
+//end
+
+
+rule "Providers have up to 4 days a week"
+// Approximates the previous two rules, but saves in perf.
+salience -1
+when
+    $bus : BusyWeek( $pro : provider, $week : weekIndex )
+    java.util.Set( size > 4 ) from accumulate ( Visit( provider == $pro, $date : date != null,
+                        date.weekIndex == $week, $day : date.dayIndex ),
+                 collectSet( $day ) )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1 ) );
+end
+
+
+
+rule "Providers may have up to 1 group session a week"
+salience -1
+when
+    $bus : BusyWeek( $pro : provider, $week : weekIndex )
+    accumulate ( $vis : GroupSession( provider == $pro, date.weekIndex == $week ),
+                 $num : count( $vis );
+                    $pro.role == ProviderRole.THERAPIST && $num > 2
+                 || $pro.role == ProviderRole.PSYCHIATRIST && $num > 1 )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $bus ) );
+end
+
+
+
+
+rule "Therapist and Psychiatrists can see a maximum of 8 PTSD therapy patients a week"
+when
+    $bus : BusyWeek( $pro : provider, $week : weekIndex )
+    accumulate ( $vis : Visit( type == VisitType.THERAPY, provider == $pro, $date : date != null,
+                        date.weekIndex == $week ),
+                 $num : count( $vis );
+                 $num > 8 )
+then
+//    System.err.println( $bus + " is taking too many therapy sessions this week " + $num );
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $bus ) );
+end
+
+rule "Psychiatrist and Therapist can see a maximum of 2 PTSD therapy patients in a morning or in an afternoon"
+when
+    $bus : ClinicSession( $pro : provider, provider.role == ProviderRole.THERAPIST || == ProviderRole.PSYCHIATRIST,
+                          $week : weekIndex, $day : dayIndex, $morn : morning )
+    accumulate ( $vis : Visit( type == VisitType.THERAPY, provider == $pro, $date : date != null,
+                        date.weekIndex == $week, date.dayIndex == $day, date.isMorning == $morn ),
+                 $num : count( $vis );
+                 $num > 2 )
+then
+//    System.err.println( $bus + " is Seeing too many patients " + $num );
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $bus ) );
+end
+
+rule "Psychiatrist can see a maximum of 3 medication patients in a morning or in an afternoon"
+when
+    $bus : ClinicSession( $pro : provider, provider.role == ProviderRole.PSYCHIATRIST,
+                          $week : weekIndex, $day : dayIndex, $morn : morning )
+    accumulate ( $vis : Visit( type == VisitType.MEDICATION, provider == $pro, $date : date != null,
+                        date.weekIndex == $week, date.dayIndex == $day, date.isMorning == $morn ),
+                 $num : count( $vis );
+                 $num > 3 )
+then
+//    System.err.println( $bus + " is Seeing too many patients " + $num );
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $bus ) );
+end
+
+
+rule "Social Worker can see a maximum of 4 counselling patients in a morning or in an afternoon"
+when
+    $bus : ClinicSession( $pro : provider, provider.role == ProviderRole.SOCIALWORKER,
+                          $week : weekIndex, $day : dayIndex, $morn : morning )
+    accumulate ( $vis : Visit( type == VisitType.COUNSELING, provider == $pro, $date : date != null,
+                        date.weekIndex == $week, date.dayIndex == $day, date.isMorning == $morn ),
+                 $num : count( $vis );
+                 $num > 4 )
+then
+//    System.err.println( $bus + " is Seeing too many patients " + $num );
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   1,
+                   $bus ) );
+end
+
+
+
+
+rule "Group Sessions can host from 2 to 12 participants"
+when
+    $grp : GroupSession( $pro : provider, $date : date )
+    accumulate ( $vis : Visit( type == VisitType.GROUP, provider == $pro, date == $date ),
+                 $num : count( $vis );
+                 $num < 2 || $num > 12 )
+then
+//    System.err.println( " GROUP " + $grp + " has too few or too many patients " + $num );
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_HARD,
+                   2,
+                   $grp ) );
+end
+
+
+
+// ############################################################################
+// Hard constraints : building a relationship
+// ############################################################################
+
+
+
+rule "Patient should see the same provider"
+when
+    $vis1 : Visit( $type : type, $pro : provider != null, $pat : patient )
+    $vis2 : Visit( this != $vis1, $date2 : date != null, type == $type,
+                   patient == $pat, provider != null, provider != $pro )
+//            VisitDate( this == $date2, weekIndex == $vis2.expectedWeek )
+then
+    boolean isSocial = $type == VisitType.COUNSELING ? true : false;
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   isSocial ? ConstraintType.NEGATIVE_SOFT : ConstraintType.NEGATIVE_HARD,
+                   4,
+                   $vis1,
+                   $vis2 ) );
+end
+
+
+
+
+
+// ############################################################################
+// Soft constraints
+// ############################################################################
+
+
+
+rule "Therapy sessions should be scheduled at the same day and time over weeks"
+when
+    $vis1 : Visit( type == VisitType.THERAPY, $date1 : date != null, $pro : provider, $pat : patient,
+                   $onWeek : date.weekIndex, $onDay : date.dayIndex, $morn : date.morning )
+    $vis2 : Visit( this != $vis1, type == VisitType.THERAPY, $date2 : date != null, provider == $pro, patient == $pat,
+                   date.weekIndex != $onWeek, date.dayIndex != $onDay || date.morning != $morn )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_SOFT,
+                   10,
+                   $vis1,
+                   $vis2 ) );
+end
+
+
+rule "Group sessions should be scheduled at the same day and time over weeks"
+when
+    $vis1 : Visit( type == VisitType.GROUP, $date1 : date != null, $pro : provider, $pat : patient,
+                   $onWeek : date.weekIndex, $onDay : date.dayIndex, $morn : date.morning )
+    $vis2 : Visit( this != $vis1, type == VisitType.GROUP, $date2 : date != null, provider == $pro, patient == $pat,
+                   date.weekIndex != $onWeek, date.dayIndex != $onDay || date.morning != $morn )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_SOFT,
+                   9,
+                   $vis1,
+                   $vis2 ) );
+end
+
+
+//
+//rule "a maximum of 25% of all Individual Therapy sessions should occur each work day during the week"
+//// TODO Hitting heavily on performance
+//salience -1
+//when
+//    $wk : ClinicWeek( $week : weekIndex, $days : days )
+//    accumulate( $vis : Visit( $type : type != VisitType.GROUP, $date : date != null, date.weekIndex == $week ),
+//                $num : count( $vis ) )
+//    $day : Integer() from $days
+//    accumulate( $vis : Visit( $type : type != VisitType.GROUP, $date : date != null,
+//                              date.weekIndex == $week, date.dayIndex == $day ),
+//                $frc : count( $vis );
+//                $frc > $num * 0.25 )
+//then
+//    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+//                   ConstraintType.NEGATIVE_SOFT,
+//                   8,
+//                   $wk,
+//                   $day,
+//                   $num,
+//                   $frc ) );
+//end
+
+
+
+
+rule "a patient being seen for Group Therapy should not have their session on the same day as Individual therapy"
+when
+    $vis1 : Visit( type == VisitType.GROUP, $date1 : date != null, $pat : patient,
+                   $onWeek : date.weekIndex, $onDay : date.dayIndex )
+    $vis2 : Visit( type == VisitType.THERAPY, $date2 : date != null, patient == $pat,
+                   date.weekIndex == $onWeek, date.dayIndex == $onDay  )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_SOFT,
+                   3,
+                   $vis1,
+                   $vis2 ) );
+end
+
+
+rule "a patient being seen for medication or social services, should be seen in the same day as their Individual or Group therapy"
+when
+    $vis1 : Visit( type == VisitType.COUNSELING || == VisitType.MEDICATION, $date1 : date != null, $pat : patient,
+                   $onWeek : date.weekIndex, $onDay : date.dayIndex )
+    $vis2 : Visit( type == VisitType.THERAPY || == VisitType.GROUP, $date2 : date != null, patient == $pat,
+                   date.weekIndex == $onWeek, date.dayIndex != $onDay  )
+then
+    insertLogical( new IntConstraintOccurrence( drools.getRule().getName(),
+                   ConstraintType.NEGATIVE_SOFT,
+                   2,
+                   $vis1,
+                   $vis2 ) );
+end
+
+
+// ############################################################################
+// Calculate score
+// ############################################################################
+
+// Accumulate hard constraints
+rule "hardConstraintsBroken"
+        salience -100 // Do the other rules first (optional, for performance)
+    when
+        not String( this == "test" )
+        accumulate(
+            $h : IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_HARD, $weight : weight),
+            $hardTotal : sum( $weight )
+            // Vote for http://jira.jboss.com/jira/browse/JBRULES-1075
+        )
+    then
+        scoreHolder.setHardConstraintsBroken( $hardTotal.intValue() );
+end
+//
+//rule "hardConstraintsBroken - report"
+//        salience -100 // Do the other rules first (optional, for performance)
+//    when
+//        String( this == "test" )
+//        $h : IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_HARD, $weight : weight)
+//    then
+//        System.err.println( $h );
+//end
+
+
+// Accumulate soft constraints
+rule "softConstraintsBroken"
+        salience -100 // Do the other rules first (optional, for performance)
+    when
+        not String( this == "test" )
+        $softTotal : Number() from accumulate(
+            IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_SOFT, $weight : weight),
+            sum($weight) // Vote for http://jira.jboss.com/jira/browse/JBRULES-1075
+        )
+    then
+        scoreHolder.setSoftConstraintsBroken($softTotal.intValue());
+end
+
+
+//rule "softConstraintsBroken - report"
+//        salience -100 // Do the other rules first (optional, for performance)
+//    when
+//        String( this == "testSoft" )
+//        $h : IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_SOFT, $weight : weight)
+//    then
+//        System.out.println( $h );
+//end

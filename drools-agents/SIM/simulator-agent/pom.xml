@@ -49,6 +49,14 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>org.drools.planner</groupId>
+            <artifactId>drools-planner-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.drools.planner</groupId>
+            <artifactId>drools-planner-examples</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.drools.mas</groupId>
             <artifactId>drools-mas-core</artifactId>
         </dependency>

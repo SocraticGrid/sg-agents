@@ -60,6 +60,7 @@ import org.drools.mas.action.helpers.*;
 import org.drools.mas.Encodings;
 
 import org.drools.mas.util.helper.*;
+import org.drools.mas.core.helpers.*;
 
 
 

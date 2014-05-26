@@ -17,7 +17,8 @@
 
     <properties>
         <!--drools.version>5.6.0-SG</drools.version-->
-        <drools.version>5.6.0-SNAPSHOT</drools.version>
+        <!--drools.version>5.6.0-SNAPSHOT</drools.version-->
+        <drools.version>5.6.0.Final</drools.version>
         <!--drools.chance.version>0.5.6-SG</drools.chance.version-->
         <drools.chance.version>0.5.6.Final</drools.chance.version>
         <drools.mas.version>1.0-SG</drools.mas.version>
@@ -103,6 +104,19 @@
                 <version>${drools.version}</version>
             </dependency>
             
+            <!-- Drools Planner dependencies -->
+            <dependency>
+                <groupId>org.drools.planner</groupId>
+                <artifactId>drools-planner-core</artifactId>
+                <version>${drools.version}</version>
+            </dependency> 
+            <dependency>
+                <groupId>org.drools.planner</groupId>
+                <artifactId>drools-planner-examples</artifactId>
+                <version>${drools.version}</version>
+            </dependency> 
+
+
             <!-- Drools Chance dependencies -->
             <dependency>
                 <groupId>org.drools</groupId>
@@ -568,11 +582,11 @@
             <id>EmpireRDF-snapshot</id>
             <url>https://github.com/EmpireRDF/mavenRepo/raw/master/snapshots</url>
         </repository>
-        <repository>
+        <!--repository>
             <id>aduna</id>
             <name>Aduna Software</name>
             <url>http://repo.aduna-software.org/maven2/releases/</url>
-        </repository>
+        </repository-->
         <repository>
             <id>repo1</id>
             <name>Maven2 Repo 1</name>

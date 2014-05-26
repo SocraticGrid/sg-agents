@@ -68,6 +68,7 @@ import org.drools.mas.Encodings;
 import org.drools.mas.core.SessionManager;
 
 import org.drools.mas.util.helper.*;
+import org.drools.mas.core.helpers.*;
 
 
 
@@ -188,7 +189,7 @@ then
     PMML4Helper.setPack( "org.drools.pmml.pmml_4_1.diag.ptsd" );
 
     System.out.println(" LOADING DIAGNOSTIC " + $rs );
-    SessionManager.addResource($sessionId, $rs );
+    SessionHelper.getInstance().getSessionManager($sessionId).addResource($rs);
 //    PMML4Helper.setPack( defPack );
 end
 
@@ -200,7 +201,7 @@ when
     SessionLocator( $sessionId: sessionId, mind == false )
 then
     System.out.println(" LOADING DECISION ");
-    SessionManager.addResource( $sessionId, $rs );
+    SessionHelper.getInstance().getSessionManager($sessionId).addResource($rs);
 end
 
 

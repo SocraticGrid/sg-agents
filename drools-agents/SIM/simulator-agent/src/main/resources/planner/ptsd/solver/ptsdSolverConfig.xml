@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+    <environmentMode>DEBUG</environmentMode>
+    <solutionClass>planner.ptsd.domain.PTSDRoster</solutionClass>
+    <planningEntityClass>planner.ptsd.domain.Visit</planningEntityClass>
+
+    <scoreDirectorFactory>
+        <scoreDefinitionType>HARD_AND_SOFT</scoreDefinitionType>
+        <scoreDrl>/planner/ptsd/solver/ptsdScoreRules.drl</scoreDrl>
+    </scoreDirectorFactory>
+
+    <termination>
+        <!--maximumSecondsSpend>60</maximumSecondsSpend-->
+        <scoreAttained>-0hard/-999999soft</scoreAttained>
+    </termination>
+
+    <constructionHeuristic>
+        <constructionHeuristicType>BEST_FIT</constructionHeuristicType>
+    </constructionHeuristic>
+
+    <localSearch>
+        <unionMoveSelector>
+            <moveListFactory>
+                <cacheType>PHASE</cacheType>
+                <selectionOrder>SHUFFLED</selectionOrder>
+                <moveListFactoryClass>planner.ptsd.solver.move.factory.VisitDateChangeMoveFactory</moveListFactoryClass>
+            </moveListFactory>
+            <moveListFactory>
+                <cacheType>PHASE</cacheType>
+                <selectionOrder>SHUFFLED</selectionOrder>
+                <moveListFactoryClass>planner.ptsd.solver.move.factory.AssignCareProviderMoveFactory</moveListFactoryClass>
+            </moveListFactory>
+            <moveListFactory>
+                <cacheType>PHASE</cacheType>
+                <selectionOrder>SHUFFLED</selectionOrder>
+                <moveListFactoryClass>planner.ptsd.solver.move.factory.VisitTimeSwapMoveFactory</moveListFactoryClass>
+            </moveListFactory>
+        </unionMoveSelector>
+        <acceptor>
+            <solutionTabuSize>1000</solutionTabuSize>
+            <planningEntityTabuSize>7</planningEntityTabuSize>
+        </acceptor>
+
+        <forager>
+            <minimalAcceptedSelection>800</minimalAcceptedSelection>
+        </forager>
+
+    </localSearch>
+</solver>
