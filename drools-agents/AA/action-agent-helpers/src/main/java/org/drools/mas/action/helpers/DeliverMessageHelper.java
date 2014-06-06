@@ -56,7 +56,7 @@ import javax.xml.ws.BindingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.socraticgrid.dsa.DSAIntegration;
-import org.socraticgrid.dsa.DSAIntegrationPortType;
+import org.socraticgrid.dsa.DSAIntegrationService;
 import org.socraticgrid.dsa.DeliverMessageRequestType;
 import org.socraticgrid.dsa.DeliverMessageResponseType;
 
@@ -102,7 +102,7 @@ public class DeliverMessageHelper {
             return response;
         }
         
-        DSAIntegrationPortType port;
+        DSAIntegrationService port;
         try{
             port = getPort(endpoint);
         }catch(Exception e){
@@ -184,9 +184,9 @@ public class DeliverMessageHelper {
     }
     
    
-    private static DSAIntegrationPortType getPort(String endpoint) {
+    private static DSAIntegrationService getPort(String endpoint) {
         DSAIntegration service = new DSAIntegration();
-        DSAIntegrationPortType port = service.getDSAIntegrationPortSoap11();
+        DSAIntegrationService port = service.getDSAIntegrationPortSoap11();
         ((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                 endpoint);
         return port;

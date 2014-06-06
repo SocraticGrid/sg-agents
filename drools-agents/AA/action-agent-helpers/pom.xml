@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.socraticgrid</groupId>
         <artifactId>AA</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-SmartAmerica</version>
     </parent>
 
 

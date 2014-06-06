@@ -56,7 +56,7 @@ import java.util.List;
 import javax.xml.ws.BindingProvider;
 import org.drools.mas.action.message.Recipient;
 import org.socraticgrid.dsa.DSAIntegration;
-import org.socraticgrid.dsa.DSAIntegrationPortType;
+import org.socraticgrid.dsa.DSAIntegrationService;
 import org.socraticgrid.dsa.GetDirectoryAttributeRequestType;
 import org.socraticgrid.dsa.GetDirectoryAttributeResponseType;
 
@@ -98,9 +98,9 @@ public class LDAPIdentityChannelInvoker implements ChannelInvoker {
         return recipient;
     }
     
-    private DSAIntegrationPortType getPort(String endpoint) {
+    private DSAIntegrationService getPort(String endpoint) {
         DSAIntegration service = new DSAIntegration();
-        DSAIntegrationPortType port = service.getDSAIntegrationPortSoap11();
+        DSAIntegrationService port = service.getDSAIntegrationPortSoap11();
         ((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                 endpoint);
         return port;

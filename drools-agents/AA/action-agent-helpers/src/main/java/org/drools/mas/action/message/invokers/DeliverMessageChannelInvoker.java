@@ -54,7 +54,7 @@ package org.drools.mas.action.message.invokers;
 import javax.xml.ws.BindingProvider;
 import org.drools.mas.action.message.types.AlertMessage;
 import org.socraticgrid.dsa.DSAIntegration;
-import org.socraticgrid.dsa.DSAIntegrationPortType;
+import org.socraticgrid.dsa.DSAIntegrationService;
 import org.socraticgrid.dsa.DeliverMessageRequestType;
 import org.socraticgrid.dsa.DeliverMessageResponseType;
 
@@ -79,7 +79,7 @@ public class DeliverMessageChannelInvoker implements ChannelInvoker{
     public Object invoke(String endpoint, Object object) {
         System.out.println("DELIVERING A MESSAGE " + object);
         AlertMessage msg = (AlertMessage)object;
-        DSAIntegrationPortType port = getPort(endpoint);
+        DSAIntegrationService port = getPort(endpoint);
         DeliverMessageRequestType request = new DeliverMessageRequestType();
         request.setRefId((String)msg.getRefId());
         request.getSubject().add("1");
@@ -96,9 +96,9 @@ public class DeliverMessageChannelInvoker implements ChannelInvoker{
         return null;
     }
     
-     private DSAIntegrationPortType getPort(String endpoint) {
+     private DSAIntegrationService getPort(String endpoint) {
         DSAIntegration service = new DSAIntegration();
-        DSAIntegrationPortType port = service.getDSAIntegrationPortSoap11();
+        DSAIntegrationService port = service.getDSAIntegrationPortSoap11();
         ((BindingProvider) port).getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
                 endpoint);
         return port;

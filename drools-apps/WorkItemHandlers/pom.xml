@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.socraticgrid</groupId>
         <artifactId>drools-applications</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-SmartAmerica</version>
     </parent>
     
     <artifactId>sg-workItemHandlers</artifactId>
@@ -152,7 +152,7 @@
                         <artifactId>jetty-maven-plugin</artifactId>
                         <version>7.6.0.RC2</version>
                         <configuration>
-                            <war>${settings.localRepository}/org/drools/mas/impl/drools-mas-action-agent/1.0-SNAPSHOT/drools-mas-action-agent-1.0-SNAPSHOT.war</war>
+                            <war>${settings.localRepository}/org/drools/mas/impl/drools-mas-action-agent/1.0-SmartAmerica/drools-mas-action-agent-1.0-SmartAmerica.war</war>
                     
                             <stopKey>foo</stopKey>
                             <stopPort>9999</stopPort>

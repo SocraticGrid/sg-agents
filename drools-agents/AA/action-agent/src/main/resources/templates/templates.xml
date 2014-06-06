@@ -1,74 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
-    <template id="template1">
+    <template id="template-smart-america-recommendation-1">
         <header>
             <![CDATA[
-            Recommendation 1
+            CDS Medication Warning
             ]]>
         </header>
         <body>
             <![CDATA[
-            It is recommended that invasive breast cancer patients be offered Breast MRI if there is<br>a) discrepancy regarding the extent of disease from clinical examination, mammography or ultrasound assessment, b) if breast density precludes accurate mammographic assessment, or c) to assess tumour size if breast conserving surgery is being considered for invasive lobular cancer.
+            The Pharmacogenomics Clinical Decision Support System detected a transient , but significant blood pressure reduction associated with this patient's Lopressor administration.  An extended release formulation might be considered if more predictable blood pressure control is desired.
             ]]>
         </body>
     </template>
-    <template id="template2">
+    <template id="template-smart-america-recommendation-2">
         <header>
             <![CDATA[
-            Recommendation 2
+            CDS Medication Warning
             ]]>
         </header>
         <body>
             <![CDATA[
-            ER and PR should be measured in all patients with breast cancer. The primary purpose of measuring these receptors is to identify patients with breast cancer that can be treated with hormone therapy. In combination with established prognostic factors (i.e., tumor stage, tumor grade, and number of lymph node metastases), ER and PR may also be used for determining short-term prognosis in patients with newly diagnosed breast cancer.<br>Please indicate whether you accept this recommendation using the choices offered below. If you accept, an appropriate order will be filed electroinically on your behalf. If you would like to change the order for any reason, please select 'Modify' to edit as appropriate.
-            ]]>
-        </body>
-    </template>
-    <template id="template3">
-        <header>
-            <![CDATA[
-            Recommendation 3
-            ]]>
-        </header>
-        <body>
-            <![CDATA[
-            HER-2 should be measured in all patients with invasive breast cancer. The primary purpose of measuring HER-2 is to select patients with breast cancer that may be treated with trastuzumab.<br><br>HER-2 may also identify patients that preferentially benefit from anthracycline-based adjuvant chemotherapy.<br>Please indicate whether you accept this recommendation using the choices offered below. If you accept, an appropriate order will be filed electroinically on your behalf. If you would like to change the order for any reason, please select 'Modify' to edit as appropriate.
-            ]]>
-        </body>
-    </template>
-    <template id="template4">
-        <header>
-            <![CDATA[
-            Lab Test Result is ready
-            ]]>
-        </header>
-        <body>
-            <![CDATA[
-            Dear Jane,<br><br>Your recent Estrogen Receptor Assay has been resulted and is positive. This is good news and enables us to consider hormonal therapy. As we discussed previously, we should explore your options in person. My next available appointment is Tuesday, March 27th at 1400 in the Woman's Helath Clinic.<br><br>Please indicate whether you accept this appointment using the choices offered below. If you accept, your appointment will be booked automatically on your behalf. If you would like to change the appointment time for any reason, please select “Modify” and select a more appropriate time.<br><br>In the meantime, feel free to consult the educational material in the patient portal. If you have any questions, email me.<br>Sincerely,<br>Dr. Emory Fry
-            ]]>
-        </body>
-    </template>
-    <template id="template5">
-        <header>
-            <![CDATA[
-            Recommendation 4
-            ]]>
-        </header>
-        <body>
-            <![CDATA[
-            Patients with early invasive breast cancer should have a baseline dual energy X-ray absorptiometry (DEXA) scan to assess bone mineral density if they are starting adjuvant aromatase inhibitor treatment. No recent scan can be located.<br>Please indicate whether you would like to order the recommended DEXA scan using the choices offered below. If you accept, an appropriate order will be filed electroinically on your behalf. If you would like to change the order for any reason, please select “Modify” to edit as appropriate.
-            ]]>
-        </body>
-    </template>
-    <template id="template6">
-        <header>
-            <![CDATA[
-            You have time sensitive treatment recommendations for a patient waiting for you. Please login to the your portal account, or review using mobile MedAlert.
-            ]]>
-        </header>
-        <body>
-            <![CDATA[
-            
+            The Pharmacogenomics Clinical Decision Support System has detected a transient , but significant blood pressure reduction associated with this patient's Lopressor administration. This patient also has Single Nucleotide Polumorphisms (Ser49Gly, Arg389Gly) in the ADRB1 gene that has been associated with variable Lopressor efficacy. An alternative class of medication may be indicated if more predictable blood pressure control is desired.
             ]]>
         </body>
     </template>

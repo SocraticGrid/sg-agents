@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.socraticgrid</groupId>
         <artifactId>CDSA</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-SmartAmerica</version>
     </parent>
 
     <artifactId>clinical-decision-support-agent</artifactId>

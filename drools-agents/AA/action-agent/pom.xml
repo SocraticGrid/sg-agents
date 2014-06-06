@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.socraticgrid</groupId>
         <artifactId>AA</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-SmartAmerica</version>
     </parent>
 
 
@@ -58,6 +58,31 @@
                 <dsa.endpoint>http://localhost:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
             </properties>
         </profile>
+	<profile>
+            <id>1.139</id>
+            <properties>
+                <agent.name>action-agent</agent.name>
+                <agent.node>action-agent-localnode</agent.node>
+                <agent.endpoint.ip>192.168.1.139</agent.endpoint.ip>
+                <agent.endpoint.port>8081</agent.endpoint.port>
+                <agent.logfile>/tmp/action-agent.log</agent.logfile>
+
+                <dsa.endpoint>http://localhost:8080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
+            </properties>
+        </profile>
+	<profile>
+            <id>demo-167.117</id>
+            <properties>
+                <agent.name>action-agent</agent.name>
+                <agent.node>action-agent-localnode</agent.node>
+                <agent.endpoint.ip>devtools03</agent.endpoint.ip>
+                <agent.endpoint.port>8081</agent.endpoint.port>
+                <agent.logfile>/tmp/action-agent.log</agent.logfile>
+
+                <dsa.endpoint>http://localhost:11080/DSAServiceWeb/DSAIntegration</dsa.endpoint>
+            </properties>
+        </profile>
+
     </profiles>
     
     <properties>

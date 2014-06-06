@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.socraticgrid</groupId>
         <artifactId>drools-agents</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-SmartAmerica</version>
     </parent>
 
     <groupId>org.socraticgrid</groupId>
     <artifactId>sg-service-clients</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-SmartAmerica</version>
     <packaging>pom</packaging>
     <name>SG :: Service Clients</name>
     <modules>
