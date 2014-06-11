@@ -140,6 +140,24 @@ public class DeliverMessageHelper {
         deliverMessage(endpoint, params);
     }
     
+    public static void sendEmail(String endpoint, String toEmail, String title, String body) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("body", body);
+        params.put("title", body);
+        
+        List<String> recipients = new ArrayList<String>();
+        recipients.add(toEmail);
+        params.put("mainRecipients", recipients);
+        
+        List<String> types = new ArrayList<String>();
+        types.add("EMAIL");
+        params.put("type", types);
+        if(logger.isInfoEnabled()){
+            logger.info(" >>> DeliveryMessageHelper: Sending an EMAIL: title: '"+title+ "' - body: '"+body+"' to email: '"+toEmail+"'");
+        }
+        deliverMessage(endpoint, params);
+    }
+    
     public static void sendMobile(String endpoint, String sender, String subject, String text) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("body", text);

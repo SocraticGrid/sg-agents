@@ -34,6 +34,7 @@ declare Entity
     resolved            : boolean                   = false
     cn                  : String
     mobile              : String
+    email               : String
     employeeNumber      : String
     displayName         : String
     gender              : String
@@ -43,6 +44,7 @@ end
 declare trait OrgEntity
     cn                  : String
     mobile              : String
+    email               : String
     employeeNumber      : String
     displayName         : String
     gender              : String
@@ -150,6 +152,7 @@ then
                                                           $id );
     $ent.setCn( (String) results.get( "cn" ) );
     $ent.setMobile( (String) results.get( "mobile" ) );
+    $ent.setEmail( (String) results.get( "email" ) );
     $ent.setEmployeeNumber( (String) results.get( "employerNumber" ) );
     $ent.setDisplayName( (String) results.get( "displayNumber" ) );
     $ent.setGender( (String) results.get( "gender" ) );
@@ -179,6 +182,7 @@ then
                                                           $id );
     $ent.setCn( (String) results.get( "cn" ) );
     $ent.setMobile( (String) results.get( "mobile" ) );
+    $ent.setEmail( (String) results.get( "email" ) );
     $ent.setEmployeeNumber( (String) results.get( "employerNumber" ) );
     $ent.setDisplayName( (String) results.get( "displayNumber" ) );
     $ent.setGender( (String) results.get( "gender" ) );
@@ -343,6 +347,26 @@ then
                                     (String) $sender,
                                     $rec.getId(),
                                     (String) $header);
+end
+
+rule "Send Email Alert"
+when
+    $action: Action( actionName == "deliverMessage",
+                     $refId          : this["refId"],
+                     $convoId        : this["conversationId"],
+                     $type           : this["type"] == "EMAIL",
+                     $title          : this["title"] != null,
+                     $body           : this["body"] != null
+                   )
+    $rec :   Recipient( messageId == $convoId )
+then
+    String endpoint = EndPointHelper.getEndPoint( "DSAIntegration" );
+    RulesLoggerHelper.debug(logger, drools, ">>> Sending an EMAIL Message using endpoint '{}' to receiver '{}'", endpoint, $rec);
+
+    DeliverMessageHelper.sendEmail( endpoint,
+                                    (String) $rec.getEmail(),
+                                    (String) $title,
+                                    (String) $body);
 end
 
 

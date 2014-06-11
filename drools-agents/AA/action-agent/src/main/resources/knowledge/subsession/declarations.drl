@@ -26,6 +26,7 @@ declare Entity
     resolved            : boolean                   = false
     cn                  : String
     mobile              : String
+    email               : String
     employeeNumber      : String
     displayName         : String
     gender              : String
@@ -35,6 +36,7 @@ end
 declare trait OrgEntity
     cn                  : String
     mobile              : String
+    email               : String
     employeeNumber      : String
     displayName         : String
     gender              : String
