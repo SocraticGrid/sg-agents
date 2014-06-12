@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
+    <template id="PasswordReset">
+        <!-- You can use ##split## in the title section to split the title in
+        2-->
+        <title>
+            <![CDATA[
+            PQCNC: Confirm Password Reset
+            ]]>
+        </title>
+        <header>
+            <![CDATA[
+            ]]>
+        </header>
+        <body>
+            <![CDATA[
+            Hello
+            You have requested a new password for your PQCNC Login Service account.
+            Click the following link to automatically confirm your reset:
+            
+            @{link}
+            
+            <b>test</b>
+            
+            Thank you,
+            ]]>
+        </body>
+    </template>
     <template id="NoSkinToSkinContactIn7Days">
         <title>
             <![CDATA[

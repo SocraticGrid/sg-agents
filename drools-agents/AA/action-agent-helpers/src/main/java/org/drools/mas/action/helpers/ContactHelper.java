@@ -175,6 +175,7 @@ public class ContactHelper {
         List<String> names = new ArrayList<String>();
         names.add("cn");
         names.add("mobile");
+        names.add("email");
         names.add("employeeNumber");
         names.add("displayName");
         names.add("gender");

@@ -143,7 +143,7 @@ public class DeliverMessageHelper {
     public static void sendEmail(String endpoint, String toEmail, String title, String body) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("body", body);
-        params.put("title", body);
+        params.put("title", title);
         
         List<String> recipients = new ArrayList<String>();
         recipients.add(toEmail);
