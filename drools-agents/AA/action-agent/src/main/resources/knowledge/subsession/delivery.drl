@@ -354,6 +354,7 @@ when
     $action: Action( actionName == "deliverMessage",
                      $refId          : this["refId"],
                      $convoId        : this["conversationId"],
+                     $sender         : this["sender"],
                      $type           : this["type"] == "EMAIL",
                      $title          : this["title"] != null,
                      $body           : this["body"] != null
@@ -364,7 +365,8 @@ then
     RulesLoggerHelper.debug(logger, drools, ">>> Sending an EMAIL Message using endpoint '{}' to receiver '{}'", endpoint, $rec);
 
     DeliverMessageHelper.sendEmail( endpoint,
-                                    (String) $rec.getEmail(),
+                                    (String) $sender,
+                                    (String) $rec.getId(),
                                     (String) $title,
                                     (String) $body);
 end
