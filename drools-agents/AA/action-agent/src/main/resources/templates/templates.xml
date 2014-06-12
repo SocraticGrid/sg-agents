@@ -14,14 +14,13 @@
         </header>
         <body>
             <![CDATA[
-            Hello
+            Hello,</br></br>
             You have requested a new password for your PQCNC Login Service account.
+            </br>
             Click the following link to automatically confirm your reset:
-            
+            </br>
             @{link}
-            
-            <b>test</b>
-            
+            </br></br>
             Thank you,
             ]]>
         </body>
