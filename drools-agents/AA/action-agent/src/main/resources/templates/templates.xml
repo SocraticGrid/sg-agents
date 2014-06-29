@@ -8,7 +8,7 @@
         </header>
         <body>
             <![CDATA[
-            The Pharmacogenomics Clinical Decision Support System detected a transient , but significant blood pressure reduction associated with this patient's Lopressor administration.  An extended release formulation might be considered if more predictable blood pressure control is desired.
+            The Pharmacogenomics Clinical Decision Support System has detected a transient, but significant blood pressure reduction associated with this patient's Lopressor administration. An extended release formulation might be considered if more predictable blood pressure control is desired.
             ]]>
         </body>
     </template>
@@ -20,7 +20,7 @@
         </header>
         <body>
             <![CDATA[
-            The Pharmacogenomics Clinical Decision Support System has detected a transient , but significant blood pressure reduction associated with this patient's Lopressor administration. This patient also has Single Nucleotide Polumorphisms (Ser49Gly, Arg389Gly) in the ADRB1 gene that has been associated with variable Lopressor efficacy. An alternative class of medication may be indicated if more predictable blood pressure control is desired.
+            The Pharmacogenomics Clinical Decision Support System has detected a transient, but significant blood pressure reduction associated with this patient's Lopressor administration. This patient also has Single Nucleotide Polymorphisms (Ser49Gly, Arg389Gly) in the ADRB1 gene that have been associated with variable Lopressor efficacy. An alternative class of medication may be indicated if more predictable blood pressure control is desired.
             ]]>
         </body>
     </template>
