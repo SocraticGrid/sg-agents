@@ -60,7 +60,7 @@ import java.util.Date;
 import java.util.ArrayList;
 
 import org.drools.mas.util.helper.SessionLocator;
-import org.drools.mas.util.helper.ResponseContent;
+import org.drools.mas.core.helpers.ResponseContent;
 
 import org.socraticgrid.kmr2.simulatorAgent.SimulatorModelMarker;
 
