@@ -61,7 +61,9 @@ import java.util.Date;
 import java.util.ArrayList;
 
 import org.socraticgrid.kmr2.simulatorAgent.SimulatorModelMarker;
+import planner.ptsd.log.RulesLoggerHelper;
 
+global Logger logger;
 
 declare ConfigurationDetail
     config              : Configuration
@@ -82,10 +84,9 @@ when
                 )
     not   ConfigurationDetail()
 then
-    insert( new ConfigurationDetail( null,
-            true,
-            "(ok)" )
-          );
+    ConfigurationDetail conf = new ConfigurationDetail( null, true, "(ok)" );
+    RulesLoggerHelper.debug(logger, drools, "Inserting new ConfigurationDetail: {}", conf);
+    insert(conf);
 end
 
 rule "Action_Request : Execute getConfigurationDetail"
@@ -100,9 +101,13 @@ when
                )
     $s : ConfigurationDetail()
 then
+    boolean blank = $blank == null? false : $blank instanceof String ? Boolean.parseBoolean((String)$blank) : (Boolean) $blank;
+
+    RulesLoggerHelper.debug(logger, drools, "Retrieving Configuration from ConfigDAO using modelId= '{}', configId= '{}', blank= '{}'.", $modelId, $configId, blank);
     Configuration cfg = ConfigDAO.getConfiguration( (String) $modelId,
                                                     (String) $configId,
-                                                    (Boolean) $blank );
+                                                    blank);
+    RulesLoggerHelper.debug(logger, drools, "Configuration found: {}", cfg);
     $s.setConfig( cfg );
     update( $s );
 end

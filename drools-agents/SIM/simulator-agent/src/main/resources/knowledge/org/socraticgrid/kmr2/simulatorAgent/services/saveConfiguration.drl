@@ -63,7 +63,10 @@ import org.drools.mas.util.helper.SessionLocator;
 import org.drools.mas.core.helpers.ResponseContent;
 
 import org.socraticgrid.kmr2.simulatorAgent.SimulatorModelMarker;
+import com.thoughtworks.xstream.XStream;
+import planner.ptsd.log.RulesLoggerHelper;
 
+global Logger logger;
 
 declare SaveConfigResult
     configId            : String
@@ -113,9 +116,24 @@ when
                )
     $s : SaveConfigResult(modelId == $modelId)
 then
+    Configuration conf = null;
+    RulesLoggerHelper.debug(logger, drools, "Using configuration: '{}' of type '{}'.", $config, $config != null? $config.getClass() : "null");
+    if ($config != null){
+        if ($config instanceof String){
+            conf = new Configuration();
+            XStream xstream = new XStream();
+            xstream.fromXML((String)$config, conf);
+        } else if ($config instanceof Configuration){
+            conf = (Configuration) $config;
+        }
+
+    }
+
+    
+    RulesLoggerHelper.debug(logger, drools, "Final configuration: '{}'.", conf);
     String cfgId = ConfigDAO.saveConfiguration( (String) $configId,
                                                 (String) $modelId,
-                                                (Configuration) $config );
+                                                conf );
     $s.setConfigId( cfgId );
     update( $s);
 end

@@ -85,6 +85,7 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
         <bean id="agent1-configuration" class="org.drools.mas.core.DroolsAgentConfiguration">
             <property name="agentId" value="Agent 1"/>
             <property name="changeset" value="simulatorAgent_changeset.xml" />
+            <property name="defaultSubsessionChangeSet" value="simulatorAgent_defSession_changeset.xml" />
             <!-- by default the mindNodeLocation is local -->
             <property name="mindNodeLocation" value="${agent.node}"/>
             <property name="subSessions">

@@ -61,6 +61,9 @@ import org.drools.mas.util.helper.SessionLocator;
 import org.drools.mas.core.helpers.ResponseContent;
 
 import org.socraticgrid.kmr2.simulatorAgent.SimulatorModelMarker;
+import planner.ptsd.log.RulesLoggerHelper;
+
+global Logger logger;
 
 declare ModelElement
     modelId             : String    @key
@@ -99,8 +102,9 @@ when
                 )
     getPlanningModels($userId, $return;)
 then
-     ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
-     retract ($a);
+    RulesLoggerHelper.debug(logger, drools, "Delivering Response: {}", $return);
+    ResponseContent.deliverResponse($sessionId, $msgId, $return, null, true );
+    retract ($a);
 end
 
 rule "Action_Request : getPlanningModels Init"
@@ -111,6 +115,7 @@ when
                 )
     not   ModelList( tags == ["Plan"] )
 then
+    RulesLoggerHelper.debug(logger, drools, "User {} requested 'getPlanningModels' action.", $userId);
     insert( new ModelList( new ArrayList( java.util.Arrays.asList("Plan") ),
             null,
             true,
@@ -125,6 +130,7 @@ salience -10
 when
     $a :  Action( actionName == "getPlanningModels" )
 then
+    RulesLoggerHelper.debug(logger, drools, "Cleaning 'getPlanningModels' data for Action '{}'", $a);
     retract( $a );
 end
 
@@ -135,7 +141,7 @@ salience 10
 when
     InternalResource( $id : name, $type : description, $tags : categories  )
 then
-    System.out.printf("\n\nInternalResource found: \n\tid -> %s \n\ttype -> %s \n\ttags -> %s\n\n",$id, $type, $tags);
+    RulesLoggerHelper.debug(logger, drools, "InternalResource found:\n\tid -> {}\n\ttype -> {}\n\ttags -> {}", $id, $type, $tags);
     insertLogical( new ModelElement( $id,
                                      new ArrayList($tags),
                                      $type,
@@ -157,7 +163,7 @@ when
         collectList( $m )
     )
 then
-    System.out.printf("Listing Model Elements (%s): %s",$list.size(), $list);
+    RulesLoggerHelper.debug(logger, drools, "Listing Model Elements ({}): {}", $list.size(), $list);
     $ml.setModels( new ArrayList( $list ) );
     update( $ml );
 end

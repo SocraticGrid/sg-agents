@@ -50,8 +50,7 @@
  ~
 -->
 
-<change-set xmlns='http://drools.org/drools-5.0/change-set'
-        >
+<change-set xmlns='http://drools.org/drools-5.0/change-set'>
     <add>
 
         <resource type="DRL" source="classpath:knowledge/org/socraticgrid/kmr2/simulatorAgent/mock/mock_ptsd_sim.ref"

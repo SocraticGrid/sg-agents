@@ -12,7 +12,8 @@
     <packaging>pom</packaging>
     <name>SG :: Simulator Agent Master</name>
     <modules>
-        <module>simulator-agent</module>
+        <module>simulator-agent-api</module>
+	<module>simulator-agent</module>
     </modules>
 
 </project>

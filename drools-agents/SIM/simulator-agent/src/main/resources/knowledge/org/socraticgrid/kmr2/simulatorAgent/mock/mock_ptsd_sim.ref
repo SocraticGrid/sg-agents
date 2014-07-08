@@ -63,11 +63,15 @@ rule "Init Descriptors Dec"
 salience 999
 when
 then
+    System.out.println("1");
     PackageBuilderConfiguration conf = new PackageBuilderConfiguration();
+    System.out.println("2");
     XmlChangeSetReader xmlReader = new XmlChangeSetReader( conf.getSemanticModules() );
-    xmlReader.setClassLoader( Class.class.getClassLoader(), Class.class);
+    System.out.println("3");
+    xmlReader.setClassLoader( drools.getClass().getClassLoader(), drools.getClass());
+    System.out.println("4: "+drools.getClass().getResourceAsStream("/config/sim_model_list.xml"));
 
-    ChangeSet changeSet = xmlReader.read( new java.io.InputStreamReader(Class.class.getResourceAsStream("/config/sim_model_list.xml")) );
+    ChangeSet changeSet = xmlReader.read( new java.io.InputStreamReader(drools.getClass().getResourceAsStream("/config/sim_model_list.xml")) );
 
     System.out.println("\n\nSim changeSet: "+changeSet);
     

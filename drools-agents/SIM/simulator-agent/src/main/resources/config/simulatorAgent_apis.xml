@@ -60,6 +60,8 @@
 
 
 
+        <resource type="DRL" source="classpath:knowledge/org/socraticgrid/kmr2/simulatorAgent/services/config.drl" />
+        
         <resource type="DRL" source="classpath:knowledge/org/socraticgrid/kmr2/simulatorAgent/services/getPlanningModels.drl" />
 
         <resource type="DRL" source="classpath:knowledge/org/socraticgrid/kmr2/simulatorAgent/services/searchConfigurations.drl" />

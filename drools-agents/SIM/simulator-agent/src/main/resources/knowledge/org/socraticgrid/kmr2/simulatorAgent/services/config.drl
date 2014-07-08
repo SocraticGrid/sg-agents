@@ -50,68 +50,37 @@
  *
  ******************************************************************************/
 
-/*
-    Domain-Specific, concrete routing rules.
-    Can exploit JsonPath / XPath queries on a message's
-    encoded form for type-unsafe checks, in addition to
-    standard pattern matching on a message content
-    represented in object form
+package org.socraticgrid.kmr2.simulatorAgent.services;
 
-*/
+import org.drools.io.internal.InternalResource;
 
+import org.drools.mas.body.content.Action;
+import java.util.List;
+import java.util.Date;
+import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import planner.ptsd.log.RulesLoggerHelper;
 
-package org.drools.mas;
+global Logger logger;
 
-import org.drools.mas.Destination;
-import org.drools.mas.SessionMapping;
-import org.drools.mas.ACLMessage;
-import org.drools.mas.util.ACLMessageFactory;
-import org.drools.mas.body.acts.Inform;
-import org.drools.mas.body.content.*;
-import org.drools.mas.util.InspectMessageHelper;
-
-// ACL message factory, to generate responses
-global ACLMessageFactory aclFactory;
-
-
-rule "Test_Mapping"
+/**
+Configures the session's logger global.
+**/
+rule "[SUB-CONFIG] Logger Configuration"
+salience 1000
 when
 then
-    insert( new SessionMapping( "drX", "session1" ) );
+    Logger sessionLogger = LoggerFactory.getLogger("sim");
+    drools.getWorkingMemory().setGlobal("logger",sessionLogger);
+
+    RulesLoggerHelper.debug(sessionLogger, drools, "Sim Logger configured. ");
 end
 
-
-rule "Route_Encoded"
-salience -1
+rule "[SUB-CONFIG] Log Objects"
+salience 999
 when
-    $msg    : ACLMessage( $msgId : id, $b : body, encoding == Encodings.JSON )
-    $userId : String( this != null ) from InspectMessageHelper.inspect( $msg, "$..userId[0]" )
-    mapSession( $userId , $sessionId ; )
+    $o: Object()
 then
-    System.out.println( "Sim Routing message " + $msgId + " to session " + $sessionId + " for user " + $userId );
-    insert( new Destination( $msgId, $sessionId ) );
+    RulesLoggerHelper.debug(logger, drools, "Object found in session: {}", $o);
 end
-
-rule "Route_Encoded_X"
-salience -1
-when
-    $msg    : ACLMessage( $msgId : id, $b : body, encoding == Encodings.XML )
-    $userId : String( this != null && this != "" ) from InspectMessageHelper.inspect( $msg, "//userId" )
-    mapSession( $userId , $sessionId ; )
-then
-    System.out.println( "Sim Routing message " + $msgId + " to session " + $sessionId + " for user " + $userId );
-    insert( new Destination( $msgId, $sessionId ) );
-end
-
-
-rule "Route_Encoded_X_map"
-salience -1
-when
-    $msg    : ACLMessage( $msgId : id, $b : body, encoding == Encodings.XML )
-    $userId : String( this != null && this != "" ) from InspectMessageHelper.inspect( $msg, "//key[. = 'userId']/../value" )
-    mapSession( $userId , $sessionId ; )
-then
-    System.out.println( "Sim Routing message " + $msgId + " to session " + $sessionId + " for user " + $userId );
-    insert( new Destination( $msgId, $sessionId ) );
-end
-
