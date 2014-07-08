@@ -11,6 +11,7 @@ import org.drools.mas.util.MessageContentEncoder;
 import org.drools.mas.action.helpers.*;
 import org.drools.mas.util.helper.*;
 import org.drools.mas.util.*;
+import org.drools.mas.core.helpers.*;
 
 import org.slf4j.Logger;
 

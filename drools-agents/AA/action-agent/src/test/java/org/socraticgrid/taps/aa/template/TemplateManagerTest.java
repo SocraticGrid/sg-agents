@@ -4,6 +4,9 @@
  */
 package org.socraticgrid.taps.aa.template;
 
+import java.util.HashMap;
+import java.util.Map;
+import org.drools.informer.interaction.TemplateBuilder;
 import org.junit.Assert;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
@@ -36,6 +39,22 @@ public class TemplateManagerTest {
         Assert.assertNotNull(template);
         Assert.assertEquals("Test title for @{person}", template.getTitle());
         Assert.assertEquals("@{greetingMessage}", template.getHeader());
+    }
+    
+    @Test
+    public void mvelCodeInTemplateTest(){
+        
+        TemplateEntry template = templateManager.getTemplate("NoSkinToSkinContactIn7Days");
+        Assert.assertNotNull(template);
+        
+        Map<String, String> variables = new HashMap<>();
+        variables.put("common_patient_gestationalAge", "33");
+        variables.put("common_patient_weight", "915.678");
+        
+        String appliedTemplate = TemplateBuilder.applyTemplate(template.getHeader(), variables);
+        
+        Assert.assertEquals("33wks 915g", appliedTemplate.trim());
+        
     }
     
     @Test

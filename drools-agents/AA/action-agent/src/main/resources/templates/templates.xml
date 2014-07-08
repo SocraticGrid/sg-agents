@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
+    <template id="Blank">
+        <!-- You can use ##split## in the title section to split the title in
+        2-->
+        <title>
+            <![CDATA[
+            @{title}
+            ]]>
+        </title>
+        <header>
+            <![CDATA[
+            @{header}
+            ]]>
+        </header>
+        <body>
+            <![CDATA[
+            @{body}
+            ]]>
+        </body>
+    </template>
     <template id="PasswordReset">
         <!-- You can use ##split## in the title section to split the title in
         2-->

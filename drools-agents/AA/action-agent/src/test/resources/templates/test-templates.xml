@@ -17,4 +17,22 @@
             ]]>
         </body>
     </template>
+    <template id="NoSkinToSkinContactIn7Days">
+        <title>
+            <![CDATA[
+            @{common_patient_chartId}
+            ]]>
+        </title>
+        <header>
+            <![CDATA[
+            @code{common_patient_weight_short = common_patient_weight.contains(".")?common_patient_weight.substring(0, common_patient_weight.indexOf(".")):common_patient_weight;}
+            @{common_patient_gestationalAge}wks @{common_patient_weight_short}g
+            ]]>
+        </header>
+        <body>
+            <![CDATA[
+            No Skin To Skin Contact In 7 Days
+            ]]>
+        </body>
+    </template>
 </templates>
