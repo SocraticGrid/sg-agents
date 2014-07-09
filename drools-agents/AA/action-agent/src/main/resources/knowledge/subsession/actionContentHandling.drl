@@ -50,46 +50,65 @@ when
     $context: ActionContentTemplateContext (action == $action,
                                             $variables: variables)
 then
-    //get template data
-    TemplateEntry template = templateManager.getTemplate((String)$templateId);
-    String title = template.getTitle();
-    String header = template.getHeader();
-    String body = template.getBody();
+    try{
+        //get template data
+        TemplateEntry template = templateManager.getTemplate((String)$templateId);
+        String title = template.getTitle();
+        String header = template.getHeader();
+        String body = template.getBody();
 
-    //replace title template
-    String finalTitle = TemplateBuilder.applyTemplate( (String) title, (Map<String,Object>) $variables ).replace( "\n", "" );
+        RulesLoggerHelper.trace(logger, drools, "Found template '{}' with title= '{}', header= '{}' and body= '{}'", $templateId, title, header, body);
 
-    //replace header template
-    String finalHeader = TemplateBuilder.applyTemplate( (String) header, (Map<String,Object>) $variables ).replace( "\n", "" );
+        RulesLoggerHelper.trace(logger, drools, "Template Variables:");
+        for (Map.Entry<String, Object> entry : ((Map<String,Object>)$variables).entrySet()){
+            RulesLoggerHelper.trace(logger, drools, "'{}' -> {}", entry.getKey(), entry.getValue());
+        }
 
-    //replace body template
-    String finalBody = TemplateBuilder.applyTemplate( (String) body, (Map<String,Object>) $variables ).replace( "\n", "" );
+        //replace title template
+        String finalTitle = TemplateBuilder.applyTemplate( (String) title, (Map<String,Object>) $variables );
+        finalTitle = finalTitle == null ? "" : finalTitle.replace( "\n", "" );
+        RulesLoggerHelper.trace(logger, drools, "Final title= '{}'", finalTitle);
 
-    RulesLoggerHelper.info(logger, drools, "Template '{}' processed. Final Result:\nTitle: {}\nHeader: {}\nBody: {}", $templateId, finalTitle, finalHeader, finalBody );
+        //replace header template
+        String finalHeader = TemplateBuilder.applyTemplate( (String) header, (Map<String,Object>) $variables );
+        finalHeader = finalHeader == null ? "" : finalHeader.replace( "\n", "" );
+        RulesLoggerHelper.trace(logger, drools, "Final header= '{}'", finalHeader);
 
-    //prepare 'title', 'header' and 'body' entries for Action 
-    MyMapArgsEntryType titleEntry = new MyMapArgsEntryType();
-    titleEntry.setKey("title");
-    titleEntry.setValue(finalTitle);
+        //replace body template
+        String finalBody = TemplateBuilder.applyTemplate( (String) body, (Map<String,Object>) $variables );
+        finalBody = finalBody == null ? "" : finalBody.replace( "\n", "" );
+        RulesLoggerHelper.trace(logger, drools, "Final body= '{}'", finalBody);
 
-    MyMapArgsEntryType headerEntry = new MyMapArgsEntryType();
-    headerEntry.setKey("header");
-    headerEntry.setValue(finalHeader);
+        RulesLoggerHelper.debug(logger, drools, "Template '{}' processed. Final Result:\nTitle: {}\nHeader: {}\nBody: {}", $templateId, finalTitle, finalHeader, finalBody );
 
-    MyMapArgsEntryType bodyEntry = new MyMapArgsEntryType();
-    bodyEntry.setKey("body");
-    bodyEntry.setValue(finalBody);
+        //prepare 'title', 'header' and 'body' entries for Action 
+        MyMapArgsEntryType titleEntry = new MyMapArgsEntryType();
+        titleEntry.setKey("title");
+        titleEntry.setValue(finalTitle);
+
+        MyMapArgsEntryType headerEntry = new MyMapArgsEntryType();
+        headerEntry.setKey("header");
+        headerEntry.setValue(finalHeader);
+
+        MyMapArgsEntryType bodyEntry = new MyMapArgsEntryType();
+        bodyEntry.setKey("body");
+        bodyEntry.setValue(finalBody);
 
 
-    //Add 'title', 'header' and 'body' to Action
-    modify($action){
-        getArgs().add(titleEntry),
-        getArgs().add(headerEntry),
-        getArgs().add(bodyEntry)
+        //Add 'title', 'header' and 'body' to Action
+        modify($action){
+            getArgs().add(titleEntry),
+            getArgs().add(headerEntry),
+            getArgs().add(bodyEntry)
+        }
+    } catch (Exception e){
+        RulesLoggerHelper.error(logger, drools, "Error processing Template '{}'. Retracting Action '{}'", $templateId, $action);
+        RulesLoggerHelper.error(logger, drools, "Error:", e);
+        retract( $action );
+    } finally{
+        //we don't need the context anymore
+        retract($context); 
     }
-    
-    //we don't need the context anymore
-    retract($context); 
 end
 
 

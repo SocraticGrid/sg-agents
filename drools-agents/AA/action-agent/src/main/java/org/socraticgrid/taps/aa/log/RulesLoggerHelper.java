@@ -36,6 +36,10 @@ public class RulesLoggerHelper {
         logger.error(formatMessage(helper, messageFormat), args);
     }
     
+    public static void error(Logger logger, KnowledgeHelper helper, String messageFormat, Throwable error){
+        logger.error(formatMessage(helper, messageFormat), error);
+    }
+    
     public static void info(Logger logger, KnowledgeHelper helper, String messageFormat, Object... args){
         logger.info(formatMessage(helper, messageFormat), args);
     }
